@@ -287,33 +287,33 @@
   },
   "agentUI": {
     "leadGen": {
-      "title": "Lead Generation",
-      "createCampaign": "Create Campaign",
-      "campaignName": "Campaign Name",
-      "targetCriteria": "Target Criteria",
-      "scrape": "Scrape Leads",
-      "leadsFound": "Leads Found",
-      "enrichmentStatus": "Enrichment",
-      "score": "Lead Score",
+      "title": "Lead-Generierung",
+      "createCampaign": "Kampagne erstellen",
+      "campaignName": "Kampagnenname",
+      "targetCriteria": "Zielkriterien",
+      "scrape": "Leads extrahieren",
+      "leadsFound": "Leads gefunden",
+      "enrichmentStatus": "Anreicherung",
+      "score": "Lead-Score",
       "outreachStatus": "Outreach"
     },
     "content": {
-      "title": "SEO Content",
-      "createBrief": "Create Brief",
-      "topic": "Topic / Keyword",
-      "contentType": "Content Type",
-      "wordCount": "Word Count",
-      "generate": "Generate Article",
-      "seoScore": "SEO Score",
-      "publish": "Publish"
+      "title": "SEO-Inhalt",
+      "createBrief": "Brief erstellen",
+      "topic": "Thema / Keyword",
+      "contentType": "Inhaltstyp",
+      "wordCount": "Wortanzahl",
+      "generate": "Artikel generieren",
+      "seoScore": "SEO-Score",
+      "publish": "Veröffentlichen"
     },
     "partners": {
-      "title": "Partnerships",
-      "findPartners": "Find Partners",
-      "industry": "Industry",
-      "partnerType": "Partner Type",
-      "fitScore": "Fit Score",
-      "outreach": "Send Outreach"
+      "title": "Partnerschaften",
+      "findPartners": "Partner finden",
+      "industry": "Branche",
+      "partnerType": "Partnertyp",
+      "fitScore": "Passungs-Score",
+      "outreach": "Outreach senden"
     }
   }
 }

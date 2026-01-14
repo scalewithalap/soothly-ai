@@ -287,33 +287,33 @@
   },
   "agentUI": {
     "leadGen": {
-      "title": "Lead Generation",
-      "createCampaign": "Create Campaign",
-      "campaignName": "Campaign Name",
-      "targetCriteria": "Target Criteria",
-      "scrape": "Scrape Leads",
-      "leadsFound": "Leads Found",
-      "enrichmentStatus": "Enrichment",
-      "score": "Lead Score",
-      "outreachStatus": "Outreach"
+      "title": "Geração de Leads",
+      "createCampaign": "Criar Campanha",
+      "campaignName": "Nome da Campanha",
+      "targetCriteria": "Critérios de Alvo",
+      "scrape": "Extrair Leads",
+      "leadsFound": "Leads Encontrados",
+      "enrichmentStatus": "Enriquecimento",
+      "score": "Pontuação de Lead",
+      "outreachStatus": "Prospecção"
     },
     "content": {
-      "title": "SEO Content",
-      "createBrief": "Create Brief",
-      "topic": "Topic / Keyword",
-      "contentType": "Content Type",
-      "wordCount": "Word Count",
-      "generate": "Generate Article",
-      "seoScore": "SEO Score",
-      "publish": "Publish"
+      "title": "Conteúdo SEO",
+      "createBrief": "Criar Brief",
+      "topic": "Tópico / Palavra-chave",
+      "contentType": "Tipo de Conteúdo",
+      "wordCount": "Contagem de Palavras",
+      "generate": "Gerar Artigo",
+      "seoScore": "Pontuação SEO",
+      "publish": "Publicar"
     },
     "partners": {
-      "title": "Partnerships",
-      "findPartners": "Find Partners",
-      "industry": "Industry",
-      "partnerType": "Partner Type",
-      "fitScore": "Fit Score",
-      "outreach": "Send Outreach"
+      "title": "Parcerias",
+      "findPartners": "Encontrar Parceiros",
+      "industry": "Indústria",
+      "partnerType": "Tipo de Parceiro",
+      "fitScore": "Pontuação de Compatibilidade",
+      "outreach": "Enviar Proposta"
     }
   }
 }

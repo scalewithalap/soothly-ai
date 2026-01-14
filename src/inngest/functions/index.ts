@@ -1,16 +1,30 @@
 /**
  * Inngest Functions Index
- * Export all Inngest functions for the API route
+ * Exports all background job functions for the agent system
  */
 
-// Import agent functions as they are created
-// import { leadsScrapingFunction } from "./leads/scraping";
-// import { contentGenerationFunction } from "./content/generation";
-// import { partnerDiscoveryFunction } from "./partners/discovery";
+// Lead Generation Functions
+import { handleCampaignCreated, enrichLeads } from "./leads";
 
-// Export all functions
+// SEO Content Functions
+import { handleBriefCreated, generateArticle } from "./content";
+
+// Partnership Functions
+import { discoverPartners, qualifyPartner } from "./partners";
+
+/**
+ * All Inngest functions to be registered with the serve handler
+ */
 export const functions = [
-  // leadsScrapingFunction,
-  // contentGenerationFunction,
-  // partnerDiscoveryFunction,
+  // Lead Generation
+  handleCampaignCreated,
+  enrichLeads,
+
+  // SEO Content
+  handleBriefCreated,
+  generateArticle,
+
+  // Partnership
+  discoverPartners,
+  qualifyPartner,
 ];

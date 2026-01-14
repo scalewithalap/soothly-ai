@@ -3,154 +3,212 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Modal } from "@/components/ui/modal";
+import { z } from "zod";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
-// import { useLanguage } from "@/providers/language-provider"; // Assuming this exists or I should mock/create it.
-// Actually SKILL says "NEVER use hardcoded strings". I'll assume the dict hook pattern.
-// If the provider doesn't exist, I'll just use the JSON keys directly for now or a mock.
-// I'll stick to the SKILL: "const { dict } = useLanguage();"
-// I better verify if useLanguage exists. But for now I will assume it follows the SKILL.
-
-// Mocking useLanguage for safety if I don't see it in file list earlier
-// I saw "language-switcher.tsx" in ui folder, likely there is a provider.
-// I will check providers later. For now I will code with the assumption.
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useContent } from "@/hooks/use-content";
 
 const campaignSchema = z.object({
-  name: z.string().min(3, "Name must be at least 3 characters"),
+  name: z.string().min(3, "Campaign name must be at least 3 characters"),
   industry: z.string().optional(),
-  jobTitle: z.string().optional(),
+  job_title: z.string().optional(),
   location: z.string().optional(),
 });
 
-type CampaignFormValues = z.infer<typeof campaignSchema>;
+type CampaignFormData = z.infer<typeof campaignSchema>;
 
 interface CreateCampaignDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
 }
 
 export function CreateCampaignDialog({
-  isOpen,
-  onClose,
+  open,
+  onOpenChange,
   onSuccess,
 }: CreateCampaignDialogProps) {
-  // const { dict } = useLanguage(); // Commented out until I verify the hook path
+  const { content } = useContent();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // MOCK DICTIONARY TEMPORARILY - In real code this comes from context
-  const dict = {
-    agentUI: {
-      leadGen: {
-        createCampaign: "Create Campaign",
-        campaignName: "Campaign Name",
-        targetCriteria: "Target Criteria",
-      },
-    },
-    loadingStates: {
-      saving: "Saving changes...",
-    },
-    common: {
-      cancel: "Cancel",
-      create: "Create",
-    },
-  };
-
-  const form = useForm<CampaignFormValues>({
+  const form = useForm<CampaignFormData>({
     resolver: zodResolver(campaignSchema),
     defaultValues: {
       name: "",
       industry: "",
-      jobTitle: "",
+      job_title: "",
       location: "",
     },
   });
 
-  const onSubmit = async (data: CampaignFormValues) => {
+  const onSubmit = async (data: CampaignFormData) => {
     setIsSubmitting(true);
     try {
-      // TODO: Call API to create campaign
-      console.log("Creating campaign:", data);
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API
-      toast.success("Campaign created successfully");
+      const response = await fetch("/api/agents/leads/campaigns", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.name,
+          target_criteria: {
+            industry: data.industry,
+            job_title: data.job_title,
+            location: data.location,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to create campaign");
+      }
+
+      toast.success("Campaign created! Background processing started.");
       form.reset();
       onSuccess();
-      onClose();
-    } catch {
-      toast.error("Failed to create campaign");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create campaign"
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={dict.agentUI.leadGen.createCampaign}
-      description="Setup a new automated outreach campaign."
-    >
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-300">
-            {dict.agentUI.leadGen.campaignName}
-          </label>
-          <Input
-            {...form.register("name")}
-            placeholder="e.g. Q1 SaaS Outreach"
-            className="bg-gray-800 border-gray-700"
-          />
-          {form.formState.errors.name && (
-            <p className="text-xs text-red-400">
-              {form.formState.errors.name.message}
-            </p>
-          )}
-        </div>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="bg-gray-900 border-white/10 text-white max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-host">
+            {content.agentUI.leadGen.createCampaign}
+          </DialogTitle>
+          <DialogDescription className="text-gray-400">
+            Define your target audience to start generating leads
+          </DialogDescription>
+        </DialogHeader>
 
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-300">
-            {dict.agentUI.leadGen.targetCriteria}
-          </label>
-          <div className="grid grid-cols-2 gap-4">
-            <Input
-              {...form.register("industry")}
-              placeholder="Industry (e.g. Fintech)"
-              className="bg-gray-800 border-gray-700"
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-300">
+                    {content.agentUI.leadGen.campaignName}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="e.g., Q1 SaaS Outreach"
+                      className="bg-black/20 border-white/10 focus:border-cyan-500/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <Input
-              {...form.register("jobTitle")}
-              placeholder="Job Title (e.g. CTO)"
-              className="bg-gray-800 border-gray-700"
-            />
-          </div>
-          <Input
-            {...form.register("location")}
-            placeholder="Location (e.g. San Francisco)"
-            className="bg-gray-800 border-gray-700"
-          />
-        </div>
 
-        <div className="flex justify-end gap-3 pt-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onClose}
-            className="border-gray-700 text-gray-300 hover:text-white"
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="bg-indigo-600 hover:bg-indigo-500 text-white"
-          >
-            {isSubmitting ? dict.loadingStates.saving : "Create Campaign"}
-          </Button>
-        </div>
-      </form>
-    </Modal>
+            <div className="space-y-3 p-4 rounded-lg bg-white/5 border border-white/10">
+              <h4 className="text-sm font-medium text-gray-300">
+                {content.agentUI.leadGen.targetCriteria}
+              </h4>
+
+              <FormField
+                control={form.control}
+                name="industry"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-400 text-xs">
+                      Industry
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="e.g., SaaS, FinTech"
+                        className="bg-black/20 border-white/10 focus:border-cyan-500/50"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="job_title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-400 text-xs">
+                      Job Title
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="e.g., CEO, Head of Marketing"
+                        className="bg-black/20 border-white/10 focus:border-cyan-500/50"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-400 text-xs">
+                      Location
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="e.g., United States, Europe"
+                        className="bg-black/20 border-white/10 focus:border-cyan-500/50"
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                className="flex-1 border-white/10 text-gray-300 hover:bg-white/5"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white"
+              >
+                {isSubmitting
+                  ? "Creating..."
+                  : content.agentUI.leadGen.createCampaign}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 }

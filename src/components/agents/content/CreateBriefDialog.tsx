@@ -3,162 +3,218 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { Modal } from "@/components/ui/modal";
+import { z } from "zod";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "sonner";
-
-// Use number() directly instead of coerce to be stricter about types if needed,
-// but usually coerce is fine. The error might be due to react-hook-form inference.
-// I'll try without coerce first since Input type="number" returns a string in HTML but React Hook Form should handle it.
-// Actually, RHF with HTML inputs returns strings. zod.number() expects number.
-// So coerce IS needed.
-// The error "Type 'unknown' is not assignable to type 'number'" suggests that Zod might be inferring something else.
-// I will try to rebuild the file content to ensure clean typing.
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useContent } from "@/hooks/use-content";
 
 const briefSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
-  primaryKeyword: z.string().min(2, "Keyword required"),
-  wordCount: z.number().min(500),
+  primary_keyword: z.string().min(2, "Keyword is required"),
+  content_type: z.enum(["blog_post", "landing_page", "pillar_content"]),
+  target_word_count: z.number().min(500),
 });
 
-type BriefFormValues = z.infer<typeof briefSchema>;
+type BriefFormData = z.infer<typeof briefSchema>;
 
 interface CreateBriefDialogProps {
-  isOpen: boolean;
-  onClose: () => void;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
 }
 
 export function CreateBriefDialog({
-  isOpen,
-  onClose,
+  open,
+  onOpenChange,
   onSuccess,
 }: CreateBriefDialogProps) {
+  const { content } = useContent();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // MOCK DICTIONARY
-  const dict = {
-    agentUI: {
-      content: {
-        createBrief: "Create Brief",
-        topic: "Topic / Title",
-        generate: "Generate Article",
-      },
-    },
-    loadingStates: {
-      processing: "Creating brief...",
-    },
-  };
-
-  const form = useForm<BriefFormValues>({
+  const form = useForm<BriefFormData>({
     resolver: zodResolver(briefSchema),
     defaultValues: {
       title: "",
-      primaryKeyword: "",
-      wordCount: 1500,
+      primary_keyword: "",
+      content_type: "blog_post",
+      target_word_count: 1500,
     },
   });
 
-  const onSubmit = async (data: BriefFormValues) => {
+  const onSubmit = async (data: BriefFormData) => {
     setIsSubmitting(true);
     try {
-      // TODO: Call API
-      console.log("Creating brief:", data);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success("Content brief created");
+      const response = await fetch("/api/agents/content/briefs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to create brief");
+      }
+
+      toast.success("Brief created! AI is now processing your content.");
       form.reset();
       onSuccess();
-      onClose();
-    } catch {
-      toast.error("Failed to create brief");
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to create brief"
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={dict.agentUI.content.createBrief}
-      description="Plan a new SEO-optimized article."
-    >
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-300">
-            {dict.agentUI.content.topic}
-          </label>
-          <Input
-            {...form.register("title")}
-            placeholder="e.g. The Future of AI Agents"
-            className="bg-gray-800 border-gray-700"
-            disabled={isSubmitting}
-          />
-          {form.formState.errors.title?.message && (
-            <p className="text-xs text-red-400">
-              {String(form.formState.errors.title.message)}
-            </p>
-          )}
-        </div>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="bg-gray-900 border-white/10 text-white max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-host">
+            {content.agentUI.content.createBrief}
+          </DialogTitle>
+          <DialogDescription className="text-gray-400">
+            Define your content requirements for AI generation
+          </DialogDescription>
+        </DialogHeader>
 
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">
-              Primary Keyword
-            </label>
-            <Input
-              {...form.register("primaryKeyword")}
-              placeholder="e.g. ai agents"
-              className="bg-gray-800 border-gray-700"
-              disabled={isSubmitting}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-300">Article Title</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="e.g., 10 Ways to Improve SEO"
+                      className="bg-black/20 border-white/10 focus:border-purple-500/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            {form.formState.errors.primaryKeyword?.message && (
-              <p className="text-xs text-red-400">
-                {String(form.formState.errors.primaryKeyword.message)}
-              </p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-300">
-              Target Word Count
-            </label>
-            <Input
-              type="number"
-              {...form.register("wordCount", { valueAsNumber: true })}
-              className="bg-gray-800 border-gray-700"
-              disabled={isSubmitting}
-            />
-            {form.formState.errors.wordCount?.message && (
-              <p className="text-xs text-red-400">
-                {String(form.formState.errors.wordCount.message)}
-              </p>
-            )}
-          </div>
-        </div>
 
-        <div className="flex justify-end gap-3 pt-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onClose}
-            className="border-gray-700 text-gray-300 hover:text-white"
-            disabled={isSubmitting}
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white"
-          >
-            {isSubmitting
-              ? dict.loadingStates.processing
-              : dict.agentUI.content.createBrief}
-          </Button>
-        </div>
-      </form>
-    </Modal>
+            <FormField
+              control={form.control}
+              name="primary_keyword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-300">
+                    {content.agentUI.content.topic}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      placeholder="e.g., SEO best practices"
+                      className="bg-black/20 border-white/10 focus:border-purple-500/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="content_type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-300">
+                    {content.agentUI.content.contentType}
+                  </FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="bg-black/20 border-white/10">
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="bg-gray-900 border-white/10">
+                      <SelectItem value="blog_post">Blog Post</SelectItem>
+                      <SelectItem value="landing_page">Landing Page</SelectItem>
+                      <SelectItem value="pillar_content">
+                        Pillar Content
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="target_word_count"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-300">
+                    {content.agentUI.content.wordCount}
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      type="number"
+                      onChange={(e) => field.onChange(parseInt(e.target.value))}
+                      className="bg-black/20 border-white/10 focus:border-purple-500/50"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="flex gap-3 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                className="flex-1 border-white/10 text-gray-300 hover:bg-white/5"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="flex-1 bg-purple-600 hover:bg-purple-500 text-white"
+              >
+                {isSubmitting
+                  ? "Creating..."
+                  : content.agentUI.content.createBrief}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 }

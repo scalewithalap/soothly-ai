@@ -1,140 +1,121 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Users, BarChart3, Send } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Plus, Target, BarChart3, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CreateCampaignDialog } from "./CreateCampaignDialog";
-import type { LeadCampaign } from "@/types/database";
-import { cn } from "@/lib/utils";
+import { useContent } from "@/hooks/use-content";
+import type { Database } from "@/types/database";
+
+type LeadCampaign = Database["public"]["Tables"]["lead_campaigns"]["Row"];
 
 interface LeadCampaignListProps {
   initialCampaigns: LeadCampaign[];
 }
 
 export function LeadCampaignList({ initialCampaigns }: LeadCampaignListProps) {
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const router = useRouter();
+  const { content } = useContent();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [campaigns] = useState<LeadCampaign[]>(initialCampaigns);
 
-  // MOCK DICTIONARY
-  const dict = {
-    agentUI: {
-      leadGen: {
-        title: "Lead Generation",
-        createCampaign: "Create Campaign",
-        leadsFound: "Leads Found",
-        enrichmentStatus: "Enrichment",
-        score: "Avg Score",
-        outreachStatus: "Outreach",
-      },
-    },
+  const handleCampaignCreated = () => {
+    setIsDialogOpen(false);
+    router.refresh();
   };
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
+        <div className="space-y-1">
           <h2 className="text-2xl font-host font-bold text-white">
-            {dict.agentUI.leadGen.title}
+            {content.agentUI.leadGen.title}
           </h2>
-          <p className="text-gray-400">Manage your outreach campaigns</p>
+          <p className="text-gray-400">Manage your lead generation campaigns</p>
         </div>
         <Button
-          onClick={() => setIsCreateOpen(true)}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white gap-2"
+          onClick={() => setIsDialogOpen(true)}
+          className="bg-cyan-600 hover:bg-cyan-500 text-white gap-2"
         >
           <Plus className="h-4 w-4" />
-          {dict.agentUI.leadGen.createCampaign}
+          {content.agentUI.leadGen.createCampaign}
         </Button>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {campaigns.map((campaign) => (
-          <div
-            key={campaign.id}
-            className="group relative overflow-hidden rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-md transition-all hover:border-white/20 hover:bg-white/10"
+      {/* Campaign Grid */}
+      {campaigns.length === 0 ? (
+        <div className="py-16 text-center border border-dashed border-white/10 rounded-xl">
+          <Target className="h-12 w-12 mx-auto text-gray-500 mb-4" />
+          <h3 className="text-lg font-semibold text-white mb-2">
+            No campaigns yet
+          </h3>
+          <p className="text-gray-400 mb-6 max-w-md mx-auto">
+            Create your first lead generation campaign to start finding and
+            qualifying potential customers automatically.
+          </p>
+          <Button
+            onClick={() => setIsDialogOpen(true)}
+            className="bg-cyan-600 hover:bg-cyan-500 text-white gap-2"
           >
-            <div className="mb-4 flex items-center justify-between">
-              <div
-                className={cn(
-                  "rounded-full px-2 py-1 text-xs font-medium uppercase tracking-wider",
-                  campaign.status === "active"
-                    ? "bg-green-500/20 text-green-400"
-                    : "bg-gray-500/20 text-gray-400"
-                )}
-              >
-                {campaign.status}
-              </div>
-              <span className="text-xs text-gray-500">
-                {new Date(campaign.created_at).toLocaleDateString()}
-              </span>
-            </div>
-
-            <h3 className="mb-2 font-host text-lg font-bold text-white">
-              {campaign.name}
-            </h3>
-
-            <div className="grid grid-cols-3 gap-2 py-4">
-              <div className="text-center">
-                <div className="mb-1 flex justify-center text-gray-400">
-                  <Users className="h-4 w-4" />
-                </div>
-                <div className="text-lg font-bold text-white">
-                  {campaign.leads_collected}
-                </div>
-                <div className="text-xs text-gray-500">
-                  {dict.agentUI.leadGen.leadsFound}
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="mb-1 flex justify-center text-gray-400">
-                  <BarChart3 className="h-4 w-4" />
-                </div>
-                <div className="text-lg font-bold text-white">
-                  {/* Mocking avg score logic for now */}
-                  0%
-                </div>
-                <div className="text-xs text-gray-500">
-                  {dict.agentUI.leadGen.score}
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="mb-1 flex justify-center text-gray-400">
-                  <Send className="h-4 w-4" />
-                </div>
-                <div className="text-lg font-bold text-white">
-                  {campaign.leads_contacted}
-                </div>
-                <div className="text-xs text-gray-500">
-                  {dict.agentUI.leadGen.outreachStatus}
-                </div>
-              </div>
-            </div>
-
-            <Button
-              variant="outline"
-              className="w-full border-white/10 bg-white/5 text-white hover:bg-white/10"
+            <Plus className="h-4 w-4" />
+            {content.agentUI.leadGen.createCampaign}
+          </Button>
+        </div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {campaigns.map((campaign) => (
+            <div
+              key={campaign.id}
+              className="group relative overflow-hidden rounded-xl border border-white/10 bg-white/5 p-5 backdrop-blur-md transition-all hover:bg-white/10"
             >
-              View Details
-            </Button>
-          </div>
-        ))}
+              <div className="flex items-start justify-between mb-4">
+                <div className="h-10 w-10 rounded-lg bg-linear-to-br from-cyan-500/20 to-blue-500/20 flex items-center justify-center text-cyan-400">
+                  <Target className="h-5 w-5" />
+                </div>
+                <div
+                  className={`text-xs px-2 py-1 rounded-full border ${
+                    campaign.status === "active"
+                      ? "bg-green-500/20 text-green-400 border-green-500/20"
+                      : campaign.status === "paused"
+                      ? "bg-yellow-500/20 text-yellow-400 border-yellow-500/20"
+                      : "bg-gray-500/20 text-gray-400 border-gray-500/20"
+                  }`}
+                >
+                  {campaign.status}
+                </div>
+              </div>
 
-        {campaigns.length === 0 && (
-          <div className="col-span-full py-12 text-center border border-dashed border-white/10 rounded-xl">
-            <p className="text-gray-400">
-              No campaigns yet. Create one to get started.
-            </p>
-          </div>
-        )}
-      </div>
+              <h4 className="font-bold text-white mb-1">{campaign.name}</h4>
+              <p className="text-sm text-gray-400 mb-4">
+                {campaign.description || "No description"}
+              </p>
+
+              <div className="grid grid-cols-2 gap-3 text-sm pt-4 border-t border-white/10">
+                <div className="flex items-center gap-1.5 text-gray-300">
+                  <BarChart3 className="h-4 w-4 text-gray-500" />
+                  <span>
+                    {content.agentUI.leadGen.leadsFound}:{" "}
+                    {campaign.leads_collected}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5 text-gray-300">
+                  <Mail className="h-4 w-4 text-gray-500" />
+                  <span>
+                    {content.agentUI.leadGen.outreachStatus}:{" "}
+                    {campaign.leads_contacted}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       <CreateCampaignDialog
-        isOpen={isCreateOpen}
-        onClose={() => setIsCreateOpen(false)}
-        onSuccess={() => {
-          // In real app, we would invalidate queries or refresh router
-          console.log("Refresh list");
-        }}
+        open={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        onSuccess={handleCampaignCreated}
       />
     </div>
   );
