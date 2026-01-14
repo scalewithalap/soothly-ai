@@ -3,13 +3,66 @@
  * Shared types for all AI provider implementations
  */
 
+// All supported AI models across providers
 export type AIModel =
-  | "gpt-4o"
-  | "gpt-4o-mini"
-  | "gpt-4-turbo"
-  | "claude-sonnet-4-20250514"
-  | "claude-3-5-sonnet-20241022"
-  | "claude-3-haiku-20240307";
+  // OpenAI Models
+  | "gpt-5.2"
+  | "gpt-5.0"
+  | "gpt-5-mini"
+  | "gpt-5-nano"
+  // Anthropic Models (Claude 4.5)
+  | "claude-opus-4.5"
+  | "claude-sonnet-4.5"
+  | "claude-haiku-4.5"
+  // Google Gemini Models
+  | "gemini-3-pro"
+  | "gemini-3-flash"
+  | "gemini-2.5-pro";
+
+// Model display names for UI
+export const MODEL_DISPLAY_NAMES: Record<AIModel, string> = {
+  // OpenAI
+  "gpt-5.2": "gpt-5.2-2025-12-11",
+  "gpt-5.0": "gpt-5-2025-08-07",
+  "gpt-5-mini": "gpt-5-mini-2025-08-07",
+  "gpt-5-nano": "gpt-5-nano-2025-08-07",
+  // Claude 4.5
+  "claude-opus-4.5": "Claude Opus 4.5",
+  "claude-sonnet-4.5": "Claude Sonnet 4.5",
+  "claude-haiku-4.5": "Claude Haiku 4.5",
+  // Gemini
+  "gemini-3-pro": "gemini-3-pro-preview",
+  "gemini-3-flash": "gemini-3-flash-preview",
+  "gemini-2.5-pro": "gemini-2.5-pro",
+};
+
+// Models available for article generation
+export const ARTICLE_GENERATION_MODELS: AIModel[] = [
+  "gemini-3-pro",
+  "gemini-3-flash",
+  "gemini-2.5-pro",
+  "gpt-5.2",
+  "gpt-5.0",
+  "gpt-5-mini",
+  "gpt-5-nano",
+  "claude-haiku-4.5",
+  "claude-sonnet-4.5",
+  "claude-opus-4.5",
+];
+
+// Model provider mapping
+export const MODEL_PROVIDER: Record<AIModel, ProviderType> = {
+  "gpt-5.2": "openai",
+  "gpt-5.0": "openai",
+  "gpt-5-mini": "openai",
+  "gpt-5-nano": "openai",
+  "claude-opus-4.5": "anthropic",
+  "claude-sonnet-4.5": "anthropic",
+  "claude-haiku-4.5": "anthropic",
+  "gemini-3-pro": "gemini",
+  "gemini-3-flash": "gemini",
+  "gemini-2.5-pro": "gemini",
+};
 
 export interface Message {
   role: "system" | "user" | "assistant";
@@ -74,7 +127,7 @@ export interface AIProvider {
   embed(text: string, options?: EmbeddingOptions): Promise<EmbeddingResult>;
 }
 
-export type ProviderType = "openai" | "anthropic";
+export type ProviderType = "openai" | "anthropic" | "gemini";
 
 export interface AIProviderConfig {
   provider: ProviderType;

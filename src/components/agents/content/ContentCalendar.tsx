@@ -93,7 +93,7 @@ export function ContentCalendar({ initialBriefs }: ContentCalendarProps) {
                     brief.status
                   )}`}
                 >
-                  {brief.status.replace("_", " ")}
+                  {(brief.status ?? "draft").replace("_", " ")}
                 </div>
               </div>
 
@@ -111,7 +111,7 @@ export function ContentCalendar({ initialBriefs }: ContentCalendarProps) {
                   </span>
                 </div>
                 <span className="text-xs text-gray-500">
-                  {brief.content_type.replace("_", " ")}
+                  {(brief.content_type ?? "blog_post").replace("_", " ")}
                 </span>
               </div>
             </div>

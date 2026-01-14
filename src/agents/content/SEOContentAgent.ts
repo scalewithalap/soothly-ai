@@ -136,7 +136,7 @@ For each keyword, estimate:
 
 Return as JSON array:
 [{ "keyword": "...", "search_volume": 1000, "keyword_difficulty": 45, "relevance_score": 90 }]`,
-        { model: "gpt-4o-mini", temperature: 0.5 }
+        { model: "gemini-3-flash" as const, temperature: 0.5 }
       );
 
       const keywords = JSON.parse(result.content);
@@ -263,7 +263,7 @@ Return as JSON:
   "meta_title": "...",
   "meta_description": "..."
 }`,
-        { model: "gpt-4o-mini", temperature: 0.3 }
+        { model: "gemini-3-flash" as const, temperature: 0.3 }
       );
 
       const analysis = JSON.parse(result.content);

@@ -7,7 +7,11 @@ import { BaseAgent } from "../base/Agent";
 import type { AgentTask, AgentResult, CreditCost } from "../base/types";
 import { getOpenAI } from "@/lib/ai";
 import { inngest, AgentEvents } from "@/inngest/client";
-import type { LeadContact, Contact } from "@/types/database";
+import type { Database } from "@/types/database";
+
+// Type aliases for database tables
+type LeadContact = Database["public"]["Tables"]["lead_contacts"]["Row"];
+type Contact = Database["public"]["Tables"]["contacts"]["Row"];
 
 export class LeadGenAgent extends BaseAgent {
   readonly name = "leads" as const;
@@ -178,7 +182,7 @@ export class LeadGenAgent extends BaseAgent {
 
     try {
       const result = await ai.complete(scoringPrompt, {
-        model: "gpt-4o-mini",
+        model: "gemini-3-flash",
         temperature: 0.3,
       });
 

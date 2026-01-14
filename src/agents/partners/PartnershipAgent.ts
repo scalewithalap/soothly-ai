@@ -191,7 +191,7 @@ Return as JSON:
   "recommendation": "proceed" | "maybe" | "pass",
   "reasoning": "..."
 }`,
-        { model: "gpt-4o-mini", temperature: 0.3 }
+        { model: "gemini-3-flash", temperature: 0.3 }
       );
 
       const qualification = JSON.parse(result.content);
@@ -283,7 +283,7 @@ Return as JSON:
   "subject": "...",
   "body": "..."
 }`,
-        { model: "gpt-4o-mini", temperature: 0.7 }
+        { model: "gemini-3-flash", temperature: 0.7 }
       );
 
       const email = JSON.parse(result.content);

@@ -30,12 +30,47 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useContent } from "@/hooks/use-content";
+import { Sparkles } from "lucide-react";
+
+// AI Models available for article generation
+const AI_MODELS = [
+  { value: "gemini-3-pro", label: "Gemini 3 Pro", provider: "Google" },
+  { value: "gemini-3-flash", label: "Gemini 3 Flash", provider: "Google" },
+  { value: "gemini-2.5-pro", label: "Gemini 2.5 Pro", provider: "Google" },
+  { value: "gpt-5.2", label: "GPT-5.2", provider: "OpenAI" },
+  { value: "gpt-5.0", label: "GPT-5.0", provider: "OpenAI" },
+  { value: "gpt-5-mini", label: "GPT-5 Mini", provider: "OpenAI" },
+  { value: "gpt-5-nano", label: "GPT-5 Nano", provider: "OpenAI" },
+  {
+    value: "claude-haiku-4.5",
+    label: "Claude Haiku 4.5",
+    provider: "Anthropic",
+  },
+  {
+    value: "claude-sonnet-4.5",
+    label: "Claude Sonnet 4.5",
+    provider: "Anthropic",
+  },
+  { value: "claude-opus-4.5", label: "Claude Opus 4.5", provider: "Anthropic" },
+] as const;
 
 const briefSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
   primary_keyword: z.string().min(2, "Keyword is required"),
   content_type: z.enum(["blog_post", "landing_page", "pillar_content"]),
   target_word_count: z.number().min(500),
+  ai_model: z.enum([
+    "gemini-3-pro",
+    "gemini-3-flash",
+    "gemini-2.5-pro",
+    "gpt-5.2",
+    "gpt-5.0",
+    "gpt-5-mini",
+    "gpt-5-nano",
+    "claude-haiku-4.5",
+    "claude-sonnet-4.5",
+    "claude-opus-4.5",
+  ]),
 });
 
 type BriefFormData = z.infer<typeof briefSchema>;
@@ -61,6 +96,7 @@ export function CreateBriefDialog({
       primary_keyword: "",
       content_type: "blog_post",
       target_word_count: 1500,
+      ai_model: "gemini-3-pro",
     },
   });
 
@@ -78,7 +114,12 @@ export function CreateBriefDialog({
         throw new Error(errorData.error || "Failed to create brief");
       }
 
-      toast.success("Brief created! AI is now processing your content.");
+      const modelLabel =
+        AI_MODELS.find((m) => m.value === data.ai_model)?.label ||
+        data.ai_model;
+      toast.success(
+        `Brief created! ${modelLabel} is now generating your content.`
+      );
       form.reset();
       onSuccess();
     } catch (error) {
@@ -142,13 +183,72 @@ export function CreateBriefDialog({
               )}
             />
 
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="content_type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-300">
+                      {content.agentUI.content.contentType}
+                    </FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="bg-black/20 border-white/10">
+                          <SelectValue />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className="bg-gray-900 border-white/10">
+                        <SelectItem value="blog_post">Blog Post</SelectItem>
+                        <SelectItem value="landing_page">
+                          Landing Page
+                        </SelectItem>
+                        <SelectItem value="pillar_content">
+                          Pillar Content
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="target_word_count"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-gray-300">
+                      {content.agentUI.content.wordCount}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        type="number"
+                        onChange={(e) =>
+                          field.onChange(parseInt(e.target.value))
+                        }
+                        className="bg-black/20 border-white/10 focus:border-purple-500/50"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {/* AI Model Selector */}
             <FormField
               control={form.control}
-              name="content_type"
+              name="ai_model"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">
-                    {content.agentUI.content.contentType}
+                  <FormLabel className="text-gray-300 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-purple-400" />
+                    AI Model
                   </FormLabel>
                   <Select
                     onValueChange={field.onChange}
@@ -156,38 +256,59 @@ export function CreateBriefDialog({
                   >
                     <FormControl>
                       <SelectTrigger className="bg-black/20 border-white/10">
-                        <SelectValue />
+                        <SelectValue placeholder="Select AI Model" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="bg-gray-900 border-white/10">
-                      <SelectItem value="blog_post">Blog Post</SelectItem>
-                      <SelectItem value="landing_page">Landing Page</SelectItem>
-                      <SelectItem value="pillar_content">
-                        Pillar Content
-                      </SelectItem>
+                      {/* Google Models */}
+                      <div className="px-2 py-1.5 text-xs font-semibold text-gray-500">
+                        Google
+                      </div>
+                      {AI_MODELS.filter((m) => m.provider === "Google").map(
+                        (model) => (
+                          <SelectItem key={model.value} value={model.value}>
+                            <span className="flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-blue-500" />
+                              {model.label}
+                            </span>
+                          </SelectItem>
+                        )
+                      )}
+
+                      {/* OpenAI Models */}
+                      <div className="px-2 py-1.5 text-xs font-semibold text-gray-500 mt-1">
+                        OpenAI
+                      </div>
+                      {AI_MODELS.filter((m) => m.provider === "OpenAI").map(
+                        (model) => (
+                          <SelectItem key={model.value} value={model.value}>
+                            <span className="flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-green-500" />
+                              {model.label}
+                            </span>
+                          </SelectItem>
+                        )
+                      )}
+
+                      {/* Anthropic Models */}
+                      <div className="px-2 py-1.5 text-xs font-semibold text-gray-500 mt-1">
+                        Anthropic
+                      </div>
+                      {AI_MODELS.filter((m) => m.provider === "Anthropic").map(
+                        (model) => (
+                          <SelectItem key={model.value} value={model.value}>
+                            <span className="flex items-center gap-2">
+                              <span className="w-2 h-2 rounded-full bg-orange-500" />
+                              {model.label}
+                            </span>
+                          </SelectItem>
+                        )
+                      )}
                     </SelectContent>
                   </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="target_word_count"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-gray-300">
-                    {content.agentUI.content.wordCount}
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="number"
-                      onChange={(e) => field.onChange(parseInt(e.target.value))}
-                      className="bg-black/20 border-white/10 focus:border-purple-500/50"
-                    />
-                  </FormControl>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Choose the AI model for article generation
+                  </p>
                   <FormMessage />
                 </FormItem>
               )}

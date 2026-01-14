@@ -4,6 +4,20 @@ import { z } from "zod";
 import { inngest } from "@/inngest/client";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
+// Supported AI models for article generation
+const aiModelEnum = z.enum([
+  "gemini-3-pro",
+  "gemini-3-flash",
+  "gemini-2.5-pro",
+  "gpt-5.2",
+  "gpt-5.0",
+  "gpt-5-mini",
+  "gpt-5-nano",
+  "claude-haiku-4.5",
+  "claude-sonnet-4.5",
+  "claude-opus-4.5",
+]);
+
 const createBriefSchema = z.object({
   title: z.string().min(5),
   primary_keyword: z.string().min(2),
@@ -11,6 +25,7 @@ const createBriefSchema = z.object({
     .enum(["blog_post", "landing_page", "pillar_content"])
     .default("blog_post"),
   target_word_count: z.number().min(500).default(1500),
+  ai_model: aiModelEnum.default("gemini-3-pro"),
 });
 
 // GET /api/agents/content/briefs - List briefs for current org
@@ -96,6 +111,7 @@ export async function POST(request: NextRequest) {
         primary_keyword: parsed.data.primary_keyword,
         content_type: parsed.data.content_type,
         target_word_count: parsed.data.target_word_count,
+        ai_model: parsed.data.ai_model,
         status: "draft",
       })
       .select()
@@ -106,12 +122,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "db/create_failed" }, { status: 500 });
     }
 
-    // Trigger Inngest event for background processing
+    // Trigger Inngest event for background processing with model selection
     await inngest.send({
       name: "content/brief.created",
       data: {
         briefId: (brief as { id: string }).id,
         orgId: userData.org_id,
+      },
+    });
+
+    // Also trigger article generation with selected model
+    await inngest.send({
+      name: "content/article.generate",
+      data: {
+        briefId: (brief as { id: string }).id,
+        orgId: userData.org_id,
+        model: parsed.data.ai_model,
       },
     });
 

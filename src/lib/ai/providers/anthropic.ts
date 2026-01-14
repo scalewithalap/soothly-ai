@@ -7,9 +7,22 @@ import type {
   CompletionResult,
   EmbeddingResult,
   Message,
+  AIModel,
 } from "./types";
 
-const DEFAULT_MODEL = "claude-sonnet-4-20250514";
+const DEFAULT_MODEL = "claude-haiku-4.5";
+
+// Map our model names to Anthropic's API model names
+const MODEL_MAP: Record<string, string> = {
+  "claude-opus-4.5": "claude-opus-4-5-20260115",
+  "claude-sonnet-4.5": "claude-sonnet-4-5-20260115",
+  "claude-haiku-4.5": "claude-haiku-4-5-20260115",
+};
+
+function getApiModel(model?: AIModel): string {
+  if (!model) return DEFAULT_MODEL;
+  return MODEL_MAP[model] || model;
+}
 
 export class AnthropicProvider implements AIProvider {
   readonly name = "anthropic";
@@ -26,7 +39,7 @@ export class AnthropicProvider implements AIProvider {
     options?: CompletionOptions
   ): Promise<CompletionResult> {
     const response = await this.client.messages.create({
-      model: options?.model || DEFAULT_MODEL,
+      model: getApiModel(options?.model),
       max_tokens: options?.maxTokens || 1024,
       messages: [{ role: "user", content: prompt }],
     });
@@ -59,7 +72,7 @@ export class AnthropicProvider implements AIProvider {
     const systemMessage = messages.find((m) => m.role === "system");
 
     const response = await this.client.messages.create({
-      model: options?.model || DEFAULT_MODEL,
+      model: getApiModel(options?.model),
       max_tokens: options?.maxTokens || 1024,
       system: options?.systemPrompt || systemMessage?.content,
       messages: anthropicMessages,
@@ -80,8 +93,8 @@ export class AnthropicProvider implements AIProvider {
   }
 
   async embed(
-    _text: string,
-    _options?: EmbeddingOptions
+    text: string,
+    options?: EmbeddingOptions
   ): Promise<EmbeddingResult> {
     // Anthropic doesn't have a native embedding API
     // For embeddings, use OpenAI or another provider

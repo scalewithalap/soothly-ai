@@ -7,10 +7,24 @@ import type {
   CompletionResult,
   EmbeddingResult,
   Message,
+  AIModel,
 } from "./types";
 
-const DEFAULT_MODEL = "gpt-4o-mini";
+const DEFAULT_MODEL = "gpt-5-nano";
 const DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small";
+
+// Map our model names to OpenAI's API model names
+const MODEL_MAP: Record<string, string> = {
+  "gpt-5.2": "gpt-5.2-2025-12-11",
+  "gpt-5.0": "gpt-5-2025-08-07",
+  "gpt-5-mini": "gpt-5-mini-2025-08-07",
+  "gpt-5-nano": "gpt-5-nano-2025-08-07",
+};
+
+function getApiModel(model?: AIModel): string {
+  if (!model) return DEFAULT_MODEL;
+  return MODEL_MAP[model] || model;
+}
 
 export class OpenAIProvider implements AIProvider {
   readonly name = "openai";
@@ -27,7 +41,7 @@ export class OpenAIProvider implements AIProvider {
     options?: CompletionOptions
   ): Promise<CompletionResult> {
     const response = await this.client.chat.completions.create({
-      model: options?.model || DEFAULT_MODEL,
+      model: getApiModel(options?.model),
       messages: [{ role: "user", content: prompt }],
       max_tokens: options?.maxTokens,
       temperature: options?.temperature ?? 0.7,
@@ -69,7 +83,7 @@ export class OpenAIProvider implements AIProvider {
     );
 
     const response = await this.client.chat.completions.create({
-      model: options?.model || DEFAULT_MODEL,
+      model: getApiModel(options?.model),
       messages: formattedMessages,
       max_tokens: options?.maxTokens,
       temperature: options?.temperature ?? 0.7,
