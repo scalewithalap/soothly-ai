@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { CreditCard, TrendingDown, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useContent } from "@/hooks/use-content";

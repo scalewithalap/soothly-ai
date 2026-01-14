@@ -3,7 +3,7 @@
  * Pre-configured actors for lead scraping, enrichment, and partner discovery
  */
 
-import { runActor, startActorRun } from "./client";
+import { runActor } from "./client";
 
 // ============================================
 // ACTOR IDS - Popular Apify actors
