@@ -12,84 +12,33 @@ import {
   ArrowUpRight,
   Receipt,
   Calendar,
+  Gift,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
-interface PlanInfo {
-  name: string;
+interface SubscriptionPlan {
+  id: string;
   tier: string;
-  price: number;
-  credits: number;
-  seats: number;
+  name: string;
+  description: string | null;
+  price_monthly: number;
+  price_yearly: number | null;
+  credits_monthly: number;
+  credits_one_time: number;
+  max_seats: number;
+  is_recurring: boolean;
+  support_type: string;
   features: string[];
+  agents_access: string[];
+  api_access: string;
+  display_order: number;
 }
-
-const PLANS: Record<string, PlanInfo> = {
-  starter: {
-    name: "Starter",
-    tier: "starter",
-    price: 49,
-    credits: 500,
-    seats: 1,
-    features: [
-      "Lead Generation Agent",
-      "SEO Content Agent",
-      "500 credits/month",
-      "1 team seat",
-      "Email support",
-    ],
-  },
-  growth: {
-    name: "Growth",
-    tier: "growth",
-    price: 149,
-    credits: 2000,
-    seats: 3,
-    features: [
-      "All Starter features",
-      "Partnership Agent",
-      "2,000 credits/month",
-      "3 team seats",
-      "All AI models",
-      "Email support",
-    ],
-  },
-  scale: {
-    name: "Scale",
-    tier: "scale",
-    price: 399,
-    credits: 6000,
-    seats: 10,
-    features: [
-      "All Growth features",
-      "6,000 credits/month",
-      "10 team seats",
-      "Full API access",
-      "Custom integrations",
-      "Priority support",
-    ],
-  },
-  enterprise: {
-    name: "Enterprise",
-    tier: "enterprise",
-    price: 0,
-    credits: -1,
-    seats: -1,
-    features: [
-      "All Scale features",
-      "Unlimited credits",
-      "Unlimited team seats",
-      "SSO/SAML",
-      "Dedicated support",
-      "Custom contracts",
-    ],
-  },
-};
 
 export default function BillingSettingsPage() {
   const [loading, setLoading] = useState(true);
-  const [currentTier, setCurrentTier] = useState("starter");
-  const [credits, setCredits] = useState({ used: 0, total: 500 });
+  const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
+  const [currentTier, setCurrentTier] = useState("free");
+  const [credits, setCredits] = useState({ used: 0, total: 50 });
 
   useEffect(() => {
     fetchBillingData();
@@ -98,6 +47,17 @@ export default function BillingSettingsPage() {
   const fetchBillingData = async () => {
     try {
       const supabase = createClient();
+
+      // Fetch plans from API endpoint (avoids generated type issues)
+      const plansRes = await fetch("/api/plans");
+      if (plansRes.ok) {
+        const { plans: plansData } = await plansRes.json();
+        if (plansData) {
+          setPlans(plansData);
+        }
+      }
+
+      // Fetch user's current subscription
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -117,14 +77,11 @@ export default function BillingSettingsPage() {
             .single();
 
           if (orgData) {
-            setCurrentTier(orgData.subscription_tier || "starter");
-            // Credits usage will be fetched from credit_ledger in real implementation
-            const creditsTotal =
-              PLANS[orgData.subscription_tier || "starter"]?.credits || 500;
-            setCredits({
-              used: 0, // TODO: Calculate from credit_ledger
-              total: creditsTotal,
-            });
+            const tier = orgData.subscription_tier || "free";
+            setCurrentTier(tier);
+
+            // Get plan for credits info from already-fetched plans
+            // This is done after the state update
           }
         }
       }
@@ -135,8 +92,29 @@ export default function BillingSettingsPage() {
     }
   };
 
-  const currentPlan = PLANS[currentTier] || PLANS.starter;
-  const creditsPercentage = Math.min((credits.used / credits.total) * 100, 100);
+  // Compute credits based on current plan
+  useEffect(() => {
+    const currentPlan = plans.find((p) => p.tier === currentTier);
+    if (currentPlan) {
+      const creditsTotal =
+        currentPlan.credits_monthly > 0
+          ? currentPlan.credits_monthly
+          : currentPlan.credits_one_time || 50;
+      setCredits({
+        used: 0, // TODO: Calculate from credit_ledger
+        total: creditsTotal,
+      });
+    }
+  }, [plans, currentTier]);
+
+  const currentPlan = plans.find((p) => p.tier === currentTier) || plans[0];
+  const creditsPercentage =
+    credits.total > 0 ? Math.min((credits.used / credits.total) * 100, 100) : 0;
+
+  const formatPrice = (cents: number) => {
+    if (cents === 0) return "Free";
+    return `$${(cents / 100).toFixed(0)}`;
+  };
 
   if (loading) {
     return (
@@ -164,25 +142,34 @@ export default function BillingSettingsPage() {
               </p>
             </div>
           </div>
-          <Badge variant="default" className="capitalize text-sm px-3 py-1">
-            {currentPlan.name}
-          </Badge>
+          <div className="flex items-center gap-2">
+            {currentPlan && !currentPlan.is_recurring && (
+              <Badge variant="warning" className="gap-1">
+                <Gift className="w-3 h-3" />
+                One-time
+              </Badge>
+            )}
+            <Badge variant="default" className="capitalize text-sm px-3 py-1">
+              {currentPlan?.name || "Free"}
+            </Badge>
+          </div>
         </div>
 
         <div className="flex items-baseline gap-1 mb-4">
           <span className="text-4xl font-bold text-gray-900 dark:text-white">
-            ${currentPlan.price}
+            {currentPlan ? formatPrice(currentPlan.price_monthly) : "Free"}
           </span>
-          {currentPlan.price > 0 && (
+          {currentPlan && currentPlan.price_monthly > 0 && (
             <span className="text-gray-500">/month</span>
           )}
-          {currentPlan.price === 0 && (
-            <span className="text-gray-500">Custom pricing</span>
-          )}
+          {currentPlan?.price_monthly === 0 &&
+            currentPlan?.tier === "enterprise" && (
+              <span className="text-gray-500">Custom pricing</span>
+            )}
         </div>
 
         <div className="grid grid-cols-2 gap-4 mb-6">
-          {currentPlan.features.slice(0, 4).map((feature, i) => (
+          {currentPlan?.features.slice(0, 4).map((feature, i) => (
             <div key={i} className="flex items-center gap-2 text-sm">
               <Check className="w-4 h-4 text-green-500" />
               <span className="text-gray-700 dark:text-gray-300">
@@ -199,9 +186,11 @@ export default function BillingSettingsPage() {
               Upgrade Plan (Coming Soon)
             </Button>
           )}
-          <Button variant="outline" disabled>
-            Manage Subscription
-          </Button>
+          {currentPlan?.is_recurring && (
+            <Button variant="outline" disabled>
+              Manage Subscription
+            </Button>
+          )}
         </div>
       </Card>
 
@@ -216,7 +205,9 @@ export default function BillingSettingsPage() {
               Credit Usage
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Track your monthly credit consumption
+              {currentPlan?.is_recurring
+                ? "Track your monthly credit consumption"
+                : "Your one-time credits"}
             </p>
           </div>
         </div>
@@ -233,7 +224,9 @@ export default function BillingSettingsPage() {
           </div>
           <Progress value={creditsPercentage} className="h-2" />
           <p className="text-xs text-gray-500">
-            Credits reset on the 1st of each month
+            {currentPlan?.is_recurring
+              ? "Credits reset on the 1st of each month"
+              : "One-time credits do not expire"}
           </p>
         </div>
       </Card>
@@ -243,12 +236,12 @@ export default function BillingSettingsPage() {
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           Available Plans
         </h3>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {Object.entries(PLANS).map(([key, plan]) => (
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          {plans.map((plan) => (
             <Card
-              key={key}
+              key={plan.id}
               className={`p-4 ${
-                key === currentTier
+                plan.tier === currentTier
                   ? "border-violet-500 bg-violet-50 dark:bg-violet-900/10"
                   : ""
               }`}
@@ -257,24 +250,31 @@ export default function BillingSettingsPage() {
                 <h4 className="font-semibold text-gray-900 dark:text-white">
                   {plan.name}
                 </h4>
-                {key === currentTier && (
+                {plan.tier === currentTier && (
                   <Badge variant="info" className="text-xs">
                     Current
                   </Badge>
                 )}
               </div>
               <div className="mb-3">
-                {plan.price > 0 ? (
+                {plan.price_monthly > 0 ? (
                   <>
-                    <span className="text-2xl font-bold">${plan.price}</span>
+                    <span className="text-2xl font-bold">
+                      {formatPrice(plan.price_monthly)}
+                    </span>
                     <span className="text-sm text-gray-500">/mo</span>
                   </>
-                ) : (
+                ) : plan.tier === "enterprise" ? (
                   <span className="text-lg font-medium text-gray-600">
                     Custom
                   </span>
+                ) : (
+                  <span className="text-2xl font-bold text-green-600">
+                    Free
+                  </span>
                 )}
               </div>
+              <p className="text-xs text-gray-500 mb-3">{plan.description}</p>
               <ul className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
                 {plan.features.slice(0, 3).map((f, i) => (
                   <li key={i} className="flex items-center gap-1">

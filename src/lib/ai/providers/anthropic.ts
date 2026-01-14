@@ -98,6 +98,8 @@ export class AnthropicProvider implements AIProvider {
   ): Promise<EmbeddingResult> {
     // Anthropic doesn't have a native embedding API
     // For embeddings, use OpenAI or another provider
+    void text;
+    void options;
     throw new Error(
       "Anthropic does not support embeddings. Use OpenAI provider for embeddings."
     );
