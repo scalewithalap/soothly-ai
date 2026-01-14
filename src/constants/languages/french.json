@@ -284,5 +284,36 @@
       "fiveHoursAgo": "il y a 5 heures",
       "oneDayAgo": "il y a 1 jour"
     }
+  },
+  "agentUI": {
+    "leadGen": {
+      "title": "Lead Generation",
+      "createCampaign": "Create Campaign",
+      "campaignName": "Campaign Name",
+      "targetCriteria": "Target Criteria",
+      "scrape": "Scrape Leads",
+      "leadsFound": "Leads Found",
+      "enrichmentStatus": "Enrichment",
+      "score": "Lead Score",
+      "outreachStatus": "Outreach"
+    },
+    "content": {
+      "title": "SEO Content",
+      "createBrief": "Create Brief",
+      "topic": "Topic / Keyword",
+      "contentType": "Content Type",
+      "wordCount": "Word Count",
+      "generate": "Generate Article",
+      "seoScore": "SEO Score",
+      "publish": "Publish"
+    },
+    "partners": {
+      "title": "Partnerships",
+      "findPartners": "Find Partners",
+      "industry": "Industry",
+      "partnerType": "Partner Type",
+      "fitScore": "Fit Score",
+      "outreach": "Send Outreach"
+    }
   }
 }
