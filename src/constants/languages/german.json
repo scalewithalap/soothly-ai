@@ -1,0 +1,288 @@
+{
+  "auth": {
+    "social": {
+      "google": "Google",
+      "github": "GitHub"
+    },
+    "layout": {
+      "headline": "8 KI-Agenten, die <br /> 24/7 für Ihr Geschäft arbeiten",
+      "subheadline": "Lead-Generierung, Content-Erstellung, Vertragsprüfung und mehr—alles auf Autopilot.",
+      "valueProps": [
+        "Finden und erreichen Sie Ihre idealen Kunden automatisch",
+        "Generieren Sie SEO-optimierte Inhalte in großem Umfang",
+        "Überwachen Sie Compliance und prüfen Sie Verträge mit KI",
+        "Optimieren Sie Preise und reduzieren Sie Ausgaben"
+      ],
+      "testimonial": {
+        "quote": "Zero Headache hat unsere Geschäftsweise verändert. Unsere Lead-Generierung ist um 300% gestiegen und wir sparen 20 Stunden pro Woche bei der Content-Erstellung.",
+        "author": "Sarah Miller",
+        "role": "CEO, TechScale Inc"
+      },
+      "copyright": "Alle Rechte vorbehalten."
+    },
+    "login": {
+      "headline": "Willkommen zurück",
+      "subheadline": "Melden Sie sich an, um auf Ihr Dashboard zuzugreifen",
+      "emailLabel": "E-Mail-Adresse",
+      "emailPlaceholder": "ihr@email.de",
+      "passwordLabel": "Passwort",
+      "passwordPlaceholder": "Passwort eingeben",
+      "rememberMe": "Angemeldet bleiben",
+      "submitButton": "Anmelden",
+      "forgotPasswordLink": "Passwort vergessen?",
+      "signupPrompt": "Kein Konto?",
+      "signupLink": "Jetzt registrieren",
+      "socialDivider": "Oder weiter mit",
+      "errors": {
+        "invalidCredentials": "E‑Mail oder Passwort falsch. Bitte erneut versuchen.",
+        "tooManyAttempts": "Zu viele Versuche. Versuchen Sie es in 5 Minuten erneut."
+      }
+    },
+    "signup": {
+      "headline": "Konto erstellen",
+      "subheadline": "Starten Sie Ihre 14‑tägige kostenlose Testphase, keine Kreditkarte nötig.",
+      "fullNameLabel": "Vollständiger Name",
+      "fullNamePlaceholder": "Max Mustermann",
+      "emailLabel": "Geschäftliche E‑Mail",
+      "emailPlaceholder": "max@firma.de",
+      "passwordLabel": "Passwort erstellen",
+      "passwordPlaceholder": "Mindestens 8 Zeichen",
+      "confirmPasswordLabel": "Passwort bestätigen",
+      "confirmPasswordPlaceholder": "Passwort erneut eingeben",
+      "terms": {
+        "prefix": "Ich stimme den ",
+        "tos": "Nutzungsbedingungen",
+        "and": " und der ",
+        "privacy": "Datenschutzrichtlinie zu"
+      },
+      "submitButton": "Konto erstellen",
+      "loginPrompt": "Bereits ein Konto?",
+      "loginLink": "Anmelden",
+      "passwordStrength": {
+        "weak": "Schwach",
+        "fair": "Mittel",
+        "good": "Gut",
+        "strong": "Stark"
+      },
+      "errors": {
+        "emailExists": "Ein Konto mit dieser E‑Mail existiert bereits.",
+        "passwordMismatch": "Passwörter stimmen nicht überein.",
+        "weakPassword": "Wählen Sie ein stärkeres Passwort."
+      },
+      "socialDivider": "Oder weiter mit"
+    },
+    "forgotPassword": {
+      "headline": "Passwort zurücksetzen",
+      "subheadline": "Geben Sie Ihre E‑Mail ein, um einen Reset‑Link zu erhalten",
+      "emailLabel": "E‑Mail-Adresse",
+      "emailPlaceholder": "ihr@email.de",
+      "submitButton": "Reset‑Link senden",
+      "backToLogin": "Zurück zur Anmeldung",
+      "successHeadline": "E‑Mail prüfen",
+      "successMessage": "Wir haben einen Link an {email} gesendet. Er läuft in 1 Stunde ab.",
+      "errorEmailNotFound": "Kein Konto mit dieser E‑Mail gefunden."
+    }
+  },
+  "dashboard": {
+    "welcomeMessage": "Willkommen zurück, {firstName}",
+    "welcomeSubtext": "Das passiert heute mit Ihren Agenten.",
+    "creditBalance": {
+      "title": "Verbleibende Credits",
+      "lowBalanceWarning": "Wenig Credits",
+      "upgradeCTA": "Plan upgraden"
+    },
+    "agentStatus": {
+      "title": "Ihre Agenten",
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "paused": "Pausiert",
+      "lastActive": "Zuletzt aktiv",
+      "enableCTA": "Aktivieren",
+      "configureCTA": "Konfigurieren"
+    },
+    "quickActions": {
+      "title": "Schnelle Aktionen",
+      "actions": [
+        "Lead‑Kampagne erstellen",
+        "Inhalte generieren",
+        "Partner finden"
+      ]
+    },
+    "stats": {
+      "totalCredits": "Gesamte Credits",
+      "activeAgents": "Aktive Agenten",
+      "timeSaved": "Zeit gespart"
+    },
+    "recentActivity": {
+      "title": "Letzte Aktivitäten",
+      "viewAll": "Alle ansehen",
+      "emptyState": "Keine Aktivitäten. Aktivieren Sie einen Agenten, um zu starten.",
+      "items": [
+        "Vertriebs-Bot hat 50 neue qualifizierte Leads gefunden",
+        "Content-Agent hat 3 neue Blog-Beiträge veröffentlicht",
+        "Abonnement erfolgreich verlängert",
+        "Neue Teameinladung akzeptiert"
+      ]
+    },
+    "newAgent": "Neuer Agent"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "agents": "Agenten",
+    "billing": "Abrechnung",
+    "settings": "Einstellungen",
+    "signOut": "Abmelden"
+  },
+  "header": {
+    "searchPlaceholder": "Suchen..."
+  },
+  "agents": {
+    "leadGeneration": {
+      "name": "Vertriebs-Outreach-Bot",
+      "short": "Finden, anreichern und ideale Kunden erreichen.",
+      "long": "Unser Lead‑Generation‑Agent durchsucht LinkedIn, reichert Kontakte an, bewertet Leads und sendet automatisch personalisierte Outreach‑Nachrichten."
+    },
+    "seoContent": {
+      "name": "Content-Generator",
+      "short": "Keywords recherchieren und SEO‑Artikel automatisch veröffentlichen.",
+      "long": "Der Content‑Agent analysiert Wettbewerber, findet Keyword‑Chancen, erstellt hochwertige Artikel und plant deren Veröffentlichung für organischen Traffic."
+    },
+    "partnerships": {
+      "name": "Partnerschafts-Scout",
+      "short": "Affiliates und Partner entdecken und rekrutieren.",
+      "long": "Identifizieren Sie potenzielle Partner, bewerten Sie deren Passung und automatisieren Sie die Kontaktaufnahme, um Ihr Affiliate‑Netzwerk aufzubauen."
+    },
+    "contractReview": {
+      "name": "Rechtsprüfungs-Bot",
+      "short": "Verträge auf Risiken prüfen.",
+      "long": "Laden Sie einen Vertrag hoch und unsere KI markiert riskante Klauseln und schlägt Verbesserungen vor."
+    },
+    "regulatoryMonitoring": {
+      "name": "Compliance-Wächter",
+      "short": "Regulatorische Änderungen im Blick behalten.",
+      "long": "Überwachen Sie Updates, bewerten Sie deren Auswirkungen und generieren Sie automatisch Compliance‑Dokumentation."
+    },
+    "accountsReceivable": {
+      "name": "Finanzassistent",
+      "short": "Rechnungs‑Follow‑Ups automatisieren und Cashflow verbessern.",
+      "long": "Synchronisieren Sie Rechnungen, senden Sie Erinnerungen und verhandeln Sie Zahlungsbedingungen mit KI."
+    },
+    "spendAnalysis": {
+      "name": "Kostenoptimierer",
+      "short": "Versteckte Einsparungen in Ausgaben finden.",
+      "long": "Kategorisieren Sie Transaktionen, identifizieren Sie redundante Abos und finden Sie günstigere Alternativen, um Kosten zu senken."
+    },
+    "dynamicPricing": {
+      "name": "Preisstrategie-Bot",
+      "short": "Preise basierend auf Nachfrage und Konkurrenz optimieren.",
+      "long": "Beobachten Sie Konkurrenzpreise, führen Sie A/B‑Tests durch und lassen Sie KI Preis­punkte finden, die den Umsatz maximieren."
+    },
+    "dataScraper": {
+      "name": "Daten-Scraper",
+      "short": "Daten von jeder Website extrahieren.",
+      "long": "Automatisiertes Web-Scraping im großen Maßstab."
+    }
+  },
+  "errors": {
+    "generic": {
+      "server": "Ein Fehler ist aufgetreten. Bitte später erneut versuchen.",
+      "network": "Keine Verbindung. Bitte prüfen Sie Ihre Internetverbindung.",
+      "sessionExpired": "Sitzung abgelaufen. Bitte erneut anmelden.",
+      "unauthorized": "Sie haben keine Berechtigung für diese Aktion.",
+      "notFound": "Wir konnten das Gesuchte nicht finden."
+    },
+    "credit": {
+      "insufficient": "Nicht genug Credits. Upgrade oder mehr kaufen.",
+      "limitReached": "Monatliches Kreditlimit erreicht. Reset am {date}."
+    },
+    "validation": {
+      "required": "Dieses Feld ist erforderlich.",
+      "invalidEmail": "Bitte geben Sie eine gültige E‑Mail-Adresse ein.",
+      "passwordTooShort": "Passwort muss mindestens 8 Zeichen haben.",
+      "invalidURL": "Bitte geben Sie eine gültige URL ein.",
+      "numberRequired": "Bitte geben Sie eine Zahl ein.",
+      "fileTooLarge": "Datei muss kleiner als {size} MB sein."
+    }
+  },
+  "tooltips": {
+    "creditBalance": "Credits werden verwendet, wenn Agenten Aktionen ausführen. Jede Aktion hat unterschiedliche Kosten.",
+    "passwordVisibility": {
+      "show": "Passwort anzeigen",
+      "hide": "Passwort verbergen"
+    },
+    "termsLink": "Nutzungsbedingungen anzeigen",
+    "privacyLink": "Datenschutzrichtlinie anzeigen",
+    "copyButton": "In die Zwischenablage kopieren",
+    "copySuccess": "Kopiert!"
+  },
+  "loadingStates": {
+    "signingIn": "Anmeldung läuft...",
+    "creatingAccount": "Konto wird erstellt...",
+    "sendingEmail": "Link wird gesendet...",
+    "processing": "Verarbeitung...",
+    "saving": "Speichern..."
+  },
+  "settings": {
+    "team": {
+      "title": "Teammitglieder",
+      "description": "Verwalten Sie, wer Zugriff auf Ihre Organisation hat",
+      "inviteButton": "Mitglied einladen",
+      "membersList": {
+        "title": "Mitglieder"
+      },
+      "pendingInvites": {
+        "title": "Ausstehende Einladungen",
+        "expires": "Läuft ab"
+      },
+      "actions": {
+        "makeAdmin": "Zum Admin machen",
+        "makeMember": "Zum Mitglied machen",
+        "removeFromTeam": "Aus Team entfernen",
+        "you": "(Sie)"
+      },
+      "inviteModal": {
+        "title": "Teammitglied einladen",
+        "description": "Senden Sie eine Einladung zum Beitritt",
+        "emailLabel": "E-Mail-Adresse",
+        "roleLabel": "Rolle",
+        "member": "Mitglied",
+        "memberDesc": "Kann Agenten sehen und nutzen",
+        "admin": "Admin",
+        "adminDesc": "Kann Team & Einstellungen verwalten",
+        "cancel": "Abbrechen",
+        "sendButton": "Einladung senden"
+      }
+    }
+  },
+  "invite": {
+    "welcome": "Willkommen im Team!",
+    "redirecting": "Weiterleitung zum Dashboard...",
+    "invalid": {
+      "title": "Ungültige Einladung",
+      "homeButton": "Zur Startseite"
+    },
+    "expired": {
+      "titleExpired": "Einladung abgelaufen",
+      "titleUsed": "Einladung bereits genutzt",
+      "message": "Diese Einladung ist nicht mehr gültig. Bitte kontaktieren Sie Ihren Team-Admin für eine neue Einladung."
+    },
+    "valid": {
+      "title": "Sie wurden eingeladen!",
+      "messagePart1": "hat Sie eingeladen als",
+      "loginButton": "Anmelden zum Akzeptieren",
+      "acceptButton": "Einladung akzeptieren",
+      "signupPrompt": "Kein Konto?",
+      "signupLink": "Jetzt registrieren"
+    }
+  },
+  "mockData": {
+    "time": {
+      "twoMinutesAgo": "vor 2 Min.",
+      "fifteenMinutesAgo": "vor 15 Min.",
+      "oneHourAgo": "vor 1 Std.",
+      "twoHoursAgo": "vor 2 Stunden",
+      "fiveHoursAgo": "vor 5 Stunden",
+      "oneDayAgo": "vor 1 Tag"
+    }
+  }
+}

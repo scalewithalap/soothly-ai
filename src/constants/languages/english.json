@@ -1,0 +1,284 @@
+{
+  "auth": {
+    "social": {
+      "google": "Google",
+      "github": "GitHub"
+    },
+    "layout": {
+      "headline": "8 AI Agents Working <br /> 24/7 For Your Business",
+      "subheadline": "Lead generation, content creation, contract review, and more—all on autopilot.",
+      "valueProps": [
+        "Find and reach your ideal customers automatically",
+        "Generate SEO-optimized content at scale",
+        "Monitor compliance and review contracts with AI",
+        "Optimize pricing and reduce spending"
+      ],
+      "testimonial": {
+        "quote": "Zero Headache transformed how we do business. Our lead generation is up 300%, and we've saved 20 hours per week on content creation.",
+        "author": "Sarah Miller",
+        "role": "CEO, TechScale Inc"
+      },
+      "copyright": "All rights reserved."
+    },
+    "login": {
+      "headline": "Welcome back",
+      "subheadline": "Sign in to access your dashboard",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "you@company.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "rememberMe": "Keep me signed in",
+      "submitButton": "Sign in",
+      "forgotPasswordLink": "Forgot password?",
+      "signupPrompt": "No account?",
+      "signupLink": "Create one",
+      "socialDivider": "Or continue with",
+      "errors": {
+        "invalidCredentials": "Invalid email or password. Please try again.",
+        "tooManyAttempts": "Too many attempts. Try again in 5 minutes."
+      }
+    },
+    "signup": {
+      "headline": "Create your account",
+      "subheadline": "Start your 14‑day free trial, no credit card needed.",
+      "fullNameLabel": "Full name",
+      "fullNamePlaceholder": "Jane Smith",
+      "emailLabel": "Work email",
+      "emailPlaceholder": "jane@company.com",
+      "passwordLabel": "Create password",
+      "passwordPlaceholder": "At least 8 characters",
+      "confirmPasswordLabel": "Confirm password",
+      "confirmPasswordPlaceholder": "Re-enter your password",
+      "terms": {
+        "prefix": "I agree to the ",
+        "tos": "Terms of Service",
+        "and": " and ",
+        "privacy": "Privacy Policy"
+      },
+      "submitButton": "Create account",
+      "loginPrompt": "Already have an account?",
+      "loginLink": "Sign in",
+      "passwordStrength": {
+        "weak": "Weak",
+        "fair": "Fair",
+        "good": "Good",
+        "strong": "Strong"
+      },
+      "errors": {
+        "emailExists": "An account with this email already exists.",
+        "passwordMismatch": "Passwords don't match.",
+        "weakPassword": "Choose a stronger password."
+      },
+      "socialDivider": "Or continue with"
+    },
+    "forgotPassword": {
+      "headline": "Reset your password",
+      "subheadline": "Enter your email to receive a reset link",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "you@company.com",
+      "submitButton": "Send reset link",
+      "backToLogin": "Back to sign in",
+      "successHeadline": "Check your email",
+      "successMessage": "We've sent a reset link to {email}. It expires in 1 hour.",
+      "errorEmailNotFound": "No account found with that email."
+    }
+  },
+  "dashboard": {
+    "welcomeMessage": "Welcome back, {firstName}",
+    "welcomeSubtext": "Here's what's happening with your agents today.",
+    "creditBalance": {
+      "title": "Credits remaining",
+      "lowBalanceWarning": "Running low on credits",
+      "upgradeCTA": "Upgrade plan"
+    },
+    "agentStatus": {
+      "title": "Your agents",
+      "active": "Active",
+      "inactive": "Inactive",
+      "paused": "Paused",
+      "lastActive": "Last active",
+      "enableCTA": "Enable",
+      "configureCTA": "Configure"
+    },
+    "quickActions": {
+      "title": "Quick actions",
+      "actions": ["Create lead campaign", "Generate content", "Find partners"]
+    },
+    "stats": {
+      "totalCredits": "Total Credits",
+      "activeAgents": "Active Agents",
+      "timeSaved": "Time Saved"
+    },
+    "recentActivity": {
+      "title": "Recent activity",
+      "viewAll": "View all",
+      "emptyState": "No recent activity. Enable an agent to get started.",
+      "items": [
+        "Sales Bot found 50 new qualified leads",
+        "Content Agent published 3 new blog posts",
+        "Subscription renewed successfully",
+        "New team member invite accepted"
+      ]
+    },
+    "newAgent": "New Agent"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "agents": "Agents",
+    "billing": "Billing",
+    "settings": "Settings",
+    "signOut": "Sign out"
+  },
+  "header": {
+    "searchPlaceholder": "Search..."
+  },
+  "agents": {
+    "leadGeneration": {
+      "name": "Sales Outreach Bot",
+      "short": "Find, enrich, and reach ideal customers.",
+      "long": "Our Lead Generation agent scrapes LinkedIn, enriches contacts, scores leads, and sends personalized outreach automatically."
+    },
+    "seoContent": {
+      "name": "Content Generator",
+      "short": "Research keywords and publish SEO articles automatically.",
+      "long": "The Content agent analyzes competitors, finds keyword opportunities, generates high‑quality articles, and schedules publishing for organic traffic."
+    },
+    "partnerships": {
+      "name": "Partnership Scout",
+      "short": "Discover and recruit affiliates and partners.",
+      "long": "Find potential partners, score fit, and automate outreach to build your affiliate network."
+    },
+    "contractReview": {
+      "name": "Legal Review Bot",
+      "short": "Analyze contracts for risks and suggest improvements.",
+      "long": "Upload a contract and our AI flags risky clauses and recommends amendments."
+    },
+    "regulatoryMonitoring": {
+      "name": "Compliance Watchdog",
+      "short": "Stay ahead of compliance changes.",
+      "long": "Monitor regulatory updates, assess impact, and generate compliance documentation automatically."
+    },
+    "accountsReceivable": {
+      "name": "Finance Assistant",
+      "short": "Automate invoice follow‑ups and improve cash flow.",
+      "long": "Sync invoices, send reminder sequences, and negotiate payment terms with AI."
+    },
+    "spendAnalysis": {
+      "name": "Cost Optimizer",
+      "short": "Find hidden savings in spending.",
+      "long": "Categorize transactions, identify redundant subscriptions, and discover cheaper alternatives to cut costs."
+    },
+    "dynamicPricing": {
+      "name": "Pricing Strategist",
+      "short": "Optimize prices based on demand and competition.",
+      "long": "Monitor competitor pricing, run A/B tests, and let AI find revenue‑maximizing price points."
+    },
+    "dataScraper": {
+      "name": "Data Scraper",
+      "short": "Extract data from completely any website.",
+      "long": "Automated web scraping at scale."
+    }
+  },
+  "errors": {
+    "generic": {
+      "server": "Something went wrong. Please try again later.",
+      "network": "Unable to connect. Check your internet connection.",
+      "sessionExpired": "Session expired. Please sign in again.",
+      "unauthorized": "You don't have permission for this action.",
+      "notFound": "We couldn't find what you're looking for."
+    },
+    "credit": {
+      "insufficient": "Not enough credits. Upgrade or purchase more.",
+      "limitReached": "Monthly credit limit reached. Credits reset on {date}."
+    },
+    "validation": {
+      "required": "This field is required.",
+      "invalidEmail": "Enter a valid email address.",
+      "passwordTooShort": "Password must be at least 8 characters.",
+      "invalidURL": "Enter a valid URL.",
+      "numberRequired": "Enter a number.",
+      "fileTooLarge": "File must be under {size}MB."
+    }
+  },
+  "tooltips": {
+    "creditBalance": "Credits are used when agents perform actions. Different actions cost different amounts.",
+    "passwordVisibility": {
+      "show": "Show password",
+      "hide": "Hide password"
+    },
+    "termsLink": "View Terms of Service",
+    "privacyLink": "Read Privacy Policy",
+    "copyButton": "Copy to clipboard",
+    "copySuccess": "Copied!"
+  },
+  "loadingStates": {
+    "signingIn": "Signing in...",
+    "creatingAccount": "Creating your account...",
+    "sendingEmail": "Sending reset link...",
+    "processing": "Processing...",
+    "saving": "Saving changes..."
+  },
+  "settings": {
+    "team": {
+      "title": "Team Members",
+      "description": "Manage who has access to your organization",
+      "inviteButton": "Invite member",
+      "membersList": {
+        "title": "Members"
+      },
+      "pendingInvites": {
+        "title": "Pending Invitations",
+        "expires": "Expires"
+      },
+      "actions": {
+        "makeAdmin": "Make Admin",
+        "makeMember": "Make Member",
+        "removeFromTeam": "Remove from team",
+        "you": "(you)"
+      },
+      "inviteModal": {
+        "title": "Invite team member",
+        "description": "Send an invitation to join your organization",
+        "emailLabel": "Email address",
+        "roleLabel": "Role",
+        "member": "Member",
+        "memberDesc": "Can view and use agents",
+        "admin": "Admin",
+        "adminDesc": "Can manage team & settings",
+        "cancel": "Cancel",
+        "sendButton": "Send invitation"
+      }
+    }
+  },
+  "invite": {
+    "welcome": "Welcome to the team!",
+    "redirecting": "Redirecting you to the dashboard...",
+    "invalid": {
+      "title": "Invalid Invitation",
+      "homeButton": "Go to homepage"
+    },
+    "expired": {
+      "titleExpired": "Invitation Expired",
+      "titleUsed": "Invitation Used",
+      "message": "This invitation is no longer valid. Please contact your team admin for a new invitation."
+    },
+    "valid": {
+      "title": "You're invited!",
+      "messagePart1": "has invited you to join as",
+      "loginButton": "Sign in to accept",
+      "acceptButton": "Accept invitation",
+      "signupPrompt": "Don't have an account?",
+      "signupLink": "Create one"
+    }
+  },
+  "mockData": {
+    "time": {
+      "twoMinutesAgo": "2m ago",
+      "fifteenMinutesAgo": "15m ago",
+      "oneHourAgo": "1h ago",
+      "twoHoursAgo": "2 hours ago",
+      "fiveHoursAgo": "5 hours ago",
+      "oneDayAgo": "1 day ago"
+    }
+  }
+}

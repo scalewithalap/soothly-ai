@@ -1,0 +1,288 @@
+{
+  "auth": {
+    "social": {
+      "google": "Google",
+      "github": "GitHub"
+    },
+    "layout": {
+      "headline": "8 Agentes de IA Trabalhando <br /> 24/7 Pelo Seu Negócio",
+      "subheadline": "Geração de leads, criação de conteúdo, revisão de contratos e mais—tudo no piloto automático.",
+      "valueProps": [
+        "Encontre e contate seus clientes ideais automaticamente",
+        "Gere conteúdo otimizado para SEO em escala",
+        "Monitore conformidade e revise contratos com IA",
+        "Otimize preços e reduza gastos"
+      ],
+      "testimonial": {
+        "quote": "Zero Headache transformou a forma como fazemos negócios. Nossa geração de leads aumentou 300% e economizamos 20 horas por semana na criação de conteúdo.",
+        "author": "Sarah Miller",
+        "role": "CEO, TechScale Inc"
+      },
+      "copyright": "Todos os direitos reservados."
+    },
+    "login": {
+      "headline": "Bem-vindo de volta",
+      "subheadline": "Entre para acessar seu painel",
+      "emailLabel": "Endereço de e-mail",
+      "emailPlaceholder": "voce@empresa.com",
+      "passwordLabel": "Senha",
+      "passwordPlaceholder": "Digite sua senha",
+      "rememberMe": "Mantenha-me conectado",
+      "submitButton": "Entrar",
+      "forgotPasswordLink": "Esqueceu a senha?",
+      "signupPrompt": "Não tem conta?",
+      "signupLink": "Crie uma",
+      "socialDivider": "Ou continue com",
+      "errors": {
+        "invalidCredentials": "E‑mail ou senha inválidos. Tente novamente.",
+        "tooManyAttempts": "Muitas tentativas. Tente novamente em 5 minutos."
+      }
+    },
+    "signup": {
+      "headline": "Crie sua conta",
+      "subheadline": "Comece seu teste grátis de 14 dias, sem cartão de crédito.",
+      "fullNameLabel": "Nome completo",
+      "fullNamePlaceholder": "João Silva",
+      "emailLabel": "E‑mail corporativo",
+      "emailPlaceholder": "joao@empresa.com",
+      "passwordLabel": "Criar senha",
+      "passwordPlaceholder": "Pelo menos 8 caracteres",
+      "confirmPasswordLabel": "Confirmar senha",
+      "confirmPasswordPlaceholder": "Redigite sua senha",
+      "terms": {
+        "prefix": "Concordo com os ",
+        "tos": "Termos de Serviço",
+        "and": " e a ",
+        "privacy": "Política de Privacidade"
+      },
+      "submitButton": "Criar conta",
+      "loginPrompt": "Já tem uma conta?",
+      "loginLink": "Entrar",
+      "passwordStrength": {
+        "weak": "Fraca",
+        "fair": "Média",
+        "good": "Boa",
+        "strong": "Forte"
+      },
+      "errors": {
+        "emailExists": "Já existe uma conta com este e‑mail.",
+        "passwordMismatch": "As senhas não coincidem.",
+        "weakPassword": "Escolha uma senha mais forte."
+      },
+      "socialDivider": "Ou continue com"
+    },
+    "forgotPassword": {
+      "headline": "Redefina sua senha",
+      "subheadline": "Digite seu e‑mail para receber um link de redefinição",
+      "emailLabel": "Endereço de e‑mail",
+      "emailPlaceholder": "voce@empresa.com",
+      "submitButton": "Enviar link",
+      "backToLogin": "Voltar para o login",
+      "successHeadline": "Verifique seu e‑mail",
+      "successMessage": "Enviamos um link para {email}. Ele expira em 1 hora.",
+      "errorEmailNotFound": "Nenhuma conta encontrada com esse e‑mail."
+    }
+  },
+  "dashboard": {
+    "welcomeMessage": "Bem-vindo de volta, {firstName}",
+    "welcomeSubtext": "Aqui está o que está acontecendo com seus agentes hoje.",
+    "creditBalance": {
+      "title": "Créditos restantes",
+      "lowBalanceWarning": "Créditos baixos",
+      "upgradeCTA": "Melhorar plano"
+    },
+    "agentStatus": {
+      "title": "Seus agentes",
+      "active": "Ativo",
+      "inactive": "Inativo",
+      "paused": "Pausado",
+      "lastActive": "Última atividade",
+      "enableCTA": "Ativar",
+      "configureCTA": "Configurar"
+    },
+    "quickActions": {
+      "title": "Ações rápidas",
+      "actions": [
+        "Criar campanha de leads",
+        "Gerar conteúdo",
+        "Encontrar parceiros"
+      ]
+    },
+    "stats": {
+      "totalCredits": "Créditos Totais",
+      "activeAgents": "Agentes Ativos",
+      "timeSaved": "Tempo Economizado"
+    },
+    "recentActivity": {
+      "title": "Atividade recente",
+      "viewAll": "Ver tudo",
+      "emptyState": "Nenhuma atividade recente. Ative um agente para começar.",
+      "items": [
+        "Bot de Vendas encontrou 50 novos leads qualificados",
+        "Agente de Conteúdo publicou 3 novos posts no blog",
+        "Assinatura renovada com sucesso",
+        "Novo convite de membro da equipe aceito"
+      ]
+    },
+    "newAgent": "Novo Agente"
+  },
+  "sidebar": {
+    "dashboard": "Painel",
+    "agents": "Agentes",
+    "billing": "Faturamento",
+    "settings": "Configurações",
+    "signOut": "Sair"
+  },
+  "header": {
+    "searchPlaceholder": "Buscar..."
+  },
+  "agents": {
+    "leadGeneration": {
+      "name": "Bot de Vendas",
+      "short": "Encontrar, enriquecer e contatar clientes ideais.",
+      "long": "Nosso agente de Geração de Leads varre o LinkedIn, enriquece contatos, qualifica leads e envia mensagens personalizadas automaticamente."
+    },
+    "seoContent": {
+      "name": "Gerador de Conteúdo",
+      "short": "Pesquisar palavras‑chave e publicar artigos SEO automaticamente.",
+      "long": "O agente de Conteúdo analisa concorrentes, encontra oportunidades de palavras‑chave, gera artigos de alta qualidade e agenda publicações para tráfego orgânico."
+    },
+    "partnerships": {
+      "name": "Caça-Parcerias",
+      "short": "Descobrir e recrutar afiliados e parceiros.",
+      "long": "Identifique parceiros potenciais, avalie a adequação e automatize o contato para construir sua rede de afiliados."
+    },
+    "contractReview": {
+      "name": "Bot de Revisão Legal",
+      "short": "Analisar contratos em busca de riscos.",
+      "long": "Envie um contrato e nossa IA sinaliza cláusulas arriscadas e sugere melhorias."
+    },
+    "regulatoryMonitoring": {
+      "name": "Vigia de Conformidade",
+      "short": "Ficar à frente das mudanças regulatórias.",
+      "long": "Monitore atualizações, avalie o impacto e gere documentação de conformidade automaticamente."
+    },
+    "accountsReceivable": {
+      "name": "Assistente Financeiro",
+      "short": "Automatizar cobranças e melhorar fluxo de caixa.",
+      "long": "Sincronize faturas, envie lembretes e negocie termos de pagamento com IA."
+    },
+    "spendAnalysis": {
+      "name": "Otimizador de Custos",
+      "short": "Encontrar economias ocultas nos gastos.",
+      "long": "Categorize transações, identifique assinaturas redundantes e encontre alternativas mais baratas para cortar custos."
+    },
+    "dynamicPricing": {
+      "name": "Estrategista de Preços",
+      "short": "Otimizar preços com base na demanda e concorrência.",
+      "long": "Monitore preços da concorrência, execute testes A/B e deixe a IA encontrar pontos de preço que maximizam a receita."
+    },
+    "dataScraper": {
+      "name": "Extrator de Dados",
+      "short": "Extrair dados de qualquer site.",
+      "long": "Web scraping automatizado em escala."
+    }
+  },
+  "errors": {
+    "generic": {
+      "server": "Algo deu errado. Tente novamente mais tarde.",
+      "network": "Não foi possível conectar. Verifique sua internet.",
+      "sessionExpired": "Sessão expirada. Faça login novamente.",
+      "unauthorized": "Você não tem permissão para esta ação.",
+      "notFound": "Não conseguimos encontrar o que você procura."
+    },
+    "credit": {
+      "insufficient": "Créditos insuficientes. Faça upgrade ou compre mais.",
+      "limitReached": "Limite mensal de créditos atingido. Reinicia em {date}."
+    },
+    "validation": {
+      "required": "Este campo é obrigatório.",
+      "invalidEmail": "Insira um e-mail válido.",
+      "passwordTooShort": "A senha deve ter pelo menos 8 caracteres.",
+      "invalidURL": "Insira uma URL válida.",
+      "numberRequired": "Insira um número.",
+      "fileTooLarge": "O arquivo deve ser menor que {size}MB."
+    }
+  },
+  "tooltips": {
+    "creditBalance": "Os créditos são usados quando agentes realizam ações. Ações diferentes têm custos diferentes.",
+    "passwordVisibility": {
+      "show": "Mostrar senha",
+      "hide": "Ocultar senha"
+    },
+    "termsLink": "Ver Termos de Serviço",
+    "privacyLink": "Ver Política de Privacidade",
+    "copyButton": "Copiar para área de transferência",
+    "copySuccess": "Copiado!"
+  },
+  "loadingStates": {
+    "signingIn": "Entrando...",
+    "creatingAccount": "Criando sua conta...",
+    "sendingEmail": "Enviando link...",
+    "processing": "Processando...",
+    "saving": "Salvando alterações..."
+  },
+  "settings": {
+    "team": {
+      "title": "Membros da Equipe",
+      "description": "Gerencie quem tem acesso à sua organização",
+      "inviteButton": "Convidar membro",
+      "membersList": {
+        "title": "Membros"
+      },
+      "pendingInvites": {
+        "title": "Convites Pendentes",
+        "expires": "Expira em"
+      },
+      "actions": {
+        "makeAdmin": "Tornar Admin",
+        "makeMember": "Tornar Membro",
+        "removeFromTeam": "Remover da equipe",
+        "you": "(você)"
+      },
+      "inviteModal": {
+        "title": "Convidar membro da equipe",
+        "description": "Envie um convite para entrar na sua organização",
+        "emailLabel": "Endereço de e-mail",
+        "roleLabel": "Função",
+        "member": "Membro",
+        "memberDesc": "Pode ver e usar agentes",
+        "admin": "Admin",
+        "adminDesc": "Pode gerenciar equipe e configurações",
+        "cancel": "Cancelar",
+        "sendButton": "Enviar convite"
+      }
+    }
+  },
+  "invite": {
+    "welcome": "Bem-vindo à equipe!",
+    "redirecting": "Redirecionando para o painel...",
+    "invalid": {
+      "title": "Convite Inválido",
+      "homeButton": "Ir para a página inicial"
+    },
+    "expired": {
+      "titleExpired": "Convite Expirado",
+      "titleUsed": "Convite Usado",
+      "message": "Este convite não é mais válido. Entre em contato com o administrador da sua equipe para um novo convite."
+    },
+    "valid": {
+      "title": "Você foi convidado!",
+      "messagePart1": "convidou você para entrar como",
+      "loginButton": "Entrar para aceitar",
+      "acceptButton": "Aceitar convite",
+      "signupPrompt": "Não tem conta?",
+      "signupLink": "Crie uma"
+    }
+  },
+  "mockData": {
+    "time": {
+      "twoMinutesAgo": "há 2m",
+      "fifteenMinutesAgo": "há 15m",
+      "oneHourAgo": "há 1h",
+      "twoHoursAgo": "há 2 horas",
+      "fiveHoursAgo": "há 5 horas",
+      "oneDayAgo": "há 1 dia"
+    }
+  }
+}

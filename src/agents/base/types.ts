@@ -1,0 +1,100 @@
+export type AgentType =
+  | "leads"
+  | "content"
+  | "partners"
+  | "contracts"
+  | "compliance"
+  | "receivables"
+  | "spend"
+  | "pricing";
+
+export interface AgentTask {
+  id: string;
+  action: string;
+  params: Record<string, unknown>;
+  priority: "low" | "normal" | "high" | "urgent";
+  metadata?: Record<string, unknown>;
+}
+
+export interface AgentResult {
+  success: boolean;
+  data?: unknown;
+  error?: string;
+  creditsUsed?: number;
+}
+
+export interface AgentEvent {
+  id: string;
+  fromAgent: AgentType;
+  toAgent?: AgentType;
+  eventType: string;
+  payload: Record<string, unknown>;
+  timestamp: Date;
+}
+
+export interface CreditCost {
+  [action: string]: number;
+}
+
+export interface AgentConfig {
+  enabled: boolean;
+  settings: Record<string, unknown>;
+}
+
+export const AGENT_METADATA: Record<
+  AgentType,
+  { displayName: string; shortDescription: string; longDescription: string }
+> = {
+  leads: {
+    displayName: "Lead Generation",
+    shortDescription:
+      "Automatically find, enrich, and reach out to your ideal customers.",
+    longDescription:
+      "Our Lead Generation agent scrapes LinkedIn, enriches contact data, scores leads based on your ICP, and sends personalized outreach sequences—all on autopilot.",
+  },
+  content: {
+    displayName: "SEO Content",
+    shortDescription:
+      "Research keywords and publish SEO-optimized articles automatically.",
+    longDescription:
+      "The Content agent analyzes your competitors, identifies keyword opportunities, generates high-quality articles, and schedules publishing to maximize organic traffic.",
+  },
+  partners: {
+    displayName: "Partnerships",
+    shortDescription:
+      "Discover and recruit affiliates and integration partners.",
+    longDescription:
+      "Find potential partners that align with your product, score them for fit, and automate outreach to build your affiliate and referral network.",
+  },
+  contracts: {
+    displayName: "Contract Review",
+    shortDescription: "Analyze contracts for risks and suggest improvements.",
+    longDescription:
+      "Upload any contract and our AI will identify unfavorable clauses, flag risks, and suggest amendments based on your company's playbook.",
+  },
+  compliance: {
+    displayName: "Regulatory Monitoring",
+    shortDescription:
+      "Stay ahead of compliance changes affecting your business.",
+    longDescription:
+      "Monitor regulatory updates across jurisdictions, assess impact on your operations, and generate compliance documentation automatically.",
+  },
+  receivables: {
+    displayName: "Accounts Receivable",
+    shortDescription: "Automate invoice follow-ups and improve cash flow.",
+    longDescription:
+      "Sync your invoices, send escalating reminder sequences, and use AI to negotiate payment terms with overdue accounts.",
+  },
+  spend: {
+    displayName: "Spend Analysis",
+    shortDescription: "Find savings hidden in your business spending.",
+    longDescription:
+      "Categorize all transactions, identify redundant subscriptions, and discover cheaper alternatives to reduce costs by 15-30%.",
+  },
+  pricing: {
+    displayName: "Dynamic Pricing",
+    shortDescription: "Optimize prices based on demand and competition.",
+    longDescription:
+      "Monitor competitor pricing, run A/B experiments, and use AI to find the price points that maximize revenue.",
+  },
+};
