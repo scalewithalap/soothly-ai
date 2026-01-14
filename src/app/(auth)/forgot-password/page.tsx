@@ -2,165 +2,125 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
+import { toast } from "sonner";
+import { ArrowLeft, Mail } from "lucide-react";
 import { useContent } from "@/hooks/use-content";
 
 export default function ForgotPasswordPage() {
   const { content } = useContent();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [error, setError] = useState("");
-
-  const supabase = createClient();
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+
+    if (!email) {
+      toast.error("Please enter your email address");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const { error: resetError } = await supabase.auth.resetPasswordForEmail(
-        email,
-        {
-          redirectTo: `${window.location.origin}/reset-password`,
-        }
-      );
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
 
-      if (resetError) {
-        if (resetError.message.includes("not found")) {
-          setError(content.auth.forgotPassword.errorEmailNotFound);
-        } else {
-          setError(resetError.message);
-        }
-        return;
+      const data = await res.json();
+
+      if (res.ok) {
+        setIsSubmitted(true);
+      } else {
+        toast.error(data.message || "Something went wrong");
       }
-
-      setIsSuccess(true);
     } catch {
-      setError(content.errors.generic.server);
+      toast.error("Failed to send reset email");
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (isSuccess) {
+  if (isSubmitted) {
     return (
-      <div className="space-y-6 text-center">
-        <div className="w-16 h-16 mx-auto rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-          <svg
-            className="w-8 h-8 text-green-600 dark:text-green-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-            />
-          </svg>
-        </div>
-
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
+        <Card className="w-full max-w-md p-8 text-center">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+            <Mail className="w-8 h-8 text-green-600 dark:text-green-400" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
             {content.auth.forgotPassword.successHeadline}
           </h1>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
-            {content.auth.forgotPassword.successMessage.replace(
-              "{email}",
-              email
-            )}
-          </p>
-        </div>
-
-        <div className="pt-4">
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-2 text-violet-600 hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-300 font-medium"
-          >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 19l-7-7m0 0l7-7m-7 7h18"
-              />
-            </svg>
-            {content.auth.forgotPassword.backToLogin}
+          <p
+            className="text-gray-600 dark:text-gray-400 mb-6"
+            dangerouslySetInnerHTML={{
+              __html: content.auth.forgotPassword.successMessage.replace(
+                "{email}",
+                `<strong>${email}</strong>`
+              ),
+            }}
+          />
+          <Link href="/login">
+            <Button variant="outline" className="gap-2">
+              <ArrowLeft className="w-4 h-4" />
+              {content.auth.forgotPassword.backToLogin}
+            </Button>
           </Link>
-        </div>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="text-center lg:text-left">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          {content.auth.forgotPassword.headline}
-        </h1>
-        <p className="mt-2 text-gray-600 dark:text-gray-400">
-          {content.auth.forgotPassword.subheadline}
-        </p>
-      </div>
-
-      {error && (
-        <div className="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
+      <Card className="w-full max-w-md p-8">
+        <div className="mb-8 text-center">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            {content.auth.forgotPassword.headline}
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            {content.auth.forgotPassword.subheadline}
+          </p>
         </div>
-      )}
 
-      <form onSubmit={handleSubmit} className="space-y-5">
-        <Input
-          label={content.auth.forgotPassword.emailLabel}
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder={content.auth.forgotPassword.emailPlaceholder}
-          required
-        />
-
-        <Button
-          type="submit"
-          disabled={isLoading}
-          loading={isLoading}
-          className="w-full"
-        >
-          {content.auth.forgotPassword.submitButton}
-        </Button>
-      </form>
-
-      <div className="text-center">
-        <Link
-          href="/login"
-          className="inline-flex items-center gap-2 text-violet-600 hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-300 font-medium"
-        >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="email">
+              {content.auth.forgotPassword.emailLabel}
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder={content.auth.forgotPassword.emailPlaceholder}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
-          </svg>
-          {content.auth.forgotPassword.backToLogin}
-        </Link>
-      </div>
+          </div>
+
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading
+              ? content.auth.forgotPassword.submittingButton
+              : content.auth.forgotPassword.submitButton}
+          </Button>
+        </form>
+
+        <div className="mt-6 text-center">
+          <Link
+            href="/login"
+            className="text-sm text-violet-600 hover:text-violet-700 dark:text-violet-400 inline-flex items-center gap-1"
+          >
+            <ArrowLeft className="w-3 h-3" />
+            {content.auth.forgotPassword.backToLogin}
+          </Link>
+        </div>
+      </Card>
     </div>
   );
 }

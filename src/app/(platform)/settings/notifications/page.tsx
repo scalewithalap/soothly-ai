@@ -16,6 +16,7 @@ import {
   Users,
   AlertTriangle,
 } from "lucide-react";
+import { useContent } from "@/hooks/use-content";
 
 interface NotificationPreferences {
   email: {
@@ -54,6 +55,7 @@ const defaultPreferences: NotificationPreferences = {
 };
 
 export default function NotificationsSettingsPage() {
+  const { content } = useContent();
   const [loading, setLoading] = useState(true);
   const [preferences, setPreferences] =
     useState<NotificationPreferences>(defaultPreferences);
@@ -83,9 +85,9 @@ export default function NotificationsSettingsPage() {
     try {
       // TODO: Save to API
       await new Promise((resolve) => setTimeout(resolve, 500));
-      toast.success("Notification preferences saved");
+      toast.success(content.settings.notifications.successMessage);
     } catch {
-      toast.error("Failed to save preferences");
+      toast.error(content.settings.notifications.errorMessage);
     } finally {
       setIsSaving(false);
     }
@@ -109,10 +111,10 @@ export default function NotificationsSettingsPage() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Email Notifications
+              {content.settings.notifications.emailTitle}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Manage which emails you receive
+              {content.settings.notifications.emailDesc}
             </p>
           </div>
         </div>
@@ -122,9 +124,11 @@ export default function NotificationsSettingsPage() {
             <div className="flex items-center gap-3">
               <Zap className="w-4 h-4 text-gray-400" />
               <div>
-                <Label htmlFor="email-completion">Agent Completion</Label>
+                <Label htmlFor="email-completion">
+                  {content.settings.notifications.fields.agentCompletion.label}
+                </Label>
                 <p className="text-xs text-gray-500">
-                  When an agent finishes a task
+                  {content.settings.notifications.fields.agentCompletion.desc}
                 </p>
               </div>
             </div>
@@ -141,9 +145,11 @@ export default function NotificationsSettingsPage() {
             <div className="flex items-center gap-3">
               <AlertTriangle className="w-4 h-4 text-gray-400" />
               <div>
-                <Label htmlFor="email-errors">Agent Errors</Label>
+                <Label htmlFor="email-errors">
+                  {content.settings.notifications.fields.agentErrors.label}
+                </Label>
                 <p className="text-xs text-gray-500">
-                  When an agent encounters an error
+                  {content.settings.notifications.fields.agentErrors.desc}
                 </p>
               </div>
             </div>
@@ -160,9 +166,11 @@ export default function NotificationsSettingsPage() {
             <div className="flex items-center gap-3">
               <FileText className="w-4 h-4 text-gray-400" />
               <div>
-                <Label htmlFor="email-weekly">Weekly Report</Label>
+                <Label htmlFor="email-weekly">
+                  {content.settings.notifications.fields.weeklyReport.label}
+                </Label>
                 <p className="text-xs text-gray-500">
-                  Summary of agent activity
+                  {content.settings.notifications.fields.weeklyReport.desc}
                 </p>
               </div>
             </div>
@@ -179,9 +187,11 @@ export default function NotificationsSettingsPage() {
             <div className="flex items-center gap-3">
               <Users className="w-4 h-4 text-gray-400" />
               <div>
-                <Label htmlFor="email-team">Team Invitations</Label>
+                <Label htmlFor="email-team">
+                  {content.settings.notifications.fields.teamInvites.label}
+                </Label>
                 <p className="text-xs text-gray-500">
-                  When you&apos;re invited to a team
+                  {content.settings.notifications.fields.teamInvites.desc}
                 </p>
               </div>
             </div>
@@ -198,9 +208,11 @@ export default function NotificationsSettingsPage() {
             <div className="flex items-center gap-3">
               <AlertTriangle className="w-4 h-4 text-red-400" />
               <div>
-                <Label htmlFor="email-security">Security Alerts</Label>
+                <Label htmlFor="email-security">
+                  {content.settings.notifications.fields.securityAlerts.label}
+                </Label>
                 <p className="text-xs text-gray-500">
-                  Login from new device, etc.
+                  {content.settings.notifications.fields.securityAlerts.desc}
                 </p>
               </div>
             </div>
@@ -223,10 +235,10 @@ export default function NotificationsSettingsPage() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              SMS & WhatsApp
+              {content.settings.notifications.smsTitle}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Urgent notifications via text
+              {content.settings.notifications.smsDesc}
             </p>
           </div>
         </div>
@@ -236,8 +248,12 @@ export default function NotificationsSettingsPage() {
             <div className="flex items-center gap-3">
               <AlertTriangle className="w-4 h-4 text-gray-400" />
               <div>
-                <Label htmlFor="sms-errors">Critical Errors</Label>
-                <p className="text-xs text-gray-500">Agent failures only</p>
+                <Label htmlFor="sms-errors">
+                  {content.settings.notifications.fields.criticalErrors.label}
+                </Label>
+                <p className="text-xs text-gray-500">
+                  {content.settings.notifications.fields.criticalErrors.desc}
+                </p>
               </div>
             </div>
             <Switch
@@ -253,9 +269,11 @@ export default function NotificationsSettingsPage() {
             <div className="flex items-center gap-3">
               <AlertTriangle className="w-4 h-4 text-red-400" />
               <div>
-                <Label htmlFor="sms-security">Security Alerts</Label>
+                <Label htmlFor="sms-security">
+                  {content.settings.notifications.fields.securityAlerts.label}
+                </Label>
                 <p className="text-xs text-gray-500">
-                  Suspicious activity detected
+                  {content.settings.notifications.fields.securityAlerts.descSms}
                 </p>
               </div>
             </div>
@@ -271,8 +289,7 @@ export default function NotificationsSettingsPage() {
 
         <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-800 rounded-lg">
           <p className="text-xs text-yellow-800 dark:text-yellow-300">
-            SMS/WhatsApp notifications require phone number verification in your
-            profile.
+            {content.settings.notifications.smsWarning}
           </p>
         </div>
       </Card>
@@ -285,10 +302,10 @@ export default function NotificationsSettingsPage() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              In-App Notifications
+              {content.settings.notifications.inAppTitle}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Desktop and browser notifications
+              {content.settings.notifications.inAppDesc}
             </p>
           </div>
         </div>
@@ -298,9 +315,11 @@ export default function NotificationsSettingsPage() {
             <div className="flex items-center gap-3">
               <Bell className="w-4 h-4 text-gray-400" />
               <div>
-                <Label htmlFor="inapp-all">All Notifications</Label>
+                <Label htmlFor="inapp-all">
+                  {content.settings.notifications.fields.allNotifications.label}
+                </Label>
                 <p className="text-xs text-gray-500">
-                  Show in notification center
+                  {content.settings.notifications.fields.allNotifications.desc}
                 </p>
               </div>
             </div>
@@ -317,9 +336,11 @@ export default function NotificationsSettingsPage() {
             <div className="flex items-center gap-3">
               <MessageSquare className="w-4 h-4 text-gray-400" />
               <div>
-                <Label htmlFor="inapp-sound">Sound Effects</Label>
+                <Label htmlFor="inapp-sound">
+                  {content.settings.notifications.fields.soundEffects.label}
+                </Label>
                 <p className="text-xs text-gray-500">
-                  Play sound for notifications
+                  {content.settings.notifications.fields.soundEffects.desc}
                 </p>
               </div>
             </div>
@@ -341,7 +362,9 @@ export default function NotificationsSettingsPage() {
           disabled={isSaving}
           className="min-w-[120px]"
         >
-          {isSaving ? "Saving..." : "Save Preferences"}
+          {isSaving
+            ? content.settings.notifications.savingButton
+            : content.settings.notifications.saveButton}
         </Button>
       </div>
     </div>

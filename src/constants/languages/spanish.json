@@ -72,15 +72,40 @@
       "socialDivider": "O continúa con"
     },
     "forgotPassword": {
-      "headline": "Restablece tu contraseña",
-      "subheadline": "Introduce tu correo para recibir un enlace de restablecimiento",
-      "emailLabel": "Dirección de correo",
-      "emailPlaceholder": "tucorreo@empresa.com",
+      "headline": "¿Olvidaste tu contraseña?",
+      "subheadline": "No te preocupes, te enviaremos instrucciones para restablecerla.",
+      "emailLabel": "Correo",
+      "emailPlaceholder": "tu@ejemplo.com",
       "submitButton": "Enviar enlace",
-      "backToLogin": "Volver a iniciar sesión",
+      "submittingButton": "Enviando...",
+      "backToLogin": "Volver al inicio de sesión",
       "successHeadline": "Revisa tu correo",
-      "successMessage": "Hemos enviado un enlace a {email}. Expira en 1 hora.",
+      "successMessage": "Si existe una cuenta para {email}, hemos enviado un enlace para restablecer la contraseña.",
       "errorEmailNotFound": "No se encontró una cuenta con ese correo."
+    },
+    "resetPassword": {
+      "headline": "Establecer nueva contraseña",
+      "subheadline": "Tu nueva contraseña debe tener al menos 8 caracteres.",
+      "passwordLabel": "Nueva Contraseña",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "Confirmar Contraseña",
+      "confirmPasswordPlaceholder": "••••••••",
+      "submitButton": "Restablecer contraseña",
+      "submittingButton": "Restableciendo...",
+      "backToLogin": "Volver al inicio de sesión",
+      "successHeadline": "¡Contraseña restablecida exitosamente!",
+      "successMessage": "Redirigiéndote al inicio de sesión...",
+      "successButton": "Ir al inicio de sesión ahora",
+      "invalidLinkHeadline": "Enlace de restablecimiento inválido",
+      "invalidLinkButton": "Solicitar nuevo enlace de restablecimiento",
+      "errors": {
+        "invalidToken": "Token de restablecimiento inválido o faltante",
+        "passwordLength": "La contraseña debe tener al menos 8 caracteres",
+        "mismatch": "Las contraseñas no coinciden",
+        "expired": "Este enlace de restablecimiento ha caducado. Por favor solicite uno nuevo.",
+        "alreadyUsed": "Este enlace de restablecimiento ya ha sido utilizado.",
+        "generic": "Error al restablecer la contraseña"
+      }
     }
   },
   "dashboard": {
@@ -251,6 +276,116 @@
         "adminDesc": "Puede gestionar equipo y configuración",
         "cancel": "Cancelar",
         "sendButton": "Enviar invitación"
+      }
+    },
+    "notifications": {
+      "emailTitle": "Notificaciones por Correo",
+      "emailDesc": "Gestiona qué correos recibes",
+      "smsTitle": "SMS y WhatsApp",
+      "smsDesc": "Notificaciones urgentes por texto",
+      "inAppTitle": "Notificaciones en la App",
+      "inAppDesc": "Notificaciones de escritorio y navegador",
+      "saveButton": "Guardar Preferencias",
+      "savingButton": "Guardando...",
+      "successMessage": "Preferencias guardadas",
+      "errorMessage": "Error al guardar preferencias",
+      "smsWarning": "Las notificaciones SMS/WhatsApp requieren verificación telefónica en tu perfil.",
+      "fields": {
+        "agentCompletion": {
+          "label": "Finalización del Agente",
+          "desc": "Cuando un agente termina una tarea"
+        },
+        "agentErrors": {
+          "label": "Errores del Agente",
+          "desc": "Cuando un agente encuentra un error"
+        },
+        "weeklyReport": {
+          "label": "Reporte Semanal",
+          "desc": "Resumen de actividad del agente"
+        },
+        "teamInvites": {
+          "label": "Invitaciones de Equipo",
+          "desc": "Cuando te invitan a un equipo"
+        },
+        "securityAlerts": {
+          "label": "Alertas de Seguridad",
+          "desc": "Inicio de sesión desde nuevo dispositivo, etc.",
+          "descSms": "Actividad sospechosa detectada"
+        },
+        "criticalErrors": {
+          "label": "Errores Críticos",
+          "desc": "Solo fallos de agentes"
+        },
+        "allNotifications": {
+          "label": "Todas las Notificaciones",
+          "desc": "Mostrar en centro de notificaciones"
+        },
+        "soundEffects": {
+          "label": "Efectos de Sonido",
+          "desc": "Reproducir sonido para notificaciones"
+        }
+      }
+    },
+    "integrations": {
+      "apiKeys": {
+        "title": "Claves API",
+        "description": "Gestiona tus claves de acceso API",
+        "generateButton": "Generar Clave",
+        "revokeButton": "Revocar",
+        "emptyState": "Sin claves API aún",
+        "emptyStateDesc": "Genera una clave para acceder a la API programáticamente",
+        "generatedSuccess": "¡Clave API generada! Cópiala ahora, no se mostrará de nuevo.",
+        "revokedSuccess": "¡Clave API revocada!",
+        "copySuccess": "Copiado al portapapeles",
+        "newKeyLabel": "Tu nueva clave API (cópiala ahora):",
+        "dismissButton": "Cerrar"
+      },
+      "webhooks": {
+        "title": "Webhooks",
+        "description": "Recibe notificaciones en tiempo real para eventos",
+        "urlLabel": "URL del Webhook",
+        "placeholder": "https://tu-servidor.com/webhook",
+        "saveButton": "Guardar",
+        "helperText": "Enviaremos peticiones POST a esta URL cuando ocurran eventos",
+        "eventsTitle": "Eventos Disponibles"
+      },
+      "connectedServices": {
+        "title": "Servicios Conectados",
+        "description": "Integraciones de terceros y conexiones OAuth",
+        "emptyState": "Sin servicios conectados",
+        "comingSoon": "Integraciones OAuth próximamente"
+      }
+    },
+    "billing": {
+      "currentPlan": {
+        "title": "Plan Actual",
+        "description": "Gestiona tu suscripción",
+        "oneTimeBadge": "Pago único",
+        "monthSuffix": "/mes",
+        "customPricing": "Precio personalizado",
+        "upgradeButton": "Mejorar Plan (Próximamente)",
+        "manageButton": "Gestionar Suscripción"
+      },
+      "creditUsage": {
+        "title": "Uso de Créditos",
+        "descriptionRecurring": "Rastrea tu consumo mensual de créditos",
+        "descriptionOneTime": "Tus créditos de pago único",
+        "usageText": "{used} de {total} créditos usados",
+        "resetTextRecurring": "Los créditos se reinician el 1 de cada mes",
+        "resetTextOneTime": "Los créditos de pago único no expiran"
+      },
+      "availablePlans": {
+        "title": "Planes Disponibles",
+        "currentBadge": "Actual",
+        "monthSuffix": "/mes",
+        "custom": "Personalizado",
+        "free": "Gratis"
+      },
+      "invoiceHistory": {
+        "title": "Historial de Facturas",
+        "description": "Descargar facturas pasadas",
+        "emptyState": "Sin facturas aún",
+        "emptyStateDesc": "Las facturas aparecerán aquí después de tu primer pago"
       }
     }
   },

@@ -72,15 +72,38 @@
       "socialDivider": "Ou continue com"
     },
     "forgotPassword": {
-      "headline": "Redefina sua senha",
-      "subheadline": "Digite seu e‑mail para receber um link de redefinição",
-      "emailLabel": "Endereço de e‑mail",
-      "emailPlaceholder": "voce@empresa.com",
+      "headline": "Esqueceu sua senha?",
+      "subheadline": "Não se preocupe, enviaremos instruções.",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "voce@exemplo.com",
       "submitButton": "Enviar link",
+      "submittingButton": "Enviando...",
       "backToLogin": "Voltar para o login",
-      "successHeadline": "Verifique seu e‑mail",
-      "successMessage": "Enviamos um link para {email}. Ele expira em 1 hora.",
-      "errorEmailNotFound": "Nenhuma conta encontrada com esse e‑mail."
+      "successHeadline": "Verifique seu e-mail",
+      "successMessage": "Se existir uma conta para {email}, enviamos um link de redefinição.",
+      "errorEmailNotFound": "Nenhuma conta encontrada com este e-mail."
+    },
+    "resetPassword": {
+      "headline": "Definir nova senha",
+      "subheadline": "Sua nova senha deve ter pelo menos 8 caracteres.",
+      "passwordLabel": "Nova Senha",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "Confirmar Senha",
+      "confirmPasswordPlaceholder": "••••••••",
+      "submitButton": "Redefinir senha",
+      "submittingButton": "Redefinindo...",
+      "backToLogin": "Voltar para o login",
+      "successHeadline": "Senha redefinida com sucesso!",
+      "successMessage": "Redirecionando para o login...",
+      "successButton": "Ir para o login agora",
+      "invalidLinkHeadline": "Link de redefinição inválido",
+      "invalidLinkButton": "Solicitar novo link de redefinição",
+      "errors": {
+        "invalidToken": "Token de redefinição inválido ou ausente",
+        "passwordLength": "A senha deve ter pelo menos 8 caracteres",
+        "mismatch": "As senhas não coincidem",
+        "generic": "Falha ao redefinir senha"
+      }
     }
   },
   "dashboard": {
@@ -251,6 +274,116 @@
         "adminDesc": "Pode gerenciar equipe e configurações",
         "cancel": "Cancelar",
         "sendButton": "Enviar convite"
+      }
+    },
+    "notifications": {
+      "emailTitle": "Notificações por E-mail",
+      "emailDesc": "Gerencie quais e-mails você recebe",
+      "smsTitle": "SMS e WhatsApp",
+      "smsDesc": "Notificações urgentes por texto",
+      "inAppTitle": "Notificações no App",
+      "inAppDesc": "Notificações de desktop e navegador",
+      "saveButton": "Salvar Preferências",
+      "savingButton": "Salvando...",
+      "successMessage": "Preferências salvas",
+      "errorMessage": "Falha ao salvar preferências",
+      "smsWarning": "Notificações SMS/WhatsApp requerem verificação de telefone no seu perfil.",
+      "fields": {
+        "agentCompletion": {
+          "label": "Conclusão de Agente",
+          "desc": "Quando um agente termina uma tarefa"
+        },
+        "agentErrors": {
+          "label": "Erros de Agente",
+          "desc": "Quando um agente encontra um erro"
+        },
+        "weeklyReport": {
+          "label": "Relatório Semanal",
+          "desc": "Resumo da atividade do agente"
+        },
+        "teamInvites": {
+          "label": "Convites de Equipe",
+          "desc": "Quando você é convidado para uma equipe"
+        },
+        "securityAlerts": {
+          "label": "Alertas de Segurança",
+          "desc": "Login de novo dispositivo, etc.",
+          "descSms": "Atividade suspeita detectada"
+        },
+        "criticalErrors": {
+          "label": "Erros Críticos",
+          "desc": "Apenas falhas de agente"
+        },
+        "allNotifications": {
+          "label": "Todas as Notificações",
+          "desc": "Mostrar na central de notificações"
+        },
+        "soundEffects": {
+          "label": "Efeitos Sonoros",
+          "desc": "Tocar som para notificações"
+        }
+      }
+    },
+    "integrations": {
+      "apiKeys": {
+        "title": "Chaves de API",
+        "description": "Gerencie suas chaves de acesso à API",
+        "generateButton": "Gerar Chave",
+        "revokeButton": "Revogar",
+        "emptyState": "Sem chaves de API ainda",
+        "emptyStateDesc": "Gere uma chave para acessar a API programaticamente",
+        "generatedSuccess": "Chave de API gerada! Copie agora, ela não será mostrada novamente.",
+        "revokedSuccess": "Chave de API revogada!",
+        "copySuccess": "Copiado para a área de transferência",
+        "newKeyLabel": "Sua nova chave de API (copie agora):",
+        "dismissButton": "Fechar"
+      },
+      "webhooks": {
+        "title": "Webhooks",
+        "description": "Receba notificações em tempo real para eventos",
+        "urlLabel": "URL do Webhook",
+        "placeholder": "https://seu-servidor.com/webhook",
+        "saveButton": "Salvar",
+        "helperText": "Enviaremos solicitações POST para esta URL quando eventos ocorrerem",
+        "eventsTitle": "Eventos Disponíveis"
+      },
+      "connectedServices": {
+        "title": "Serviços Conectados",
+        "description": "Integrações de terceiros e conexões OAuth",
+        "emptyState": "Sem serviços conectados",
+        "comingSoon": "Integrações OAuth em breve"
+      }
+    },
+    "billing": {
+      "currentPlan": {
+        "title": "Plano Atual",
+        "description": "Gerencie sua assinatura",
+        "oneTimeBadge": "Pagamento único",
+        "monthSuffix": "/mês",
+        "customPricing": "Preço personalizado",
+        "upgradeButton": "Melhorar Plano (Em breve)",
+        "manageButton": "Gerenciar Assinatura"
+      },
+      "creditUsage": {
+        "title": "Uso de Créditos",
+        "descriptionRecurring": "Acompanhe seu consumo mensal",
+        "descriptionOneTime": "Seus créditos de uso único",
+        "usageText": "{used} de {total} créditos usados",
+        "resetTextRecurring": "Créditos reiniciam no dia 1 de cada mês",
+        "resetTextOneTime": "Créditos únicos não expiram"
+      },
+      "availablePlans": {
+        "title": "Planos Disponíveis",
+        "currentBadge": "Atual",
+        "monthSuffix": "/mês",
+        "custom": "Personalizado",
+        "free": "Grátis"
+      },
+      "invoiceHistory": {
+        "title": "Histórico de Faturas",
+        "description": "Baixar faturas passadas",
+        "emptyState": "Sem faturas ainda",
+        "emptyStateDesc": "Faturas aparecerão aqui após seu primeiro pagamento"
       }
     }
   },

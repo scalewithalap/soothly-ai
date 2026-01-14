@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Plug, Key, Copy, Webhook, Plus, Trash2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { useContent } from "@/hooks/use-content";
 
 interface ApiKey {
   id: string;
@@ -18,6 +19,7 @@ interface ApiKey {
 }
 
 export default function IntegrationsSettingsPage() {
+  const { content } = useContent();
   const [loading, setLoading] = useState(true);
   const [apiKeys, setApiKeys] = useState<ApiKey[]>([]);
   const [webhookUrl, setWebhookUrl] = useState("");
@@ -65,9 +67,7 @@ export default function IntegrationsSettingsPage() {
       };
       setApiKeys((prev) => [...prev, newKey]);
 
-      toast.success(
-        "API key generated! Copy it now - it won't be shown again."
-      );
+      toast.success(content.settings.integrations.apiKeys.generatedSuccess);
     } catch (error) {
       console.error("Failed to generate API key:", error);
       toast.error("Failed to generate API key!");
@@ -78,13 +78,13 @@ export default function IntegrationsSettingsPage() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
-    toast.success("Copied to clipboard");
+    toast.success(content.settings.integrations.apiKeys.copySuccess);
   };
 
   const revokeApiKey = async (keyId: string) => {
     try {
       setApiKeys((prev) => prev.filter((k) => k.id !== keyId));
-      toast.success("API key revoked!");
+      toast.success(content.settings.integrations.apiKeys.revokedSuccess);
     } catch {
       toast.error("Failed to revoke API key!");
     }
@@ -109,10 +109,10 @@ export default function IntegrationsSettingsPage() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                API Keys
+                {content.settings.integrations.apiKeys.title}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Manage your API access keys
+                {content.settings.integrations.apiKeys.description}
               </p>
             </div>
           </div>
@@ -122,7 +122,7 @@ export default function IntegrationsSettingsPage() {
             className="gap-2"
           >
             <Plus className="w-4 h-4" />
-            Generate Key
+            {content.settings.integrations.apiKeys.generateButton}
           </Button>
         </div>
 
@@ -130,7 +130,7 @@ export default function IntegrationsSettingsPage() {
         {showNewKey && (
           <div className="mb-6 p-4 bg-green-50 dark:bg-green-900/10 border border-green-200 dark:border-green-800 rounded-lg">
             <p className="text-sm font-medium text-green-800 dark:text-green-300 mb-2">
-              Your new API key (copy it now - it won&apos;t be shown again):
+              {content.settings.integrations.apiKeys.newKeyLabel}
             </p>
             <div className="flex items-center gap-2">
               <code className="flex-1 p-2 bg-white dark:bg-gray-900 rounded font-mono text-sm">
@@ -150,7 +150,7 @@ export default function IntegrationsSettingsPage() {
               className="mt-2"
               onClick={() => setShowNewKey(null)}
             >
-              Dismiss
+              {content.settings.integrations.apiKeys.dismissButton}
             </Button>
           </div>
         )}
@@ -159,9 +159,11 @@ export default function IntegrationsSettingsPage() {
         {apiKeys.length === 0 ? (
           <div className="p-8 text-center border border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
             <Key className="w-10 h-10 mx-auto text-gray-400 mb-3" />
-            <p className="text-sm text-gray-500">No API keys yet</p>
+            <p className="text-sm text-gray-500">
+              {content.settings.integrations.apiKeys.emptyState}
+            </p>
             <p className="text-xs text-gray-400 mt-1">
-              Generate a key to access the API programmatically
+              {content.settings.integrations.apiKeys.emptyStateDesc}
             </p>
           </div>
         ) : (
@@ -206,10 +208,10 @@ export default function IntegrationsSettingsPage() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Webhooks
+              {content.settings.integrations.webhooks.title}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Receive real-time notifications for events
+              {content.settings.integrations.webhooks.description}
             </p>
           </div>
         </div>
@@ -217,27 +219,27 @@ export default function IntegrationsSettingsPage() {
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Webhook URL
+              {content.settings.integrations.webhooks.urlLabel}
             </label>
             <div className="flex gap-2">
               <Input
                 value={webhookUrl}
                 onChange={(e) => setWebhookUrl(e.target.value)}
-                placeholder="https://your-server.com/webhook"
+                placeholder={content.settings.integrations.webhooks.placeholder}
                 className="flex-1"
               />
               <Button variant="outline" disabled>
-                Save
+                {content.settings.integrations.webhooks.saveButton}
               </Button>
             </div>
             <p className="text-xs text-gray-500 mt-2">
-              We&apos;ll send POST requests to this URL when events occur
+              {content.settings.integrations.webhooks.helperText}
             </p>
           </div>
 
           <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <h4 className="font-medium text-gray-900 dark:text-white mb-2">
-              Available Events
+              {content.settings.integrations.webhooks.eventsTitle}
             </h4>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div className="flex items-center gap-2">
@@ -273,19 +275,21 @@ export default function IntegrationsSettingsPage() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Connected Services
+              {content.settings.integrations.connectedServices.title}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Third-party integrations and OAuth connections
+              {content.settings.integrations.connectedServices.description}
             </p>
           </div>
         </div>
 
         <div className="p-8 text-center border border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
           <Plug className="w-10 h-10 mx-auto text-gray-400 mb-3" />
-          <p className="text-sm text-gray-500">No connected services</p>
+          <p className="text-sm text-gray-500">
+            {content.settings.integrations.connectedServices.emptyState}
+          </p>
           <p className="text-xs text-gray-400 mt-1">
-            OAuth integrations coming soon
+            {content.settings.integrations.connectedServices.comingSoon}
           </p>
         </div>
       </Card>

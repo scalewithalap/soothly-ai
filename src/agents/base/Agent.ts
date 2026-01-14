@@ -73,9 +73,10 @@ export abstract class BaseAgent {
   }
 
   /**
-   * Deduct credits for an action. Returns true if successful.
+   * Check if there are enough credits for an action BEFORE starting task.
+   * Does NOT deduct credits - just checks availability.
    */
-  protected async chargeCredits(
+  protected async hasEnoughCredits(
     action: string,
     quantity: number = 1
   ): Promise<boolean> {
@@ -83,18 +84,76 @@ export abstract class BaseAgent {
 
     if (cost === 0) return true;
 
-    const { data, error } = await (this.db as any).rpc("deduct_credits", {
-      p_org_id: this.orgId,
-      p_agent_type: this.name,
-      p_action: action,
-      p_amount: cost,
+    // Get current balance from ledger
+    const { data: lastEntry } = await this.db
+      .from("credit_ledger")
+      .select("balance_after")
+      .eq("org_id", this.orgId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    // Check if org is enterprise (unlimited)
+    const { data: org } = await this.db
+      .from("organizations")
+      .select("subscription_tier")
+      .eq("id", this.orgId)
+      .single();
+
+    if (org?.subscription_tier === "enterprise") return true;
+
+    const balance = lastEntry?.balance_after ?? 0;
+    return balance >= cost;
+  }
+
+  /**
+   * Consume credits AFTER a task completes successfully.
+   * This should be called after successful task execution, not before.
+   */
+  protected async consumeCreditsAfterSuccess(
+    action: string,
+    quantity: number = 1,
+    referenceId?: string,
+    referenceType?: string
+  ): Promise<boolean> {
+    const cost = (this.creditCost[action] || 0) * quantity;
+
+    if (cost === 0) return true;
+
+    // Get current balance
+    const { data: lastEntry } = await this.db
+      .from("credit_ledger")
+      .select("balance_after")
+      .eq("org_id", this.orgId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    // Check if org is enterprise (unlimited)
+    const { data: org } = await this.db
+      .from("organizations")
+      .select("subscription_tier")
+      .eq("id", this.orgId)
+      .single();
+
+    const isUnlimited = org?.subscription_tier === "enterprise";
+    const currentBalance = lastEntry?.balance_after ?? 0;
+    const newBalance = isUnlimited ? currentBalance : currentBalance - cost;
+
+    // Insert ledger entry
+    const { error } = await this.db.from("credit_ledger").insert({
+      org_id: this.orgId,
+      agent_type: this.name,
+      action,
+      amount: -cost, // Negative for consumption
+      balance_after: newBalance,
+      reference_id: referenceId,
+      reference_type: referenceType,
+      metadata: isUnlimited ? { unlimited: true } : {},
     });
 
-    if (error || !(data as { success: boolean })?.success) {
-      console.error(
-        "Failed to deduct credits:",
-        error || (data as { error?: string })?.error
-      );
+    if (error) {
+      console.error("Failed to record credit consumption:", error);
       return false;
     }
 
@@ -102,19 +161,30 @@ export abstract class BaseAgent {
   }
 
   /**
+   * @deprecated Use hasEnoughCredits() before task and consumeCreditsAfterSuccess() after.
+   * This method is kept for backwards compatibility but should not be used.
+   */
+  protected async chargeCredits(
+    action: string,
+    quantity: number = 1
+  ): Promise<boolean> {
+    // Redirect to new method for backwards compatibility
+    return this.consumeCreditsAfterSuccess(action, quantity);
+  }
+
+  /**
    * Get the current credit balance for the organization
    */
   protected async getBalance(): Promise<number> {
-    const { data, error } = await (this.db as any).rpc("get_credit_balance", {
-      p_org_id: this.orgId,
-    });
+    const { data: lastEntry } = await this.db
+      .from("credit_ledger")
+      .select("balance_after")
+      .eq("org_id", this.orgId)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
 
-    if (error) {
-      console.error("Failed to get credit balance:", error);
-      return 0;
-    }
-
-    return data || 0;
+    return lastEntry?.balance_after ?? 0;
   }
 
   /**

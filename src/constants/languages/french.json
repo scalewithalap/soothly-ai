@@ -72,15 +72,38 @@
       "socialDivider": "Ou continuez avec"
     },
     "forgotPassword": {
-      "headline": "Réinitialisez votre mot de passe",
-      "subheadline": "Entrez votre e‑mail pour recevoir un lien de réinitialisation",
-      "emailLabel": "Adresse e‑mail",
-      "emailPlaceholder": "votre@email.com",
+      "headline": "Mot de passe oublié ?",
+      "subheadline": "Ne vous inquiétez pas, nous vous enverrons les instructions.",
+      "emailLabel": "E-mail",
+      "emailPlaceholder": "vous@exemple.com",
       "submitButton": "Envoyer le lien",
+      "submittingButton": "Envoi...",
       "backToLogin": "Retour à la connexion",
-      "successHeadline": "Vérifiez votre e‑mail",
-      "successMessage": "Nous avons envoyé un lien à {email}. Il expire dans 1 heure.",
-      "errorEmailNotFound": "Aucun compte trouvé avec cet e‑mail."
+      "successHeadline": "Vérifiez votre e-mail",
+      "successMessage": "Si un compte existe pour {email}, nous avons envoyé un lien de réinitialisation.",
+      "errorEmailNotFound": "Aucun compte trouvé avec cet e-mail."
+    },
+    "resetPassword": {
+      "headline": "Nouveau mot de passe",
+      "subheadline": "Votre mot de passe doit contenir au moins 8 caractères.",
+      "passwordLabel": "Nouveau mot de passe",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "Confirmer le mot de passe",
+      "confirmPasswordPlaceholder": "••••••••",
+      "submitButton": "Réinitialiser",
+      "submittingButton": "Réinitialisation...",
+      "backToLogin": "Retour à la connexion",
+      "successHeadline": "Mot de passe réinitialisé !",
+      "successMessage": "Redirection vers la connexion...",
+      "successButton": "Se connecter maintenant",
+      "invalidLinkHeadline": "Lien de réinitialisation invalide",
+      "invalidLinkButton": "Demander un nouveau lien de réinitialisation",
+      "errors": {
+        "invalidToken": "Jeton de réinitialisation invalide ou manquant",
+        "passwordLength": "Le mot de passe doit contenir au moins 8 caractères",
+        "mismatch": "Les mots de passe ne correspondent pas",
+        "generic": "Échec de la réinitialisation"
+      }
     }
   },
   "dashboard": {
@@ -251,6 +274,116 @@
         "adminDesc": "Peut gérer l'équipe et les paramètres",
         "cancel": "Annuler",
         "sendButton": "Envoyer l'invitation"
+      }
+    },
+    "notifications": {
+      "emailTitle": "Notifications par e-mail",
+      "emailDesc": "Gérez les e-mails que vous recevez",
+      "smsTitle": "SMS et WhatsApp",
+      "smsDesc": "Notifications urgentes par SMS",
+      "inAppTitle": "Notifications In-App",
+      "inAppDesc": "Notifications de bureau et navigateur",
+      "saveButton": "Enregistrer",
+      "savingButton": "Enregistrement...",
+      "successMessage": "Préférences enregistrées",
+      "errorMessage": "Échec de l'enregistrement",
+      "smsWarning": "Les notifications SMS/WhatsApp nécessitent une vérification du numéro de téléphone.",
+      "fields": {
+        "agentCompletion": {
+          "label": "Tâche terminée",
+          "desc": "Quand un agent termine une tâche"
+        },
+        "agentErrors": {
+          "label": "Erreurs d'agent",
+          "desc": "Quand un agent rencontre une erreur"
+        },
+        "weeklyReport": {
+          "label": "Rapport hebdomadaire",
+          "desc": "Résumé de l'activité des agents"
+        },
+        "teamInvites": {
+          "label": "Invitations d'équipe",
+          "desc": "Quand vous êtes invité dans une équipe"
+        },
+        "securityAlerts": {
+          "label": "Alertes de sécurité",
+          "desc": "Connexion depuis un nouvel appareil, etc.",
+          "descSms": "Activité suspecte détectée"
+        },
+        "criticalErrors": {
+          "label": "Erreurs critiques",
+          "desc": "Échecs d'agent uniquement"
+        },
+        "allNotifications": {
+          "label": "Toutes les notifications",
+          "desc": "Afficher dans le centre de notifications"
+        },
+        "soundEffects": {
+          "label": "Effets sonores",
+          "desc": "Jouer un son pour les notifications"
+        }
+      }
+    },
+    "integrations": {
+      "apiKeys": {
+        "title": "Clés API",
+        "description": "Gérez vos clés d'accès API",
+        "generateButton": "Générer une clé",
+        "revokeButton": "Révoquer",
+        "emptyState": "Aucune clé API",
+        "emptyStateDesc": "Générez une clé pour accéder à l'API",
+        "generatedSuccess": "Clé API générée ! Copiez-la maintenant.",
+        "revokedSuccess": "Clé API révoquée !",
+        "copySuccess": "Copié dans le presse-papiers",
+        "newKeyLabel": "Votre nouvelle clé API (copiez-la maintenant) :",
+        "dismissButton": "Fermer"
+      },
+      "webhooks": {
+        "title": "Webhooks",
+        "description": "Recevez des notifications en temps réel",
+        "urlLabel": "URL du Webhook",
+        "placeholder": "https://votre-serveur.com/webhook",
+        "saveButton": "Enregistrer",
+        "helperText": "Nous enverrons des requêtes POST à cette URL",
+        "eventsTitle": "Événements disponibles"
+      },
+      "connectedServices": {
+        "title": "Services connectés",
+        "description": "Intégrations tierces et connexions OAuth",
+        "emptyState": "Aucun service connecté",
+        "comingSoon": "Intégrations OAuth bientôt disponibles"
+      }
+    },
+    "billing": {
+      "currentPlan": {
+        "title": "Plan actuel",
+        "description": "Gérez votre abonnement",
+        "oneTimeBadge": "Paiement unique",
+        "monthSuffix": "/mois",
+        "customPricing": "Prix personnalisé",
+        "upgradeButton": "Améliorer le plan (Bientôt)",
+        "manageButton": "Gérer l'abonnement"
+      },
+      "creditUsage": {
+        "title": "Utilisation des crédits",
+        "descriptionRecurring": "Suivez votre consommation mensuelle",
+        "descriptionOneTime": "Vos crédits à usage unique",
+        "usageText": "{used} sur {total} crédits utilisés",
+        "resetTextRecurring": "Réinitialisation le 1er de chaque mois",
+        "resetTextOneTime": "Les crédits uniques n'expirent pas"
+      },
+      "availablePlans": {
+        "title": "Plans disponibles",
+        "currentBadge": "Actuel",
+        "monthSuffix": "/mois",
+        "custom": "Sur mesure",
+        "free": "Gratuit"
+      },
+      "invoiceHistory": {
+        "title": "Historique des factures",
+        "description": "Télécharger les factures passées",
+        "emptyState": "Aucune facture",
+        "emptyStateDesc": "Les factures apparaîtront ici après votre premier paiement"
       }
     }
   },

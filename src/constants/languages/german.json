@@ -72,15 +72,40 @@
       "socialDivider": "Oder weiter mit"
     },
     "forgotPassword": {
-      "headline": "Passwort zurücksetzen",
-      "subheadline": "Geben Sie Ihre E‑Mail ein, um einen Reset‑Link zu erhalten",
-      "emailLabel": "E‑Mail-Adresse",
-      "emailPlaceholder": "ihr@email.de",
-      "submitButton": "Reset‑Link senden",
+      "headline": "Passwort vergessen?",
+      "subheadline": "Keine Sorge, wir senden Ihnen Anweisungen.",
+      "emailLabel": "E-Mail",
+      "emailPlaceholder": "sie@beispiel.de",
+      "submitButton": "Reset-Link senden",
+      "submittingButton": "Sende...",
       "backToLogin": "Zurück zur Anmeldung",
-      "successHeadline": "E‑Mail prüfen",
-      "successMessage": "Wir haben einen Link an {email} gesendet. Er läuft in 1 Stunde ab.",
-      "errorEmailNotFound": "Kein Konto mit dieser E‑Mail gefunden."
+      "successHeadline": "E-Mail prüfen",
+      "successMessage": "Wenn ein Konto für {email} existiert, haben wir einen Reset-Link gesendet.",
+      "errorEmailNotFound": "Kein Konto mit dieser E-Mail gefunden."
+    },
+    "resetPassword": {
+      "headline": "Neues Passwort festlegen",
+      "subheadline": "Ihr neues Passwort muss mindestens 8 Zeichen lang sein.",
+      "passwordLabel": "Neues Passwort",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "Passwort bestätigen",
+      "confirmPasswordPlaceholder": "••••••••",
+      "submitButton": "Passwort zurücksetzen",
+      "submittingButton": "Zurücksetzen...",
+      "backToLogin": "Zurück zur Anmeldung",
+      "successHeadline": "Passwort erfolgreich zurückgesetzt!",
+      "successMessage": "Weiterleitung zur Anmeldung...",
+      "successButton": "Jetzt anmelden",
+      "invalidLinkHeadline": "Rücksetzungslink ungültig",
+      "invalidLinkButton": "Neuen Rücksetzungslink anfordern",
+      "errors": {
+        "invalidToken": "Ungültiges oder fehlendes Rücksetz-Token",
+        "passwordLength": "Das Passwort muss mindestens 8 Zeichen lang sein",
+        "mismatch": "Passwörter stimmen nicht überein",
+        "expired": "Dieser Rücksetzungslink ist abgelaufen. Bitte fordern Sie einen neuen an.",
+        "alreadyUsed": "Dieser Rücksetzungslink wurde bereits verwendet.",
+        "generic": "Passwort konnte nicht zurückgesetzt werden"
+      }
     }
   },
   "dashboard": {
@@ -251,6 +276,116 @@
         "adminDesc": "Kann Team & Einstellungen verwalten",
         "cancel": "Abbrechen",
         "sendButton": "Einladung senden"
+      }
+    },
+    "notifications": {
+      "emailTitle": "E-Mail-Benachrichtigungen",
+      "emailDesc": "Verwalten Sie, welche E-Mails Sie erhalten",
+      "smsTitle": "SMS und WhatsApp",
+      "smsDesc": "Dringende Benachrichtigungen per Text",
+      "inAppTitle": "In-App-Benachrichtigungen",
+      "inAppDesc": "Desktop- und Browser-Benachrichtigungen",
+      "saveButton": "Einstellungen speichern",
+      "savingButton": "Speichern...",
+      "successMessage": "Einstellungen gespeichert",
+      "errorMessage": "Fehler beim Speichern der Einstellungen",
+      "smsWarning": "SMS/WhatsApp-Benachrichtigungen erfordern eine Telefonnummer-Bestätigung.",
+      "fields": {
+        "agentCompletion": {
+          "label": "Agenten-Abschluss",
+          "desc": "Wenn ein Agent eine Aufgabe beendet"
+        },
+        "agentErrors": {
+          "label": "Agenten-Fehler",
+          "desc": "Wenn ein Agent auf einen Fehler stößt"
+        },
+        "weeklyReport": {
+          "label": "Wöchentlicher Bericht",
+          "desc": "Zusammenfassung der Agentenaktivität"
+        },
+        "teamInvites": {
+          "label": "Team-Einladungen",
+          "desc": "Wenn Sie in ein Team eingeladen werden"
+        },
+        "securityAlerts": {
+          "label": "Sicherheitswarnungen",
+          "desc": "Anmeldung von neuem Gerät usw.",
+          "descSms": "Verdächtige Aktivität erkannt"
+        },
+        "criticalErrors": {
+          "label": "Kritische Fehler",
+          "desc": "Nur Agentenausfälle"
+        },
+        "allNotifications": {
+          "label": "Alle Benachrichtigungen",
+          "desc": "Im Benachrichtigungscenter anzeigen"
+        },
+        "soundEffects": {
+          "label": "Soundeffekte",
+          "desc": "Ton für Benachrichtigungen abspielen"
+        }
+      }
+    },
+    "integrations": {
+      "apiKeys": {
+        "title": "API-Schlüssel",
+        "description": "Verwalten Sie Ihre API-Zugangsschlüssel",
+        "generateButton": "Schlüssel generieren",
+        "revokeButton": "Widerrufen",
+        "emptyState": "Noch keine API-Schlüssel",
+        "emptyStateDesc": "Generieren Sie einen Schlüssel für den programmatischen Zugriff",
+        "generatedSuccess": "API-Schlüssel generiert! Kopieren Sie ihn jetzt.",
+        "revokedSuccess": "API-Schlüssel widerrufen!",
+        "copySuccess": "In die Zwischenablage kopiert",
+        "newKeyLabel": "Ihr neuer API-Schlüssel (jetzt kopieren):",
+        "dismissButton": "Schließen"
+      },
+      "webhooks": {
+        "title": "Webhooks",
+        "description": "Erhalten Sie Echtzeit-Benachrichtigungen",
+        "urlLabel": "Webhook-URL",
+        "placeholder": "https://ihr-server.de/webhook",
+        "saveButton": "Speichern",
+        "helperText": "Wir senden POST-Anfragen an diese URL",
+        "eventsTitle": "Verfügbare Ereignisse"
+      },
+      "connectedServices": {
+        "title": "Verbundene Dienste",
+        "description": "Drittanbieter-Integrationen und OAuth",
+        "emptyState": "Keine verbundenen Dienste",
+        "comingSoon": "OAuth-Integrationen bald verfügbar"
+      }
+    },
+    "billing": {
+      "currentPlan": {
+        "title": "Aktueller Plan",
+        "description": "Verwalten Sie Ihr Abonnement",
+        "oneTimeBadge": "Einmalig",
+        "monthSuffix": "/Monat",
+        "customPricing": "Individueller Preis",
+        "upgradeButton": "Plan upgraden (Bald verfügbar)",
+        "manageButton": "Abo verwalten"
+      },
+      "creditUsage": {
+        "title": "Credit-Nutzung",
+        "descriptionRecurring": "Verfolgen Sie Ihren monatlichen Verbrauch",
+        "descriptionOneTime": "Ihre einmaligen Credits",
+        "usageText": "{used} von {total} Credits verwendet",
+        "resetTextRecurring": "Credits werden am 1. jedes Monats zurückgesetzt",
+        "resetTextOneTime": "Einmalige Credits verfallen nicht"
+      },
+      "availablePlans": {
+        "title": "Verfügbare Pläne",
+        "currentBadge": "Aktuell",
+        "monthSuffix": "/Mo",
+        "custom": "Indiv.",
+        "free": "Kostenlos"
+      },
+      "invoiceHistory": {
+        "title": "Rechnungsverlauf",
+        "description": "Vergangene Rechnungen herunterladen",
+        "emptyState": "Keine Rechnungen",
+        "emptyStateDesc": "Rechnungen erscheinen hier nach Ihrer ersten Zahlung"
       }
     }
   },

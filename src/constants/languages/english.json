@@ -72,15 +72,40 @@
       "socialDivider": "Or continue with"
     },
     "forgotPassword": {
-      "headline": "Reset your password",
-      "subheadline": "Enter your email to receive a reset link",
-      "emailLabel": "Email address",
-      "emailPlaceholder": "you@company.com",
+      "headline": "Forgot your password?",
+      "subheadline": "No worries, we'll send you reset instructions.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
       "submitButton": "Send reset link",
-      "backToLogin": "Back to sign in",
+      "submittingButton": "Sending...",
+      "backToLogin": "Back to login",
       "successHeadline": "Check your email",
-      "successMessage": "We've sent a reset link to {email}. It expires in 1 hour.",
+      "successMessage": "If an account exists for {email}, we've sent a password reset link.",
       "errorEmailNotFound": "No account found with that email."
+    },
+    "resetPassword": {
+      "headline": "Set new password",
+      "subheadline": "Your new password must be at least 8 characters.",
+      "passwordLabel": "New Password",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "Confirm Password",
+      "confirmPasswordPlaceholder": "••••••••",
+      "submitButton": "Reset password",
+      "submittingButton": "Resetting...",
+      "backToLogin": "Back to login",
+      "successHeadline": "Password reset successful!",
+      "successMessage": "Redirecting you to login...",
+      "successButton": "Go to login now",
+      "invalidLinkHeadline": "Reset link invalid",
+      "invalidLinkButton": "Request new reset link",
+      "errors": {
+        "invalidToken": "Invalid or missing reset token",
+        "passwordLength": "Password must be at least 8 characters",
+        "mismatch": "Passwords do not match",
+        "expired": "This reset link has expired. Please request a new one.",
+        "alreadyUsed": "This reset link has already been used.",
+        "generic": "Failed to reset password"
+      }
     }
   },
   "dashboard": {
@@ -107,7 +132,11 @@
     "stats": {
       "totalCredits": "Total Credits",
       "activeAgents": "Active Agents",
-      "timeSaved": "Time Saved"
+      "timeSaved": "Time Saved",
+      "totalTasks": "Total Tasks",
+      "completed": "Completed",
+      "running": "Running",
+      "creditsUsed": "Credits Used"
     },
     "recentActivity": {
       "title": "Recent activity",
@@ -120,7 +149,32 @@
         "New team member invite accepted"
       ]
     },
-    "newAgent": "New Agent"
+    "newAgent": "New Agent",
+    "title": "Dashboard",
+    "subtitle": "Monitor your AI agents and track performance",
+    "refresh": "Refresh",
+    "status": {
+      "completed": "Completed",
+      "failed": "Failed",
+      "running": "Running"
+    },
+    "analytics": {
+      "title": "Performance Analytics",
+      "noData": "No data for this period"
+    },
+    "agents": {
+      "leads": "Leads",
+      "content": "Content",
+      "partners": "Partners"
+    },
+    "activity": {
+      "title": "Recent Activity",
+      "empty": "No recent activity"
+    },
+    "successRate": {
+      "title": "Success Rate",
+      "tasks": "tasks"
+    }
   },
   "sidebar": {
     "dashboard": "Dashboard",
@@ -248,6 +302,116 @@
         "cancel": "Cancel",
         "sendButton": "Send invitation"
       }
+    },
+    "notifications": {
+      "emailTitle": "Email Notifications",
+      "emailDesc": "Manage which emails you receive",
+      "smsTitle": "SMS & WhatsApp",
+      "smsDesc": "Urgent notifications via text",
+      "inAppTitle": "In-App Notifications",
+      "inAppDesc": "Desktop and browser notifications",
+      "saveButton": "Save Preferences",
+      "savingButton": "Saving...",
+      "successMessage": "Notification preferences saved",
+      "errorMessage": "Failed to save preferences",
+      "smsWarning": "SMS/WhatsApp notifications require phone number verification in your profile.",
+      "fields": {
+        "agentCompletion": {
+          "label": "Agent Completion",
+          "desc": "When an agent finishes a task"
+        },
+        "agentErrors": {
+          "label": "Agent Errors",
+          "desc": "When an agent encounters an error"
+        },
+        "weeklyReport": {
+          "label": "Weekly Report",
+          "desc": "Summary of agent activity"
+        },
+        "teamInvites": {
+          "label": "Team Invitations",
+          "desc": "When you're invited to a team"
+        },
+        "securityAlerts": {
+          "label": "Security Alerts",
+          "desc": "Login from new device, etc.",
+          "descSms": "Suspicious activity detected"
+        },
+        "criticalErrors": {
+          "label": "Critical Errors",
+          "desc": "Agent failures only"
+        },
+        "allNotifications": {
+          "label": "All Notifications",
+          "desc": "Show in notification center"
+        },
+        "soundEffects": {
+          "label": "Sound Effects",
+          "desc": "Play sound for notifications"
+        }
+      }
+    },
+    "integrations": {
+      "apiKeys": {
+        "title": "API Keys",
+        "description": "Manage your API access keys",
+        "generateButton": "Generate Key",
+        "revokeButton": "Revoke",
+        "emptyState": "No API keys yet",
+        "emptyStateDesc": "Generate a key to access the API programmatically",
+        "generatedSuccess": "API key generated! Copy it now - it won't be shown again.",
+        "revokedSuccess": "API key revoked!",
+        "copySuccess": "Copied to clipboard",
+        "newKeyLabel": "Your new API key (copy it now - it won't be shown again):",
+        "dismissButton": "Dismiss"
+      },
+      "webhooks": {
+        "title": "Webhooks",
+        "description": "Receive real-time notifications for events",
+        "urlLabel": "Webhook URL",
+        "placeholder": "https://your-server.com/webhook",
+        "saveButton": "Save",
+        "helperText": "We'll send POST requests to this URL when events occur",
+        "eventsTitle": "Available Events"
+      },
+      "connectedServices": {
+        "title": "Connected Services",
+        "description": "Third-party integrations and OAuth connections",
+        "emptyState": "No connected services",
+        "comingSoon": "OAuth integrations coming soon"
+      }
+    },
+    "billing": {
+      "currentPlan": {
+        "title": "Current Plan",
+        "description": "Manage your subscription",
+        "oneTimeBadge": "One-time",
+        "monthSuffix": "/month",
+        "customPricing": "Custom pricing",
+        "upgradeButton": "Upgrade Plan (Coming Soon)",
+        "manageButton": "Manage Subscription"
+      },
+      "creditUsage": {
+        "title": "Credit Usage",
+        "descriptionRecurring": "Track your monthly credit consumption",
+        "descriptionOneTime": "Your one-time credits",
+        "usageText": "{used} of {total} credits used",
+        "resetTextRecurring": "Credits reset on the 1st of each month",
+        "resetTextOneTime": "One-time credits do not expire"
+      },
+      "availablePlans": {
+        "title": "Available Plans",
+        "currentBadge": "Current",
+        "monthSuffix": "/mo",
+        "custom": "Custom",
+        "free": "Free"
+      },
+      "invoiceHistory": {
+        "title": "Invoice History",
+        "description": "Download past invoices",
+        "emptyState": "No invoices yet",
+        "emptyStateDesc": "Invoices will appear here after your first payment"
+      }
     }
   },
   "invite": {
@@ -310,6 +474,29 @@
       "partnerType": "Partner Type",
       "fitScore": "Fit Score",
       "outreach": "Send Outreach"
+    }
+  },
+  "content": {
+    "calendar": {
+      "title": "Content Calendar",
+      "subtitle": "Plan and schedule your content",
+      "newBrief": "New Brief",
+      "scheduled": "Content scheduled",
+      "unscheduled": "Removed from calendar",
+      "error": "Failed to update schedule",
+      "unscheduledTitle": "Unscheduled",
+      "noUnscheduled": "All content is scheduled"
+    }
+  },
+  "leads": {
+    "pipeline": {
+      "title": "Lead Pipeline",
+      "subtitle": "Manage your sales pipeline",
+      "refresh": "Refresh",
+      "addLead": "Add Lead",
+      "moved": "Lead moved",
+      "error": "Failed to move lead",
+      "empty": "No leads"
     }
   }
 }

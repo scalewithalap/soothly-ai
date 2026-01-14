@@ -15,6 +15,7 @@ import {
   Gift,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { useContent } from "@/hooks/use-content";
 
 interface SubscriptionPlan {
   id: string;
@@ -35,6 +36,7 @@ interface SubscriptionPlan {
 }
 
 export default function BillingSettingsPage() {
+  const { content } = useContent();
   const [loading, setLoading] = useState(true);
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [currentTier, setCurrentTier] = useState("free");
@@ -112,7 +114,7 @@ export default function BillingSettingsPage() {
     credits.total > 0 ? Math.min((credits.used / credits.total) * 100, 100) : 0;
 
   const formatPrice = (cents: number) => {
-    if (cents === 0) return "Free";
+    if (cents === 0) return content.settings.billing.availablePlans.free;
     return `$${(cents / 100).toFixed(0)}`;
   };
 
@@ -135,10 +137,10 @@ export default function BillingSettingsPage() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Current Plan
+                {content.settings.billing.currentPlan.title}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Manage your subscription
+                {content.settings.billing.currentPlan.description}
               </p>
             </div>
           </div>
@@ -146,25 +148,32 @@ export default function BillingSettingsPage() {
             {currentPlan && !currentPlan.is_recurring && (
               <Badge variant="warning" className="gap-1">
                 <Gift className="w-3 h-3" />
-                One-time
+                {content.settings.billing.currentPlan.oneTimeBadge}
               </Badge>
             )}
             <Badge variant="default" className="capitalize text-sm px-3 py-1">
-              {currentPlan?.name || "Free"}
+              {currentPlan?.name ||
+                content.settings.billing.availablePlans.free}
             </Badge>
           </div>
         </div>
 
         <div className="flex items-baseline gap-1 mb-4">
           <span className="text-4xl font-bold text-gray-900 dark:text-white">
-            {currentPlan ? formatPrice(currentPlan.price_monthly) : "Free"}
+            {currentPlan
+              ? formatPrice(currentPlan.price_monthly)
+              : content.settings.billing.availablePlans.free}
           </span>
           {currentPlan && currentPlan.price_monthly > 0 && (
-            <span className="text-gray-500">/month</span>
+            <span className="text-gray-500">
+              {content.settings.billing.currentPlan.monthSuffix}
+            </span>
           )}
           {currentPlan?.price_monthly === 0 &&
             currentPlan?.tier === "enterprise" && (
-              <span className="text-gray-500">Custom pricing</span>
+              <span className="text-gray-500">
+                {content.settings.billing.currentPlan.customPricing}
+              </span>
             )}
         </div>
 
@@ -183,12 +192,12 @@ export default function BillingSettingsPage() {
           {currentTier !== "enterprise" && (
             <Button className="gap-2" disabled>
               <ArrowUpRight className="w-4 h-4" />
-              Upgrade Plan (Coming Soon)
+              {content.settings.billing.currentPlan.upgradeButton}
             </Button>
           )}
           {currentPlan?.is_recurring && (
             <Button variant="outline" disabled>
-              Manage Subscription
+              {content.settings.billing.currentPlan.manageButton}
             </Button>
           )}
         </div>
@@ -202,12 +211,12 @@ export default function BillingSettingsPage() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Credit Usage
+              {content.settings.billing.creditUsage.title}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {currentPlan?.is_recurring
-                ? "Track your monthly credit consumption"
-                : "Your one-time credits"}
+                ? content.settings.billing.creditUsage.descriptionRecurring
+                : content.settings.billing.creditUsage.descriptionOneTime}
             </p>
           </div>
         </div>
@@ -215,8 +224,9 @@ export default function BillingSettingsPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-600 dark:text-gray-400">
-              {credits.used.toLocaleString()} of{" "}
-              {credits.total.toLocaleString()} credits used
+              {content.settings.billing.creditUsage.usageText
+                .replace("{used}", credits.used.toLocaleString())
+                .replace("{total}", credits.total.toLocaleString())}
             </span>
             <span className="text-sm font-medium text-gray-900 dark:text-white">
               {Math.round(creditsPercentage)}%
@@ -225,8 +235,8 @@ export default function BillingSettingsPage() {
           <Progress value={creditsPercentage} className="h-2" />
           <p className="text-xs text-gray-500">
             {currentPlan?.is_recurring
-              ? "Credits reset on the 1st of each month"
-              : "One-time credits do not expire"}
+              ? content.settings.billing.creditUsage.resetTextRecurring
+              : content.settings.billing.creditUsage.resetTextOneTime}
           </p>
         </div>
       </Card>
@@ -234,7 +244,7 @@ export default function BillingSettingsPage() {
       {/* Available Plans */}
       <div>
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          Available Plans
+          {content.settings.billing.availablePlans.title}
         </h3>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {plans.map((plan) => (
@@ -252,7 +262,7 @@ export default function BillingSettingsPage() {
                 </h4>
                 {plan.tier === currentTier && (
                   <Badge variant="info" className="text-xs">
-                    Current
+                    {content.settings.billing.availablePlans.currentBadge}
                   </Badge>
                 )}
               </div>
@@ -262,15 +272,17 @@ export default function BillingSettingsPage() {
                     <span className="text-2xl font-bold">
                       {formatPrice(plan.price_monthly)}
                     </span>
-                    <span className="text-sm text-gray-500">/mo</span>
+                    <span className="text-sm text-gray-500">
+                      {content.settings.billing.availablePlans.monthSuffix}
+                    </span>
                   </>
                 ) : plan.tier === "enterprise" ? (
                   <span className="text-lg font-medium text-gray-600">
-                    Custom
+                    {content.settings.billing.availablePlans.custom}
                   </span>
                 ) : (
                   <span className="text-2xl font-bold text-green-600">
-                    Free
+                    {content.settings.billing.availablePlans.free}
                   </span>
                 )}
               </div>
@@ -296,19 +308,21 @@ export default function BillingSettingsPage() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Invoice History
+              {content.settings.billing.invoiceHistory.title}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Download past invoices
+              {content.settings.billing.invoiceHistory.description}
             </p>
           </div>
         </div>
 
         <div className="p-8 text-center border border-dashed border-gray-200 dark:border-gray-700 rounded-lg">
           <Calendar className="w-10 h-10 mx-auto text-gray-400 mb-3" />
-          <p className="text-sm text-gray-500">No invoices yet</p>
+          <p className="text-sm text-gray-500">
+            {content.settings.billing.invoiceHistory.emptyState}
+          </p>
           <p className="text-xs text-gray-400 mt-1">
-            Invoices will appear here after your first payment
+            {content.settings.billing.invoiceHistory.emptyStateDesc}
           </p>
         </div>
       </Card>
