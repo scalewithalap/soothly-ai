@@ -208,6 +208,25 @@
       "long": "Automatisiertes Web-Scraping im großen Maßstab."
     }
   },
+  "agentsPage": {
+    "title": "Ihre KI-Agenten",
+    "subtitle": "Konfigurieren, starten und überwachen Sie Ihre autonomen Business-Agenten.",
+    "searchPlaceholder": "Agenten suchen...",
+    "filterAll": "Alle",
+    "filterActive": "Aktiv",
+    "filterPaused": "Pausiert",
+    "emptyState": "Keine Agenten entsprechen Ihrer Suche.",
+    "configureButton": "Konfigurieren",
+    "launchButton": "Starten",
+    "pauseButton": "Pausieren",
+    "viewLogsButton": "Logs ansehen",
+    "statusActive": "Aktiv",
+    "statusPaused": "Pausiert",
+    "statusSetup": "Einrichtung erforderlich",
+    "lastRunLabel": "Letzte Ausführung",
+    "creditsUsedLabel": "Credits verwendet",
+    "tasksCompletedLabel": "Erledigte Aufgaben"
+  },
   "errors": {
     "generic": {
       "server": "Ein Fehler ist aufgetreten. Bitte später erneut versuchen.",

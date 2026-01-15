@@ -30,7 +30,7 @@ export function CreditBalance({
         throw new Error("Failed to fetch balance");
       }
       const data = await response.json();
-      setBalance(data.balance ?? 0);
+      setBalance(data.data?.balance ?? 0);
     } catch (err) {
       console.error("Failed to fetch credit balance:", err);
       setError("Unable to load");

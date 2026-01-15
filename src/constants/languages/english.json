@@ -184,7 +184,16 @@
     "signOut": "Sign out"
   },
   "header": {
-    "searchPlaceholder": "Search..."
+    "searchPlaceholder": "Search...",
+    "credits": "Credits",
+    "account": {
+      "credits": "Credits",
+      "plan": "Plan",
+      "profile": "Profile",
+      "billing": "Billing",
+      "settings": "Settings",
+      "logout": "Sign out"
+    }
   },
   "agents": {
     "leadGeneration": {
@@ -232,6 +241,25 @@
       "short": "Extract data from completely any website.",
       "long": "Automated web scraping at scale."
     }
+  },
+  "agentsPage": {
+    "title": "Your AI Agents",
+    "subtitle": "Configure, launch, and monitor your autonomous business agents.",
+    "searchPlaceholder": "Search agents...",
+    "filterAll": "All",
+    "filterActive": "Active",
+    "filterPaused": "Paused",
+    "emptyState": "No agents match your search.",
+    "configureButton": "Configure",
+    "launchButton": "Launch",
+    "pauseButton": "Pause",
+    "viewLogsButton": "View Logs",
+    "statusActive": "Active",
+    "statusPaused": "Paused",
+    "statusSetup": "Setup Required",
+    "lastRunLabel": "Last run",
+    "creditsUsedLabel": "Credits used",
+    "tasksCompletedLabel": "Tasks completed"
   },
   "errors": {
     "generic": {
@@ -497,6 +525,34 @@
       "moved": "Lead moved",
       "error": "Failed to move lead",
       "empty": "No leads"
+    }
+  },
+  "onboarding": {
+    "createOrg": {
+      "title": "Set Up Your Organization",
+      "description": "Tell us about your organization to get started with Zero Headache.",
+      "nameLabel": "Organization Name",
+      "namePlaceholder": "e.g., Acme Inc",
+      "nameRequired": "Organization name is required",
+      "industryLabel": "Industry",
+      "industryPlaceholder": "Select your industry",
+      "sizeLabel": "Company Size",
+      "sizePlaceholder": "Select company size",
+      "submit": "Create Organization",
+      "creating": "Creating...",
+      "success": "Organization created successfully!",
+      "error": "Failed to create organization"
+    }
+  },
+  "billing": {
+    "upgrade": {
+      "title": "Upgrade to Pro",
+      "description": "Unlock the full power of Zero Headache with a Pro subscription.",
+      "featureRequiresPro": "requires a Pro subscription",
+      "proTitle": "Pro Plan Benefits",
+      "startingAt": "Starting at",
+      "upgradeNow": "Upgrade Now",
+      "cancelAnytime": "Cancel anytime. No questions asked."
     }
   }
 }

@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
         org_id: userData.org_id,
         user_id: user.id,
       },
-      successUrl: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing?credits=purchased&amount=${pack.credits}`,
+      successUrl: `${process.env.NEXT_PUBLIC_APP_URL}/billing?credits=purchased&amount=${pack.credits}`,
     });
 
     return NextResponse.json({

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,6 +10,14 @@ import { useContent } from "@/hooks/use-content";
 
 export default function DashboardPage() {
   const { content } = useContent();
+  const [credits, setCredits] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("/api/core/credits")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => setCredits(data?.data?.balance || 0))
+      .catch(() => setCredits(0));
+  }, []);
 
   return (
     <div className="space-y-8">
@@ -39,8 +48,8 @@ export default function DashboardPage() {
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                 {content.dashboard.stats.totalCredits}
               </p>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                2,450
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white tabular-nums">
+                {credits !== null ? credits.toLocaleString() : "..."}
               </h3>
             </div>
           </div>

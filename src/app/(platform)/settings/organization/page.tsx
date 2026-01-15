@@ -183,7 +183,10 @@ export default function OrganizationSettingsPage() {
                 Current Plan
               </p>
               <p className="text-lg font-semibold text-violet-600 dark:text-violet-400 capitalize">
-                {org?.subscription_tier || "Starter"}
+                {org?.subscription_tier
+                  ? org.subscription_tier.charAt(0).toUpperCase() +
+                    org.subscription_tier.slice(1)
+                  : "Free"}
               </p>
             </div>
 

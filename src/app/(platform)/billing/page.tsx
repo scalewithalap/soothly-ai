@@ -41,6 +41,7 @@ export default function BillingSettingsPage() {
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [currentTier, setCurrentTier] = useState("free");
   const [credits, setCredits] = useState({ used: 0, total: 50 });
+  const [actualCredits, setActualCredits] = useState<number | null>(null);
 
   useEffect(() => {
     fetchBillingData();
@@ -87,6 +88,13 @@ export default function BillingSettingsPage() {
           }
         }
       }
+
+      // Fetch actual credit balance from API
+      const creditsRes = await fetch("/api/core/credits");
+      if (creditsRes.ok) {
+        const creditsJson = await creditsRes.json();
+        setActualCredits(creditsJson.data?.balance || 0);
+      }
     } catch (error) {
       console.error("Failed to fetch billing data:", error);
     } finally {
@@ -109,9 +117,17 @@ export default function BillingSettingsPage() {
     }
   }, [plans, currentTier]);
 
-  const currentPlan = plans.find((p) => p.tier === currentTier) || plans[0];
+  // Find current plan - only fallback to free tier plan or null
+  const currentPlan =
+    plans.find((p) => p.tier === currentTier) ||
+    plans.find((p) => p.tier === "free") ||
+    null;
+
+  // Use actualCredits from API for the "used" display (balance means remaining)
+  const creditsUsed =
+    actualCredits !== null ? Math.max(0, credits.total - actualCredits) : 0;
   const creditsPercentage =
-    credits.total > 0 ? Math.min((credits.used / credits.total) * 100, 100) : 0;
+    credits.total > 0 ? Math.min((creditsUsed / credits.total) * 100, 100) : 0;
 
   const formatPrice = (cents: number) => {
     if (cents === 0) return content.settings.billing.availablePlans.free;
@@ -225,7 +241,7 @@ export default function BillingSettingsPage() {
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-600 dark:text-gray-400">
               {content.settings.billing.creditUsage.usageText
-                .replace("{used}", credits.used.toLocaleString())
+                .replace("{used}", creditsUsed.toLocaleString())
                 .replace("{total}", credits.total.toLocaleString())}
             </span>
             <span className="text-sm font-medium text-gray-900 dark:text-white">

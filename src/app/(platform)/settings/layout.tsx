@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, Building2, Users, CreditCard, Plug, Bell } from "lucide-react";
+import { User, Building2, Users, Plug, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const settingsTabs = [
@@ -14,12 +14,6 @@ const settingsTabs = [
     label: "Organization",
   },
   { id: "team", href: "/settings/team", icon: Users, label: "Team" },
-  {
-    id: "billing",
-    href: "/settings/billing",
-    icon: CreditCard,
-    label: "Billing",
-  },
   {
     id: "integrations",
     href: "/settings/integrations",

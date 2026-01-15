@@ -206,6 +206,25 @@
       "long": "Web scraping automatisé à grande échelle."
     }
   },
+  "agentsPage": {
+    "title": "Vos Agents IA",
+    "subtitle": "Configurez, lancez et surveillez vos agents d'affaires autonomes.",
+    "searchPlaceholder": "Rechercher des agents...",
+    "filterAll": "Tous",
+    "filterActive": "Actifs",
+    "filterPaused": "En pause",
+    "emptyState": "Aucun agent ne correspond à votre recherche.",
+    "configureButton": "Configurer",
+    "launchButton": "Lancer",
+    "pauseButton": "Mettre en pause",
+    "viewLogsButton": "Voir les journaux",
+    "statusActive": "Actif",
+    "statusPaused": "En pause",
+    "statusSetup": "Configuration requise",
+    "lastRunLabel": "Dernière exécution",
+    "creditsUsedLabel": "Crédits utilisés",
+    "tasksCompletedLabel": "Tâches accomplies"
+  },
   "errors": {
     "generic": {
       "server": "Un problème est survenu. Réessayez plus tard.",
