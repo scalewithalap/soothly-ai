@@ -1,154 +1,144 @@
-import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { apiSuccess, withErrorHandler, validateBody } from "@/lib/validation";
+import { AppError, ErrorCodes } from "@/lib/errors";
+import { updateCalendarItemSchema } from "@/lib/validation/schemas";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 // GET: Fetch content briefs for calendar view
-export async function GET(request: NextRequest) {
-  try {
-    const supabase = (await createClient()) as unknown as SupabaseClient;
+export const GET = withErrorHandler(async (request: Request) => {
+  const supabase = (await createClient()) as unknown as SupabaseClient;
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "auth/unauthorized" }, { status: 401 });
-    }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    const { data: userData } = await supabase
-      .from("users")
-      .select("org_id")
-      .eq("id", user.id)
-      .single();
+  if (!user) {
+    throw new AppError(ErrorCodes.AUTH_UNAUTHORIZED, "Unauthorized", 401);
+  }
 
-    if (!userData?.org_id) {
-      return NextResponse.json({ error: "org/not_found" }, { status: 404 });
-    }
+  const { data: userData } = await supabase
+    .from("users")
+    .select("org_id")
+    .eq("id", user.id)
+    .single();
 
-    const { searchParams } = new URL(request.url);
-    const month = searchParams.get("month"); // YYYY-MM format
+  if (!userData?.org_id) {
+    throw new AppError(ErrorCodes.NOT_FOUND, "Organization not found", 404);
+  }
 
-    // Calculate date range for month
-    let startDate: string;
-    let endDate: string;
+  const { searchParams } = new URL(request.url);
+  const month = searchParams.get("month"); // YYYY-MM format
 
-    if (month) {
-      const [year, monthNum] = month.split("-").map(Number);
-      startDate = new Date(year, monthNum - 1, 1).toISOString().split("T")[0];
-      endDate = new Date(year, monthNum, 0).toISOString().split("T")[0];
-    } else {
-      // Default to current month
-      const now = new Date();
-      startDate = new Date(now.getFullYear(), now.getMonth(), 1)
-        .toISOString()
-        .split("T")[0];
-      endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-        .toISOString()
-        .split("T")[0];
-    }
+  // Calculate date range for month
+  let startDate: string;
+  let endDate: string;
 
-    // Fetch content briefs
-    const { data: briefs, error } = await supabase
-      .from("content_briefs")
-      .select(
-        "id, title, status, scheduled_date, calendar_position, created_at"
-      )
-      .eq("org_id", userData.org_id)
-      .gte("scheduled_date", startDate)
-      .lte("scheduled_date", endDate)
-      .order("calendar_position", { ascending: true });
+  if (month) {
+    const [year, monthNum] = month.split("-").map(Number);
+    startDate = new Date(year, monthNum - 1, 1).toISOString().split("T")[0];
+    endDate = new Date(year, monthNum, 0).toISOString().split("T")[0];
+  } else {
+    // Default to current month
+    const now = new Date();
+    startDate = new Date(now.getFullYear(), now.getMonth(), 1)
+      .toISOString()
+      .split("T")[0];
+    endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+      .toISOString()
+      .split("T")[0];
+  }
 
-    if (error) {
-      console.error("Failed to fetch briefs:", error);
-      return NextResponse.json({ error: "db/query_failed" }, { status: 500 });
-    }
+  // Fetch content briefs
+  const { data: briefs, error } = await supabase
+    .from("content_briefs")
+    .select("id, title, status, scheduled_date, calendar_position, created_at")
+    .eq("org_id", userData.org_id)
+    .gte("scheduled_date", startDate)
+    .lte("scheduled_date", endDate)
+    .order("calendar_position", { ascending: true });
 
-    // Also get unscheduled briefs
-    const { data: unscheduled } = await supabase
-      .from("content_briefs")
-      .select("id, title, status, created_at")
-      .eq("org_id", userData.org_id)
-      .is("scheduled_date", null)
-      .order("created_at", { ascending: false })
-      .limit(20);
-
-    return NextResponse.json({
-      briefs: briefs || [],
-      unscheduled: unscheduled || [],
-      dateRange: { startDate, endDate },
-    });
-  } catch (error) {
-    console.error("Calendar API error:", error);
-    return NextResponse.json(
-      { error: "server/internal_error" },
-      { status: 500 }
+  if (error) {
+    console.error("Failed to fetch briefs:", error);
+    throw new AppError(
+      ErrorCodes.DATABASE_ERROR,
+      "Failed to fetch content",
+      500
     );
   }
-}
+
+  // Also get unscheduled briefs
+  const { data: unscheduled } = await supabase
+    .from("content_briefs")
+    .select("id, title, status, created_at")
+    .eq("org_id", userData.org_id)
+    .is("scheduled_date", null)
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  return apiSuccess({
+    briefs: briefs || [],
+    unscheduled: unscheduled || [],
+    dateRange: { startDate, endDate },
+  });
+});
 
 // PATCH: Update scheduled date for a brief
-export async function PATCH(request: NextRequest) {
-  try {
-    const supabase = (await createClient()) as unknown as SupabaseClient;
+export const PATCH = withErrorHandler(async (request: Request) => {
+  const supabase = (await createClient()) as unknown as SupabaseClient;
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "auth/unauthorized" }, { status: 401 });
-    }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    const { data: userData } = await supabase
-      .from("users")
-      .select("org_id")
-      .eq("id", user.id)
-      .single();
+  if (!user) {
+    throw new AppError(ErrorCodes.AUTH_UNAUTHORIZED, "Unauthorized", 401);
+  }
 
-    if (!userData?.org_id) {
-      return NextResponse.json({ error: "org/not_found" }, { status: 404 });
-    }
+  const { data: userData } = await supabase
+    .from("users")
+    .select("org_id")
+    .eq("id", user.id)
+    .single();
 
-    const body = await request.json();
-    const { briefId, scheduledDate, position } = body;
+  if (!userData?.org_id) {
+    throw new AppError(ErrorCodes.NOT_FOUND, "Organization not found", 404);
+  }
 
-    if (!briefId) {
-      return NextResponse.json(
-        { error: "validation/brief_id_required" },
-        { status: 400 }
-      );
-    }
+  // Validate request body
+  const { briefId, scheduledDate, position } = await validateBody(
+    request,
+    updateCalendarItemSchema
+  );
 
-    // Update the brief
-    const updateData: Record<string, unknown> = {
-      updated_at: new Date().toISOString(),
-    };
+  // Update the brief
+  const updateData: Record<string, unknown> = {
+    updated_at: new Date().toISOString(),
+  };
 
-    if (scheduledDate !== undefined) {
-      updateData.scheduled_date = scheduledDate; // Can be null to unschedule
-    }
+  if (scheduledDate !== undefined) {
+    updateData.scheduled_date = scheduledDate; // Can be null to unschedule
+  }
 
-    if (position !== undefined) {
-      updateData.calendar_position = position;
-    }
+  if (position !== undefined) {
+    updateData.calendar_position = position;
+  }
 
-    const { data: updated, error } = await supabase
-      .from("content_briefs")
-      .update(updateData)
-      .eq("id", briefId)
-      .eq("org_id", userData.org_id)
-      .select()
-      .single();
+  const { data: updated, error } = await supabase
+    .from("content_briefs")
+    .update(updateData)
+    .eq("id", briefId)
+    .eq("org_id", userData.org_id)
+    .select()
+    .single();
 
-    if (error) {
-      console.error("Failed to update brief:", error);
-      return NextResponse.json({ error: "db/update_failed" }, { status: 500 });
-    }
-
-    return NextResponse.json({ brief: updated });
-  } catch (error) {
-    console.error("Calendar update error:", error);
-    return NextResponse.json(
-      { error: "server/internal_error" },
-      { status: 500 }
+  if (error) {
+    console.error("Failed to update brief:", error);
+    throw new AppError(
+      ErrorCodes.DATABASE_ERROR,
+      "Failed to update content",
+      500
     );
   }
-}
+
+  return apiSuccess({ brief: updated });
+});

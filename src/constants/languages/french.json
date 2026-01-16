@@ -293,6 +293,16 @@
         "adminDesc": "Peut gérer l'équipe et les paramètres",
         "cancel": "Annuler",
         "sendButton": "Envoyer l'invitation"
+      },
+      "toasts": {
+        "invitationRevoked": "Invitation révoquée",
+        "invitationRevokeFailed": "Échec de la révocation de l'invitation",
+        "invitationSent": "Invitation envoyée à {email}",
+        "invitationFailed": "Échec de l'envoi de l'invitation",
+        "memberRemoved": "Membre supprimé de l'équipe",
+        "memberRemoveFailed": "Échec de la suppression du membre",
+        "roleUpdated": "Rôle mis à jour en {role}",
+        "roleUpdateFailed": "Échec de la mise à jour du rôle"
       }
     },
     "notifications": {
@@ -466,6 +476,57 @@
       "partnerType": "Type de Partenaire",
       "fitScore": "Score de Pertinence",
       "outreach": "Envoyer une Demande"
+    }
+  },
+  "content": {
+    "calendar": {
+      "title": "Calendrier de Contenu",
+      "subtitle": "Planifiez et programmez votre contenu",
+      "newBrief": "Nouveau Brief",
+      "scheduled": "Contenu programmé",
+      "unscheduled": "Retiré du calendrier",
+      "error": "Échec de la mise à jour du programme",
+      "unscheduledTitle": "Non programmé",
+      "noUnscheduled": "Tout le contenu est programmé"
+    }
+  },
+  "leads": {
+    "pipeline": {
+      "title": "Pipeline de Leads",
+      "subtitle": "Gérez votre pipeline des ventes",
+      "refresh": "Actualiser",
+      "addLead": "Ajouter un Lead",
+      "moved": "Lead déplacé",
+      "error": "Échec du déplacement du lead",
+      "empty": "Aucun lead"
+    }
+  },
+  "onboarding": {
+    "createOrg": {
+      "title": "Configurez Votre Organisation",
+      "description": "Parlez-nous de votre organisation pour commencer avec Zero Headache.",
+      "nameLabel": "Nom de l'Organisation",
+      "namePlaceholder": "ex., Acme Inc",
+      "nameRequired": "Le nom de l'organisation est requis",
+      "industryLabel": "Secteur",
+      "industryPlaceholder": "Sélectionnez votre secteur",
+      "sizeLabel": "Taille de l'Entreprise",
+      "sizePlaceholder": "Sélectionnez la taille de l'entreprise",
+      "submit": "Créer l'Organisation",
+      "creating": "Création en cours...",
+      "success": "Organisation créée avec succès !",
+      "error": "Échec de la création de l'organisation"
+    }
+  },
+  "billing": {
+    "upgrade": {
+      "title": "Passer à Pro",
+      "description": "Débloquez toute la puissance de Zero Headache avec un abonnement Pro.",
+      "featureRequiresPro": "nécessite un abonnement Pro",
+      "proTitle": "Avantages du Plan Pro",
+      "startingAt": "À partir de",
+      "upgradeNow": "Mettre à Niveau Maintenant",
+      "cancelAnytime": "Annulez à tout moment. Aucune question."
     }
   }
 }

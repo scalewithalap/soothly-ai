@@ -130,10 +130,9 @@ export default function AgentsPage() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "paused">(
-    "all"
+    "all",
   );
-  const [agentData, setAgentData] =
-    useState<Record<string, AgentData>>(MOCK_AGENT_DATA);
+  const [agentData] = useState<Record<string, AgentData>>(MOCK_AGENT_DATA);
 
   // Filter agents
   const agentKeys = Object.keys(agentDefs);
@@ -219,8 +218,8 @@ export default function AgentsPage() {
               {filter === "all"
                 ? t.filterAll || "All"
                 : filter === "active"
-                ? t.filterActive || "Active"
-                : t.filterPaused || "Paused"}
+                  ? t.filterActive || "Active"
+                  : t.filterPaused || "Paused"}
             </Button>
           ))}
         </div>

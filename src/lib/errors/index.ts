@@ -13,10 +13,14 @@ export const ErrorCodes = {
   // Validation
   VALIDATION_INVALID_INPUT: "validation/invalid_input",
   VALIDATION_MISSING_FIELD: "validation/missing_field",
+  VALIDATION_ERROR: "validation/error",
 
   // Credits
   CREDIT_INSUFFICIENT: "credit/insufficient_balance",
   CREDIT_LIMIT_REACHED: "credit/limit_reached",
+
+  // Database
+  DATABASE_ERROR: "database/error",
 
   // Generic
   SERVER_ERROR: "server/internal_error",

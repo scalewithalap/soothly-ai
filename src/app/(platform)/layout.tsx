@@ -1,5 +1,6 @@
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 export default function PlatformLayout({
   children,
@@ -12,7 +13,9 @@ export default function PlatformLayout({
       <div className="flex-1 flex flex-col min-w-0 transition-all duration-300">
         <Header />
         <main className="flex-1 p-4 lg:p-8 overflow-y-auto">
-          <div className="mx-auto max-w-7xl w-full">{children}</div>
+          <div className="mx-auto max-w-7xl w-full">
+            <ErrorBoundary>{children}</ErrorBoundary>
+          </div>
         </main>
       </div>
     </div>

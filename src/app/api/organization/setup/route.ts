@@ -1,71 +1,57 @@
-import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { z } from "zod";
+import { apiSuccess, withErrorHandler, validateBody } from "@/lib/validation";
+import { AppError, ErrorCodes } from "@/lib/errors";
+import { createOrganizationSchema } from "@/lib/validation/schemas";
 
-const setupSchema = z.object({
-  name: z.string().min(1, "Name is required").max(100),
-  industry: z.string().optional(),
-  companySize: z.string().optional(),
-});
+// POST: Setup/Update organization
+export const POST = withErrorHandler(async (request: Request) => {
+  const supabase = await createClient();
 
-export async function POST(request: Request) {
-  try {
-    const supabase = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabase.auth.getUser();
 
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json({ error: "auth/unauthorized" }, { status: 401 });
-    }
+  if (authError || !user) {
+    throw new AppError(ErrorCodes.AUTH_UNAUTHORIZED, "Unauthorized", 401);
+  }
 
-    // Get user's org
-    const { data: userData, error: userError } = await supabase
-      .from("users")
-      .select("org_id")
-      .eq("id", user.id)
-      .single();
+  // Get user's org
+  const { data: userData, error: userError } = await supabase
+    .from("users")
+    .select("org_id")
+    .eq("id", user.id)
+    .single();
 
-    if (userError || !userData?.org_id) {
-      return NextResponse.json({ error: "org/not_found" }, { status: 404 });
-    }
+  if (userError || !userData?.org_id) {
+    throw new AppError(ErrorCodes.NOT_FOUND, "Organization not found", 404);
+  }
 
-    // Parse and validate body
-    const body = await request.json();
-    const result = setupSchema.safeParse(body);
+  // Validate request body
+  const { name, industry, size } = await validateBody(
+    request,
+    createOrganizationSchema
+  );
 
-    if (!result.success) {
-      return NextResponse.json(
-        { error: "validation/invalid_input", details: result.error.flatten() },
-        { status: 400 }
-      );
-    }
+  // Update organization
+  const { error: updateError } = await supabase
+    .from("organizations")
+    .update({
+      name,
+      industry: industry || null,
+      company_size: size || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", userData.org_id);
 
-    const { name, industry, companySize } = result.data;
-
-    // Update organization
-    const { error: updateError } = await supabase
-      .from("organizations")
-      .update({
-        name,
-        industry: industry || null,
-        company_size: companySize || null,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", userData.org_id);
-
-    if (updateError) {
-      console.error("Failed to update organization:", updateError);
-      return NextResponse.json({ error: "db/update_failed" }, { status: 500 });
-    }
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Org setup error:", error);
-    return NextResponse.json(
-      { error: "server/internal_error" },
-      { status: 500 }
+  if (updateError) {
+    console.error("Failed to update organization:", updateError);
+    throw new AppError(
+      ErrorCodes.DATABASE_ERROR,
+      "Failed to update organization",
+      500
     );
   }
-}
+
+  return apiSuccess({ success: true });
+});

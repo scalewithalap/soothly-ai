@@ -254,12 +254,45 @@
     "launchButton": "Launch",
     "pauseButton": "Pause",
     "viewLogsButton": "View Logs",
+    "viewStatsButton": "View Stats",
     "statusActive": "Active",
     "statusPaused": "Paused",
     "statusSetup": "Setup Required",
     "lastRunLabel": "Last run",
-    "creditsUsedLabel": "Credits used",
-    "tasksCompletedLabel": "Tasks completed"
+    "creditsUsedLabel": "Credits",
+    "tasksCompletedLabel": "Tasks",
+    "valueGeneratedLabel": "Value Generated",
+    "autonomy": {
+      "title": "Autonomy Level",
+      "wait": "Wait for approval",
+      "waitDesc": "Agent pauses and asks before every action",
+      "aiDecides": "AI decides",
+      "aiDecidesDesc": "Agent uses judgment on when to ask",
+      "alwaysProceed": "Full autopilot",
+      "alwaysProceedDesc": "Agent executes without interruption"
+    },
+    "statsPage": {
+      "title": "Agent Statistics",
+      "backToAgents": "Back to Agents",
+      "overview": "Overview",
+      "successRate": "Success Rate",
+      "totalRuns": "Total Runs",
+      "avgCreditsPerRun": "Avg Credits/Run",
+      "hoursSaved": "Hours Saved",
+      "recentActivity": "Recent Activity",
+      "thoughtStream": "Thought Stream",
+      "noThoughts": "No activity yet. Launch the agent to see its thinking process.",
+      "performanceChart": "Performance (Last 30 Days)",
+      "tasksLabel": "Tasks",
+      "creditsLabel": "Credits",
+      "valueLabel": "Value ($)"
+    },
+    "toasts": {
+      "activated": "Agent activated successfully",
+      "deactivated": "Agent paused",
+      "autonomyUpdated": "Autonomy level updated",
+      "error": "Failed to update agent"
+    }
   },
   "errors": {
     "generic": {
@@ -329,6 +362,16 @@
         "adminDesc": "Can manage team & settings",
         "cancel": "Cancel",
         "sendButton": "Send invitation"
+      },
+      "toasts": {
+        "invitationRevoked": "Invitation revoked",
+        "invitationRevokeFailed": "Failed to revoke invitation",
+        "invitationSent": "Invitation sent to {email}",
+        "invitationFailed": "Failed to send invitation",
+        "memberRemoved": "Member removed from team",
+        "memberRemoveFailed": "Failed to remove member",
+        "roleUpdated": "Role updated to {role}",
+        "roleUpdateFailed": "Failed to update role"
       }
     },
     "notifications": {
@@ -551,8 +594,7 @@
       "featureRequiresPro": "requires a Pro subscription",
       "proTitle": "Pro Plan Benefits",
       "startingAt": "Starting at",
-      "upgradeNow": "Upgrade Now",
-      "cancelAnytime": "Cancel anytime. No questions asked."
+      "upgradeNow": "Upgrade Now"
     }
   }
 }

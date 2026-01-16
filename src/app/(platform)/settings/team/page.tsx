@@ -93,10 +93,14 @@ export default function TeamSettingsPage() {
       setMembers((prev) =>
         prev.map((m) => (m.id === memberId ? { ...m, role } : m))
       );
-      toast.success(`Role updated to ${role}`);
+      toast.success(
+        content.settings.team.toasts.roleUpdated.replace("{role}", role)
+      );
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to update role"
+        error instanceof Error
+          ? error.message
+          : content.settings.team.toasts.roleUpdateFailed
       );
       throw error;
     }
@@ -114,10 +118,12 @@ export default function TeamSettingsPage() {
       }
 
       setMembers((prev) => prev.filter((m) => m.id !== memberId));
-      toast.success("Member removed from team");
+      toast.success(content.settings.team.toasts.memberRemoved);
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to remove member"
+        error instanceof Error
+          ? error.message
+          : content.settings.team.toasts.memberRemoveFailed
       );
       throw error;
     }
@@ -132,13 +138,17 @@ export default function TeamSettingsPage() {
 
     if (!res.ok) {
       const data = await res.json();
-      toast.error(data.error || "Failed to send invitation");
-      throw new Error(data.error || "Failed to send invitation");
+      toast.error(data.error || content.settings.team.toasts.invitationFailed);
+      throw new Error(
+        data.error || content.settings.team.toasts.invitationFailed
+      );
     }
 
     const data = await res.json();
     setInvitations((prev) => [data.invitation, ...prev]);
-    toast.success(`Invitation sent to ${email}`);
+    toast.success(
+      content.settings.team.toasts.invitationSent.replace("{email}", email)
+    );
   };
 
   const handleRevokeInvitation = async (invitationId: string) => {
@@ -148,9 +158,9 @@ export default function TeamSettingsPage() {
 
     if (res.ok) {
       setInvitations((prev) => prev.filter((i) => i.id !== invitationId));
-      toast.success("Invitation revoked");
+      toast.success(content.settings.team.toasts.invitationRevoked);
     } else {
-      toast.error("Failed to revoke invitation");
+      toast.error(content.settings.team.toasts.invitationRevokeFailed);
     }
   };
 

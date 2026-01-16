@@ -1,5 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { apiSuccess, withErrorHandler, validateBody } from "@/lib/validation";
+import { AppError, ErrorCodes } from "@/lib/errors";
+import { resetPasswordSchema } from "@/lib/validation/schemas";
 
 // Use service role for admin operations
 const supabase = createClient(
@@ -8,99 +10,77 @@ const supabase = createClient(
 );
 
 // POST: Reset password using token
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    const { token, password } = body;
+export const POST = withErrorHandler(async (request: Request) => {
+  // Validate request body
+  const { token, password } = await validateBody(request, resetPasswordSchema);
 
-    if (!token || !password) {
-      return NextResponse.json(
-        { error: "validation/missing_fields" },
-        { status: 400 }
-      );
-    }
+  // Find valid token
+  const { data: resetToken, error: tokenError } = await supabase
+    .from("password_reset_tokens")
+    .select("id, user_id, expires_at, used")
+    .eq("token", token)
+    .single();
 
-    // Validate password strength
-    if (password.length < 8) {
-      return NextResponse.json(
-        { error: "validation/password_too_short" },
-        { status: 400 }
-      );
-    }
-
-    // Find valid token
-    const { data: resetToken, error: tokenError } = await supabase
-      .from("password_reset_tokens")
-      .select("id, user_id, expires_at, used")
-      .eq("token", token)
-      .single();
-
-    if (tokenError || !resetToken) {
-      return NextResponse.json(
-        { error: "auth/invalid_token" },
-        { status: 400 }
-      );
-    }
-
-    // Check if token is already used
-    if (resetToken.used) {
-      return NextResponse.json(
-        { error: "auth/token_already_used" },
-        { status: 400 }
-      );
-    }
-
-    // Check if token is expired
-    if (new Date(resetToken.expires_at) < new Date()) {
-      return NextResponse.json(
-        { error: "auth/token_expired" },
-        { status: 400 }
-      );
-    }
-
-    // Get user's email from users table
-    const { data: user } = await supabase
-      .from("users")
-      .select("id, email")
-      .eq("id", resetToken.user_id)
-      .single();
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "auth/user_not_found" },
-        { status: 404 }
-      );
-    }
-
-    // Update password using Supabase Admin API
-    const { error: updateError } = await supabase.auth.admin.updateUserById(
-      resetToken.user_id,
-      { password }
-    );
-
-    if (updateError) {
-      console.error("Password update error:", updateError);
-      return NextResponse.json(
-        { error: "auth/password_update_failed" },
-        { status: 500 }
-      );
-    }
-
-    // Mark token as used
-    await supabase
-      .from("password_reset_tokens")
-      .update({ used: true })
-      .eq("id", resetToken.id);
-
-    return NextResponse.json({
-      success: true,
-      message: "Password reset successfully",
-    });
-  } catch (error) {
-    console.error("Reset password error:", error);
-    return NextResponse.json(
-      { error: "server/internal_error" },
-      { status: 500 }
+  if (tokenError || !resetToken) {
+    throw new AppError(
+      ErrorCodes.VALIDATION_ERROR,
+      "Invalid or expired reset token",
+      400
     );
   }
-}
+
+  // Check if token is already used
+  if (resetToken.used) {
+    throw new AppError(
+      ErrorCodes.VALIDATION_ERROR,
+      "This reset link has already been used",
+      400
+    );
+  }
+
+  // Check if token is expired
+  if (new Date(resetToken.expires_at) < new Date()) {
+    throw new AppError(
+      ErrorCodes.VALIDATION_ERROR,
+      "This reset link has expired",
+      400
+    );
+  }
+
+  // Get user's email from users table
+  const { data: user } = await supabase
+    .from("users")
+    .select("id, email")
+    .eq("id", resetToken.user_id)
+    .single();
+
+  if (!user) {
+    throw new AppError(ErrorCodes.NOT_FOUND, "User not found", 404);
+  }
+
+  // Update password using Supabase Admin API
+  const { error: updateError } = await supabase.auth.admin.updateUserById(
+    resetToken.user_id,
+    { password }
+  );
+
+  if (updateError) {
+    console.error("Password update error:", updateError);
+    throw new AppError(
+      ErrorCodes.DATABASE_ERROR,
+      "Failed to update password",
+      500
+    );
+  }
+
+  // Mark token as used
+  await supabase
+    .from("password_reset_tokens")
+    .update({ used: true })
+    .eq("id", resetToken.id);
+
+  return apiSuccess({
+    success: true,
+    message: "Password reset successfully",
+  });
+});

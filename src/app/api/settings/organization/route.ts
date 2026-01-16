@@ -1,114 +1,102 @@
-import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { z } from "zod";
+import { apiSuccess, withErrorHandler, validateBody } from "@/lib/validation";
+import { AppError, ErrorCodes } from "@/lib/errors";
+import { updateOrganizationSchema } from "@/lib/validation/schemas";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-const updateOrgSchema = z.object({
-  name: z.string().min(2).optional(),
+// GET /api/settings/organization - Get current organization
+export const GET = withErrorHandler(async () => {
+  const supabase = (await createClient()) as unknown as SupabaseClient;
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new AppError(ErrorCodes.AUTH_UNAUTHORIZED, "Unauthorized", 401);
+  }
+
+  const { data: userData } = await supabase
+    .from("users")
+    .select("org_id")
+    .eq("id", user.id)
+    .single();
+
+  if (!userData?.org_id) {
+    throw new AppError(ErrorCodes.NOT_FOUND, "Organization not found", 404);
+  }
+
+  const { data: org, error } = await supabase
+    .from("organizations")
+    .select(
+      "id, name, subscription_tier, credits_balance, credits_limit, created_at"
+    )
+    .eq("id", userData.org_id)
+    .single();
+
+  if (error) {
+    throw new AppError(
+      ErrorCodes.DATABASE_ERROR,
+      "Failed to fetch organization",
+      500
+    );
+  }
+
+  return apiSuccess({ organization: org });
 });
 
-// GET /api/settings/organization - Get current organization
-export async function GET() {
-  try {
-    const supabase = (await createClient()) as unknown as SupabaseClient;
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      return NextResponse.json({ error: "auth/unauthorized" }, { status: 401 });
-    }
-
-    const { data: userData } = await supabase
-      .from("users")
-      .select("org_id")
-      .eq("id", user.id)
-      .single();
-
-    if (!userData?.org_id) {
-      return NextResponse.json({ error: "org/not_found" }, { status: 400 });
-    }
-
-    const { data: org, error } = await supabase
-      .from("organizations")
-      .select(
-        "id, name, subscription_tier, credits_balance, credits_limit, created_at"
-      )
-      .eq("id", userData.org_id)
-      .single();
-
-    if (error) {
-      return NextResponse.json({ error: "db/fetch_failed" }, { status: 500 });
-    }
-
-    return NextResponse.json({ organization: org });
-  } catch (error) {
-    console.error("Organization GET error:", error);
-    return NextResponse.json(
-      { error: "server/internal_error" },
-      { status: 500 }
-    );
-  }
-}
-
 // PATCH /api/settings/organization - Update organization
-export async function PATCH(request: NextRequest) {
-  try {
-    const supabase = (await createClient()) as unknown as SupabaseClient;
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+export const PATCH = withErrorHandler(async (request: Request) => {
+  const supabase = (await createClient()) as unknown as SupabaseClient;
 
-    if (!user) {
-      return NextResponse.json({ error: "auth/unauthorized" }, { status: 401 });
-    }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    const { data: userData } = await supabase
-      .from("users")
-      .select("org_id, role")
-      .eq("id", user.id)
-      .single();
+  if (!user) {
+    throw new AppError(ErrorCodes.AUTH_UNAUTHORIZED, "Unauthorized", 401);
+  }
 
-    if (!userData?.org_id) {
-      return NextResponse.json({ error: "org/not_found" }, { status: 400 });
-    }
+  const { data: userData } = await supabase
+    .from("users")
+    .select("org_id, role")
+    .eq("id", user.id)
+    .single();
 
-    // Only owners and admins can update org settings
-    if (!["owner", "admin"].includes(userData.role)) {
-      return NextResponse.json({ error: "auth/forbidden" }, { status: 403 });
-    }
+  if (!userData?.org_id) {
+    throw new AppError(ErrorCodes.NOT_FOUND, "Organization not found", 404);
+  }
 
-    const body = await request.json();
-    const parsed = updateOrgSchema.safeParse(body);
-
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: "validation/invalid_input", details: parsed.error.flatten() },
-        { status: 400 }
-      );
-    }
-
-    const { data: org, error } = await supabase
-      .from("organizations")
-      .update({
-        name: parsed.data.name,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", userData.org_id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Organization update error:", error);
-      return NextResponse.json({ error: "db/update_failed" }, { status: 500 });
-    }
-
-    return NextResponse.json({ organization: org });
-  } catch (error) {
-    console.error("Organization PATCH error:", error);
-    return NextResponse.json(
-      { error: "server/internal_error" },
-      { status: 500 }
+  // Only owners and admins can update org settings
+  if (!["owner", "admin"].includes(userData.role)) {
+    throw new AppError(
+      ErrorCodes.AUTH_FORBIDDEN,
+      "Insufficient permissions",
+      403
     );
   }
-}
+
+  // Validate request body
+  const { name } = await validateBody(request, updateOrganizationSchema);
+
+  const { data: org, error } = await supabase
+    .from("organizations")
+    .update({
+      name,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", userData.org_id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Organization update error:", error);
+    throw new AppError(
+      ErrorCodes.DATABASE_ERROR,
+      "Failed to update organization",
+      500
+    );
+  }
+
+  return apiSuccess({ organization: org });
+});

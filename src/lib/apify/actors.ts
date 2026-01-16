@@ -15,6 +15,14 @@ export const ACTORS = {
   GOOGLE_MAPS_SCRAPER: "compass/crawler-google-places",
   YELLOW_PAGES_SCRAPER: "epctex/yellowpages-scraper",
 
+  // Social Media Scraping
+  TWITTER_SCRAPER: "apidojo/tweet-scraper",
+  INSTAGRAM_SCRAPER: "apify/instagram-scraper",
+  FACEBOOK_SCRAPER: "apify/facebook-pages-scraper",
+
+  // Web Search
+  GOOGLE_SEARCH_SCRAPER: "apify/google-search-scraper",
+
   // Lead/Company Enrichment
   COMPANY_INFO_SCRAPER: "tri_angle/company-info-extractor",
   LINKEDIN_PROFILE_SCRAPER: "anchor/linkedin-profile-scraper",

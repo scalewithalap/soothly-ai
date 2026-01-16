@@ -1,141 +1,119 @@
-import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { apiSuccess, withErrorHandler, validateBody } from "@/lib/validation";
+import { AppError, ErrorCodes } from "@/lib/errors";
+import {
+  pipelineStages,
+  updatePipelineStageSchema,
+} from "@/lib/validation/schemas";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-const PIPELINE_STAGES = [
-  "new",
-  "contacted",
-  "qualified",
-  "proposal",
-  "negotiation",
-  "won",
-  "lost",
-];
-
 // GET: Fetch leads grouped by pipeline stage
-export async function GET(request: NextRequest) {
-  try {
-    const supabase = (await createClient()) as unknown as SupabaseClient;
+export const GET = withErrorHandler(async () => {
+  const supabase = (await createClient()) as unknown as SupabaseClient;
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "auth/unauthorized" }, { status: 401 });
-    }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    const { data: userData } = await supabase
-      .from("users")
-      .select("org_id")
-      .eq("id", user.id)
-      .single();
+  if (!user) {
+    throw new AppError(ErrorCodes.AUTH_UNAUTHORIZED, "Unauthorized", 401);
+  }
 
-    if (!userData?.org_id) {
-      return NextResponse.json({ error: "org/not_found" }, { status: 404 });
-    }
+  const { data: userData } = await supabase
+    .from("users")
+    .select("org_id")
+    .eq("id", user.id)
+    .single();
 
-    // Fetch all contacts with their pipeline stage
-    const { data: contacts, error } = await supabase
-      .from("contacts")
-      .select(
-        "id, first_name, last_name, email, company, title, pipeline_stage, created_at, updated_at"
-      )
-      .eq("org_id", userData.org_id)
-      .order("updated_at", { ascending: false });
+  if (!userData?.org_id) {
+    throw new AppError(ErrorCodes.NOT_FOUND, "Organization not found", 404);
+  }
 
-    if (error) {
-      console.error("Failed to fetch contacts:", error);
-      return NextResponse.json({ error: "db/query_failed" }, { status: 500 });
-    }
+  // Fetch all contacts with their pipeline stage
+  const { data: contacts, error } = await supabase
+    .from("contacts")
+    .select(
+      "id, first_name, last_name, email, company, title, pipeline_stage, created_at, updated_at"
+    )
+    .eq("org_id", userData.org_id)
+    .order("updated_at", { ascending: false });
 
-    // Group by stage
-    const pipeline: Record<string, typeof contacts> = {};
-    PIPELINE_STAGES.forEach((stage) => {
-      pipeline[stage] =
-        contacts?.filter((c) => (c.pipeline_stage || "new") === stage) || [];
-    });
-
-    // Calculate stage counts
-    const counts: Record<string, number> = {};
-    PIPELINE_STAGES.forEach((stage) => {
-      counts[stage] = pipeline[stage].length;
-    });
-
-    return NextResponse.json({
-      pipeline,
-      counts,
-      total: contacts?.length || 0,
-    });
-  } catch (error) {
-    console.error("Pipeline API error:", error);
-    return NextResponse.json(
-      { error: "server/internal_error" },
-      { status: 500 }
+  if (error) {
+    console.error("Failed to fetch contacts:", error);
+    throw new AppError(
+      ErrorCodes.DATABASE_ERROR,
+      "Failed to fetch contacts",
+      500
     );
   }
-}
+
+  // Group by stage
+  const pipeline: Record<string, typeof contacts> = {};
+  pipelineStages.forEach((stage) => {
+    pipeline[stage] =
+      contacts?.filter((c) => (c.pipeline_stage || "new") === stage) || [];
+  });
+
+  // Calculate stage counts
+  const counts: Record<string, number> = {};
+  pipelineStages.forEach((stage) => {
+    counts[stage] = pipeline[stage].length;
+  });
+
+  return apiSuccess({
+    pipeline,
+    counts,
+    total: contacts?.length || 0,
+  });
+});
 
 // PATCH: Move lead to a new stage
-export async function PATCH(request: NextRequest) {
-  try {
-    const supabase = (await createClient()) as unknown as SupabaseClient;
+export const PATCH = withErrorHandler(async (request: Request) => {
+  const supabase = (await createClient()) as unknown as SupabaseClient;
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "auth/unauthorized" }, { status: 401 });
-    }
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    const { data: userData } = await supabase
-      .from("users")
-      .select("org_id")
-      .eq("id", user.id)
-      .single();
+  if (!user) {
+    throw new AppError(ErrorCodes.AUTH_UNAUTHORIZED, "Unauthorized", 401);
+  }
 
-    if (!userData?.org_id) {
-      return NextResponse.json({ error: "org/not_found" }, { status: 404 });
-    }
+  const { data: userData } = await supabase
+    .from("users")
+    .select("org_id")
+    .eq("id", user.id)
+    .single();
 
-    const body = await request.json();
-    const { contactId, stage } = body;
+  if (!userData?.org_id) {
+    throw new AppError(ErrorCodes.NOT_FOUND, "Organization not found", 404);
+  }
 
-    if (!contactId || !stage) {
-      return NextResponse.json(
-        { error: "validation/missing_fields" },
-        { status: 400 }
-      );
-    }
+  // Validate request body
+  const { contactId, stage } = await validateBody(
+    request,
+    updatePipelineStageSchema
+  );
 
-    if (!PIPELINE_STAGES.includes(stage)) {
-      return NextResponse.json(
-        { error: "validation/invalid_stage" },
-        { status: 400 }
-      );
-    }
+  const { data: updated, error } = await supabase
+    .from("contacts")
+    .update({
+      pipeline_stage: stage,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", contactId)
+    .eq("org_id", userData.org_id)
+    .select()
+    .single();
 
-    const { data: updated, error } = await supabase
-      .from("contacts")
-      .update({
-        pipeline_stage: stage,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", contactId)
-      .eq("org_id", userData.org_id)
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Failed to update contact:", error);
-      return NextResponse.json({ error: "db/update_failed" }, { status: 500 });
-    }
-
-    return NextResponse.json({ contact: updated });
-  } catch (error) {
-    console.error("Pipeline update error:", error);
-    return NextResponse.json(
-      { error: "server/internal_error" },
-      { status: 500 }
+  if (error) {
+    console.error("Failed to update contact:", error);
+    throw new AppError(
+      ErrorCodes.DATABASE_ERROR,
+      "Failed to update lead stage",
+      500
     );
   }
-}
+
+  return apiSuccess({ contact: updated });
+});
