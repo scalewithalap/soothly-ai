@@ -235,9 +235,13 @@
       "unauthorized": "No tienes permiso para esta acción.",
       "notFound": "No pudimos encontrar lo que buscas."
     },
-    "credit": {
-      "insufficient": "No tienes suficientes créditos. Mejora o compra más.",
-      "limitReached": "Se alcanzó el límite mensual de créditos. Se reinician el {date}."
+    "auth": {
+      "unauthorized": "Por favor inicia sesión para continuar.",
+      "session_expired": "Tu sesión ha expirado. Inicia sesión nuevamente.",
+      "forbidden": "No tienes permiso para esta acción.",
+      "no_organization": "Por favor configura tu organización primero.",
+      "invalid_credentials": "Correo o contraseña incorrectos.",
+      "email_not_verified": "Por favor verifica tu dirección de correo."
     },
     "validation": {
       "required": "Este campo es obligatorio.",
@@ -245,7 +249,42 @@
       "passwordTooShort": "La contraseña debe tener al menos 8 caracteres.",
       "invalidURL": "Introduce una URL válida.",
       "numberRequired": "Introduce un número.",
-      "fileTooLarge": "El archivo debe ser menor a {size}MB."
+      "fileTooLarge": "El archivo debe ser menor a {size}MB.",
+      "invalid_input": "Por favor verifica tu entrada e inténtalo de nuevo.",
+      "missing_field": "Falta un campo obligatorio.",
+      "invalid_format": "El formato no es válido."
+    },
+    "credit": {
+      "insufficient": "No tienes suficientes créditos. Mejora o compra más.",
+      "limitReached": "Se alcanzó el límite mensual de créditos. Se reinician el {date}.",
+      "insufficient_balance": "No tienes suficientes créditos para esta acción."
+    },
+    "agent": {
+      "not_found": "Agente no encontrado.",
+      "invalid_type": "Tipo de agente inválido.",
+      "task_failed": "La tarea del agente falló. Inténtalo de nuevo.",
+      "already_running": "Este agente ya está en ejecución."
+    },
+    "billing": {
+      "payment_failed": "El pago falló. Verifica tu método de pago.",
+      "subscription_required": "Se requiere una suscripción para esta función."
+    },
+    "team": {
+      "invite_expired": "Esta invitación ha expirado.",
+      "invite_invalid": "Esta invitación no es válida.",
+      "member_not_found": "Miembro del equipo no encontrado.",
+      "admin_required": "Se requieren privilegios de administrador para esta acción."
+    },
+    "mcp": {
+      "connection_failed": "Error al conectar con el servidor MCP.",
+      "server_not_found": "Servidor MCP no encontrado."
+    },
+    "database": {
+      "error": "Ocurrió un error de base de datos. Inténtalo de nuevo."
+    },
+    "server": {
+      "internal_error": "Ocurrió un error inesperado. Inténtalo de nuevo.",
+      "not_found": "El recurso solicitado no fue encontrado."
     }
   },
   "tooltips": {

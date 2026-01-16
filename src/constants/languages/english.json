@@ -302,9 +302,13 @@
       "unauthorized": "You don't have permission for this action.",
       "notFound": "We couldn't find what you're looking for."
     },
-    "credit": {
-      "insufficient": "Not enough credits. Upgrade or purchase more.",
-      "limitReached": "Monthly credit limit reached. Credits reset on {date}."
+    "auth": {
+      "unauthorized": "Please sign in to continue.",
+      "session_expired": "Your session has expired. Please sign in again.",
+      "forbidden": "You don't have permission for this action.",
+      "no_organization": "Please set up your organization first.",
+      "invalid_credentials": "Invalid email or password.",
+      "email_not_verified": "Please verify your email address."
     },
     "validation": {
       "required": "This field is required.",
@@ -312,7 +316,42 @@
       "passwordTooShort": "Password must be at least 8 characters.",
       "invalidURL": "Enter a valid URL.",
       "numberRequired": "Enter a number.",
-      "fileTooLarge": "File must be under {size}MB."
+      "fileTooLarge": "File must be under {size}MB.",
+      "invalid_input": "Please check your input and try again.",
+      "missing_field": "A required field is missing.",
+      "invalid_format": "The format is not valid."
+    },
+    "credit": {
+      "insufficient": "Not enough credits. Upgrade or purchase more.",
+      "limitReached": "Monthly credit limit reached. Credits reset on {date}.",
+      "insufficient_balance": "You don't have enough credits for this action."
+    },
+    "agent": {
+      "not_found": "Agent not found.",
+      "invalid_type": "Invalid agent type.",
+      "task_failed": "The agent task failed. Please try again.",
+      "already_running": "This agent is already running."
+    },
+    "billing": {
+      "payment_failed": "Payment failed. Please check your payment method.",
+      "subscription_required": "A subscription is required for this feature."
+    },
+    "team": {
+      "invite_expired": "This invitation has expired.",
+      "invite_invalid": "This invitation is not valid.",
+      "member_not_found": "Team member not found.",
+      "admin_required": "Admin privileges are required for this action."
+    },
+    "mcp": {
+      "connection_failed": "Failed to connect to the MCP server.",
+      "server_not_found": "MCP server not found."
+    },
+    "database": {
+      "error": "A database error occurred. Please try again."
+    },
+    "server": {
+      "internal_error": "An unexpected error occurred. Please try again.",
+      "not_found": "The requested resource was not found."
     }
   },
   "tooltips": {

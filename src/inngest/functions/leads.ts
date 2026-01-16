@@ -12,7 +12,11 @@ import {
   enrichByLinkedIn,
   findEmail,
 } from "@/lib/apify";
-import { notifyAgentCompletion, notifyAgentError } from "@/lib/notifications";
+import {
+  notifyAgentCompletion,
+  notifyAgentError,
+  getOrgOwnerNotificationPreferences,
+} from "@/lib/notifications";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 // Type helper to work around typed client limitations
@@ -104,7 +108,7 @@ export const handleCampaignCreated = inngest.createFunction(
           return await scrapeGoogleMapsLeads(
             query,
             location,
-            criteria.maxResults || 50
+            criteria.maxResults || 50,
           );
         } else {
           // Default to LinkedIn scraping
@@ -140,7 +144,7 @@ export const handleCampaignCreated = inngest.createFunction(
               job_title: lead.title,
               linkedin_url: lead.linkedinUrl,
             },
-            { onConflict: "org_id,email" }
+            { onConflict: "org_id,email" },
           )
           .select()
           .single();
@@ -191,25 +195,32 @@ export const handleCampaignCreated = inngest.createFunction(
       });
     });
 
-    // Step 7: Send notification
+    // Step 7: Send notification with user preferences
     await step.run("send-notification", async () => {
-      const owner = await getOrgOwner(orgId);
-      if (owner) {
-        await notifyAgentCompletion(
-          owner,
-          {
-            agentName: "Lead Generation",
-            action: "Lead Scraping",
-            resultCount: savedCount,
-            details: `Campaign "${campaign.name}" has collected ${savedCount} new leads.`,
-          },
-          ["email", "sms", "whatsapp"]
-        );
+      const ownerPrefs = await getOrgOwnerNotificationPreferences(orgId);
+      if (
+        ownerPrefs &&
+        ownerPrefs.preferences.eventPreferences.agentCompletion
+      ) {
+        const owner = await getOrgOwner(orgId);
+        if (owner) {
+          await notifyAgentCompletion(
+            owner,
+            {
+              agentName: "Lead Generation",
+              action: "Lead Scraping",
+              resultCount: savedCount,
+              details: `Campaign "${campaign.name}" has collected ${savedCount} new leads.`,
+            },
+            ownerPrefs.preferences.channels,
+            ownerPrefs.preferences.config,
+          );
+        }
       }
     });
 
     return { success: true, leadsFound: savedCount };
-  }
+  },
 );
 
 /**
@@ -309,7 +320,7 @@ export const enrichLeads = inngest.createFunction(
           errors.push(
             `Lead ${leadId}: ${
               error instanceof Error ? error.message : "Unknown error"
-            }`
+            }`,
           );
 
           await supabase
@@ -320,11 +331,15 @@ export const enrichLeads = inngest.createFunction(
       });
     }
 
-    // Send notification
+    // Send notification with user preferences
     await step.run("send-notification", async () => {
+      const ownerPrefs = await getOrgOwnerNotificationPreferences(orgId);
       const owner = await getOrgOwner(orgId);
-      if (owner) {
-        if (errors.length === 0) {
+      if (owner && ownerPrefs) {
+        if (
+          errors.length === 0 &&
+          ownerPrefs.preferences.eventPreferences.agentCompletion
+        ) {
           await notifyAgentCompletion(
             owner,
             {
@@ -333,9 +348,13 @@ export const enrichLeads = inngest.createFunction(
               resultCount: enrichedCount,
               details: `Successfully enriched ${enrichedCount} leads with additional data.`,
             },
-            ["email"]
+            ownerPrefs.preferences.channels,
+            ownerPrefs.preferences.config,
           );
-        } else {
+        } else if (
+          errors.length > 0 &&
+          ownerPrefs.preferences.eventPreferences.agentErrors
+        ) {
           await notifyAgentError(
             owner,
             {
@@ -345,14 +364,15 @@ export const enrichLeads = inngest.createFunction(
                 errors.length
               } failed: ${errors.slice(0, 3).join(", ")}`,
             },
-            ["email"]
+            ownerPrefs.preferences.channels,
+            ownerPrefs.preferences.config,
           );
         }
       }
     });
 
     return { enriched: enrichedCount, errors: errors.length };
-  }
+  },
 );
 
 /**
@@ -447,5 +467,5 @@ export const sendLeadOutreach = inngest.createFunction(
     });
 
     return { success: true };
-  }
+  },
 );

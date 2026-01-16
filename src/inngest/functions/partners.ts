@@ -11,6 +11,7 @@ import {
   notifyAgentCompletion,
   notifyAgentError,
   sendNotification,
+  getOrgOwnerNotificationPreferences,
 } from "@/lib/notifications";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -150,25 +151,32 @@ export const discoverPartners = inngest.createFunction(
       });
     });
 
-    // Step 4: Send notification
+    // Step 4: Send notification with user preferences
     await step.run("send-notification", async () => {
-      const owner = await getOrgOwner(orgId);
-      if (owner) {
-        await notifyAgentCompletion(
-          owner,
-          {
-            agentName: "Partnerships",
-            action: "Partner Discovery",
-            resultCount: createdCount,
-            details: `Found ${createdCount} potential ${partnerType} partners in the ${industry} industry.`,
-          },
-          ["email", "sms", "whatsapp"]
-        );
+      const ownerPrefs = await getOrgOwnerNotificationPreferences(orgId);
+      if (
+        ownerPrefs &&
+        ownerPrefs.preferences.eventPreferences.agentCompletion
+      ) {
+        const owner = await getOrgOwner(orgId);
+        if (owner) {
+          await notifyAgentCompletion(
+            owner,
+            {
+              agentName: "Partnerships",
+              action: "Partner Discovery",
+              resultCount: createdCount,
+              details: `Found ${createdCount} potential ${partnerType} partners in the ${industry} industry.`,
+            },
+            ownerPrefs.preferences.channels,
+            ownerPrefs.preferences.config,
+          );
+        }
       }
     });
 
     return { found: createdCount };
-  }
+  },
 );
 
 /**
@@ -260,7 +268,7 @@ Return as JSON:
   "recommendation": "proceed | maybe | pass",
   "reasoning": "..."
 }`,
-        { model: "gemini-3-flash", temperature: 0.3 }
+        { model: "gemini-3-flash", temperature: 0.3 },
       );
 
       try {
@@ -326,7 +334,7 @@ Return as JSON:
       fitScore: fitScore.fit_score,
       recommendation: fitScore.recommendation,
     };
-  }
+  },
 );
 
 /**
@@ -356,13 +364,13 @@ export const sendPartnerOutreach = inngest.createFunction(
     // Step 1: Send the email
     const sendResult = await step.run("send-email", async () => {
       try {
-        const results = await sendNotification({
+        const result = await sendNotification({
           recipient: { email },
           subject,
           message: body,
           channels: ["email"],
         });
-        return results[0];
+        return result.results[0];
       } catch (error) {
         console.error("Failed to send partner outreach:", error);
         throw error;
@@ -412,11 +420,15 @@ export const sendPartnerOutreach = inngest.createFunction(
       });
     });
 
-    // Step 5: Notify org owner of result
+    // Step 5: Notify org owner of result with preferences
     await step.run("send-notification", async () => {
+      const ownerPrefs = await getOrgOwnerNotificationPreferences(orgId);
       const owner = await getOrgOwner(orgId);
-      if (owner) {
-        if (sendResult.success) {
+      if (owner && ownerPrefs) {
+        if (
+          sendResult.success &&
+          ownerPrefs.preferences.eventPreferences.agentCompletion
+        ) {
           await notifyAgentCompletion(
             owner,
             {
@@ -424,9 +436,13 @@ export const sendPartnerOutreach = inngest.createFunction(
               action: "Partner Outreach",
               details: `Outreach email sent to ${email}`,
             },
-            ["email"]
+            ownerPrefs.preferences.channels,
+            ownerPrefs.preferences.config,
           );
-        } else {
+        } else if (
+          !sendResult.success &&
+          ownerPrefs.preferences.eventPreferences.agentErrors
+        ) {
           await notifyAgentError(
             owner,
             {
@@ -434,12 +450,13 @@ export const sendPartnerOutreach = inngest.createFunction(
               action: "Partner Outreach",
               error: `Failed to send outreach to ${email}: ${sendResult.error}`,
             },
-            ["email"]
+            ownerPrefs.preferences.channels,
+            ownerPrefs.preferences.config,
           );
         }
       }
     });
 
     return { success: sendResult.success, error: sendResult.error };
-  }
+  },
 );

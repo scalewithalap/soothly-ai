@@ -233,9 +233,13 @@
       "unauthorized": "Vous n'êtes pas autorisé à effectuer cette action.",
       "notFound": "Nous n'avons pas trouvé ce que vous cherchez."
     },
-    "credit": {
-      "insufficient": "Crédits insuffisants. Améliorez ou achetez plus.",
-      "limitReached": "Limite mensuelle de crédits atteinte. Réinitialisation le {date}."
+    "auth": {
+      "unauthorized": "Veuillez vous connecter pour continuer.",
+      "session_expired": "Votre session a expiré. Veuillez vous reconnecter.",
+      "forbidden": "Vous n'avez pas la permission pour cette action.",
+      "no_organization": "Veuillez d'abord créer votre organisation.",
+      "invalid_credentials": "E-mail ou mot de passe incorrect.",
+      "email_not_verified": "Veuillez vérifier votre adresse e-mail."
     },
     "validation": {
       "required": "Ce champ est obligatoire.",
@@ -243,7 +247,42 @@
       "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères.",
       "invalidURL": "Entrez une URL valide.",
       "numberRequired": "Entrez un nombre.",
-      "fileTooLarge": "Le fichier doit être inférieur à {size}MB."
+      "fileTooLarge": "Le fichier doit être inférieur à {size}MB.",
+      "invalid_input": "Veuillez vérifier vos données et réessayer.",
+      "missing_field": "Un champ obligatoire est manquant.",
+      "invalid_format": "Le format n'est pas valide."
+    },
+    "credit": {
+      "insufficient": "Crédits insuffisants. Améliorez ou achetez plus.",
+      "limitReached": "Limite mensuelle de crédits atteinte. Réinitialisation le {date}.",
+      "insufficient_balance": "Vous n'avez pas assez de crédits pour cette action."
+    },
+    "agent": {
+      "not_found": "Agent non trouvé.",
+      "invalid_type": "Type d'agent invalide.",
+      "task_failed": "La tâche de l'agent a échoué. Veuillez réessayer.",
+      "already_running": "Cet agent est déjà en cours d'exécution."
+    },
+    "billing": {
+      "payment_failed": "Le paiement a échoué. Vérifiez votre moyen de paiement.",
+      "subscription_required": "Un abonnement est requis pour cette fonctionnalité."
+    },
+    "team": {
+      "invite_expired": "Cette invitation a expiré.",
+      "invite_invalid": "Cette invitation n'est pas valide.",
+      "member_not_found": "Membre de l'équipe non trouvé.",
+      "admin_required": "Des privilèges d'administrateur sont requis pour cette action."
+    },
+    "mcp": {
+      "connection_failed": "Échec de la connexion au serveur MCP.",
+      "server_not_found": "Serveur MCP non trouvé."
+    },
+    "database": {
+      "error": "Une erreur de base de données s'est produite. Veuillez réessayer."
+    },
+    "server": {
+      "internal_error": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+      "not_found": "La ressource demandée n'a pas été trouvée."
     }
   },
   "tooltips": {

@@ -6,7 +6,10 @@
 import { inngest } from "@/inngest/client";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import { generateWithModel, getOpenAI } from "@/lib/ai";
-import { notifyAgentCompletion } from "@/lib/notifications";
+import {
+  notifyAgentCompletion,
+  getOrgOwnerNotificationPreferences,
+} from "@/lib/notifications";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AIModel } from "@/lib/ai/providers/types";
 
@@ -90,7 +93,7 @@ For each keyword, estimate:
 
 Return as JSON array:
 [{ "keyword": "...", "search_volume": 1000, "keyword_difficulty": 45, "relevance_score": 90 }]`,
-        { model: "gemini-3-pro", temperature: 0.5 }
+        { model: "gemini-3-pro", temperature: 0.5 },
       );
 
       try {
@@ -141,7 +144,7 @@ Return as JSON array:
     });
 
     return { success: true, briefId, keywordsFound: keywords.length };
-  }
+  },
 );
 
 /**
@@ -220,7 +223,7 @@ Return as JSON:
     { "heading": "...", "level": 2, "points": ["...", "..."] }
   ]
 }`,
-        { temperature: 0.7, maxTokens: 2000 }
+        { temperature: 0.7, maxTokens: 2000 },
       );
 
       try {
@@ -238,7 +241,7 @@ Return as JSON:
             (s: { heading: string; points?: string[] }) =>
               `## ${s.heading}\n${
                 s.points?.map((p: string) => `- ${p}`).join("\n") || ""
-              }`
+              }`,
           )
           .join("\n\n") || "";
 
@@ -272,7 +275,7 @@ REQUIREMENTS:
 7. Aim for the target word count
 
 Write the complete article:`,
-        { temperature: 0.7, maxTokens: 8000 }
+        { temperature: 0.7, maxTokens: 8000 },
       );
 
       const content = result.content;
@@ -336,20 +339,27 @@ Write the complete article:`,
       });
     });
 
-    // Step 7: Send notification
+    // Step 7: Send notification with user preferences
     await step.run("send-notification", async () => {
-      const owner = await getOrgOwner(orgId);
-      if (owner) {
-        await notifyAgentCompletion(
-          owner,
-          {
-            agentName: "SEO Content",
-            action: "Article Generation",
-            resultCount: article.wordCount,
-            details: `Article "${article.title}" has been generated with ${article.wordCount} words using ${selectedModel}.`,
-          },
-          ["email", "sms", "whatsapp"]
-        );
+      const ownerPrefs = await getOrgOwnerNotificationPreferences(orgId);
+      if (
+        ownerPrefs &&
+        ownerPrefs.preferences.eventPreferences.agentCompletion
+      ) {
+        const owner = await getOrgOwner(orgId);
+        if (owner) {
+          await notifyAgentCompletion(
+            owner,
+            {
+              agentName: "SEO Content",
+              action: "Article Generation",
+              resultCount: article.wordCount,
+              details: `Article "${article.title}" has been generated with ${article.wordCount} words using ${selectedModel}.`,
+            },
+            ownerPrefs.preferences.channels,
+            ownerPrefs.preferences.config,
+          );
+        }
       }
     });
 
@@ -360,7 +370,7 @@ Write the complete article:`,
       wordCount: article.wordCount,
       model: selectedModel,
     };
-  }
+  },
 );
 
 /**
@@ -419,7 +429,7 @@ Return as JSON:
   "meta_title": "...",
   "meta_description": "..."
 }`,
-        { model: "gemini-3-flash", temperature: 0.3 }
+        { model: "gemini-3-flash", temperature: 0.3 },
       );
 
       try {
@@ -456,11 +466,11 @@ Return as JSON:
             action: "SEO Optimization",
             details: `Article "${article.title}" SEO analysis complete. Score: ${analysis.seo_score}/100`,
           },
-          ["email"]
+          ["email"],
         );
       }
     });
 
     return { success: true, seoScore: analysis.seo_score };
-  }
+  },
 );

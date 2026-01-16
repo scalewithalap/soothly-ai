@@ -1,16 +1,23 @@
 /**
  * Unified Notification Service
- * Send notifications via Email, SMS, and WhatsApp
+ * Multi-channel notifications via Email, Discord, Slack, Telegram, Jira
  */
 
 import { sendEmail } from "@/lib/email/service";
-import { sendSMS, sendWhatsApp, formatPhoneNumber } from "./plivo";
+import {
+  sendDiscordNotification,
+  sendSlackNotification,
+  sendTelegramNotification,
+  createJiraIssue,
+  type NotificationChannel,
+  type NotificationConfig,
+  type ChannelResult,
+} from "./providers";
 
-export type NotificationChannel = "email" | "sms" | "whatsapp";
+export type { NotificationChannel, NotificationConfig, ChannelResult };
 
 export interface NotificationRecipient {
   email?: string;
-  phone?: string;
   name?: string;
 }
 
@@ -19,24 +26,24 @@ export interface NotificationOptions {
   subject: string;
   message: string;
   channels?: NotificationChannel[];
+  config?: NotificationConfig;
   metadata?: Record<string, unknown>;
 }
 
 export interface NotificationResult {
-  channel: NotificationChannel;
-  success: boolean;
-  messageId?: string;
-  error?: string;
+  results: ChannelResult[];
+  allSucceeded: boolean;
 }
 
 /**
  * Send a notification via one or more channels
  */
 export async function sendNotification(
-  options: NotificationOptions
-): Promise<NotificationResult[]> {
+  options: NotificationOptions,
+): Promise<NotificationResult> {
   const channels = options.channels || ["email"];
-  const results: NotificationResult[] = [];
+  const config = options.config || {};
+  const results: ChannelResult[] = [];
 
   for (const channel of channels) {
     try {
@@ -49,10 +56,7 @@ export async function sendNotification(
               text: options.message,
               html: formatEmailHtml(options.subject, options.message),
             });
-            results.push({
-              channel: "email",
-              success: true,
-            });
+            results.push({ channel: "email", success: true });
           } else {
             results.push({
               channel: "email",
@@ -62,42 +66,71 @@ export async function sendNotification(
           }
           break;
 
-        case "sms":
-          if (options.recipient.phone) {
-            const response = await sendSMS({
-              to: formatPhoneNumber(options.recipient.phone),
-              message: truncateSMS(options.message),
-            });
-            results.push({
-              channel: "sms",
-              success: true,
-              messageId: response.messageUuid,
-            });
+        case "discord":
+          if (config.discord?.webhookUrl) {
+            const discordResult = await sendDiscordNotification(
+              config.discord.webhookUrl,
+              options.subject,
+              options.message,
+            );
+            results.push(discordResult);
           } else {
             results.push({
-              channel: "sms",
+              channel: "discord",
               success: false,
-              error: "No phone number provided",
+              error: "Discord webhook not configured",
             });
           }
           break;
 
-        case "whatsapp":
-          if (options.recipient.phone) {
-            const response = await sendWhatsApp({
-              to: formatPhoneNumber(options.recipient.phone),
-              message: options.message,
-            });
-            results.push({
-              channel: "whatsapp",
-              success: true,
-              messageId: response.messageUuid,
-            });
+        case "slack":
+          if (config.slack?.webhookUrl) {
+            const slackResult = await sendSlackNotification(
+              config.slack.webhookUrl,
+              options.subject,
+              options.message,
+            );
+            results.push(slackResult);
           } else {
             results.push({
-              channel: "whatsapp",
+              channel: "slack",
               success: false,
-              error: "No phone number provided",
+              error: "Slack webhook not configured",
+            });
+          }
+          break;
+
+        case "telegram":
+          if (config.telegram?.botToken && config.telegram?.chatId) {
+            const telegramResult = await sendTelegramNotification(
+              config.telegram.botToken,
+              config.telegram.chatId,
+              options.subject,
+              options.message,
+            );
+            results.push(telegramResult);
+          } else {
+            results.push({
+              channel: "telegram",
+              success: false,
+              error: "Telegram bot not configured",
+            });
+          }
+          break;
+
+        case "jira":
+          if (config.jira) {
+            const jiraResult = await createJiraIssue(
+              config.jira,
+              options.subject,
+              options.message,
+            );
+            results.push(jiraResult);
+          } else {
+            results.push({
+              channel: "jira",
+              success: false,
+              error: "Jira not configured",
             });
           }
           break;
@@ -111,7 +144,10 @@ export async function sendNotification(
     }
   }
 
-  return results;
+  return {
+    results,
+    allSucceeded: results.every((r) => r.success),
+  };
 }
 
 /**
@@ -121,19 +157,21 @@ export async function sendBulkNotification(
   recipients: NotificationRecipient[],
   subject: string,
   message: string,
-  channels?: NotificationChannel[]
-): Promise<Map<string, NotificationResult[]>> {
-  const results = new Map<string, NotificationResult[]>();
+  channels?: NotificationChannel[],
+  config?: NotificationConfig,
+): Promise<Map<string, NotificationResult>> {
+  const results = new Map<string, NotificationResult>();
 
   for (const recipient of recipients) {
-    const key = recipient.email || recipient.phone || "unknown";
-    const recipientResults = await sendNotification({
+    const key = recipient.email || "unknown";
+    const recipientResult = await sendNotification({
       recipient,
       subject,
       message,
       channels,
+      config,
     });
-    results.set(key, recipientResults);
+    results.set(key, recipientResult);
   }
 
   return results;
@@ -156,8 +194,9 @@ export interface AgentNotificationParams {
 export async function notifyAgentCompletion(
   recipient: NotificationRecipient,
   params: AgentNotificationParams,
-  channels?: NotificationChannel[]
-): Promise<NotificationResult[]> {
+  channels?: NotificationChannel[],
+  config?: NotificationConfig,
+): Promise<NotificationResult> {
   const subject = `✅ ${params.agentName} completed: ${params.action}`;
   const message = buildAgentCompletionMessage(params);
 
@@ -166,6 +205,7 @@ export async function notifyAgentCompletion(
     subject,
     message,
     channels,
+    config,
   });
 }
 
@@ -175,8 +215,9 @@ export async function notifyAgentCompletion(
 export async function notifyAgentError(
   recipient: NotificationRecipient,
   params: AgentNotificationParams & { error: string },
-  channels?: NotificationChannel[]
-): Promise<NotificationResult[]> {
+  channels?: NotificationChannel[],
+  config?: NotificationConfig,
+): Promise<NotificationResult> {
   const subject = `❌ ${params.agentName} failed: ${params.action}`;
   const message = `Your ${params.agentName} agent encountered an error:\n\n${params.error}\n\nPlease check your dashboard for details.`;
 
@@ -185,6 +226,7 @@ export async function notifyAgentError(
     subject,
     message,
     channels,
+    config,
   });
 }
 
@@ -221,13 +263,6 @@ function formatEmailHtml(subject: string, message: string): string {
       </body>
     </html>
   `;
-}
-
-function truncateSMS(message: string, maxLength: number = 160): string {
-  if (message.length <= maxLength) {
-    return message;
-  }
-  return message.substring(0, maxLength - 3) + "...";
 }
 
 function buildAgentCompletionMessage(params: AgentNotificationParams): string {
