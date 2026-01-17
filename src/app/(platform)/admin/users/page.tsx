@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Users, Shield, User, RefreshCw } from "lucide-react";
-import { LanguageContext } from "@/context/language-context";
+import { useContent } from "@/hooks/use-content";
 import { toast } from "sonner";
 
 interface UserData {
@@ -18,8 +18,8 @@ interface UserData {
 }
 
 export default function AdminUsersPage() {
-  const ctx = useContext(LanguageContext);
-  const t = (ctx?.content?.admin || {}) as Record<string, string>;
+  const { content } = useContent();
+  const admin = content.admin;
 
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,45 +56,52 @@ export default function AdminUsersPage() {
         setUsers((prev) =>
           prev.map((u) => (u.id === userId ? { ...u, role } : u)),
         );
-        toast.success("User role updated");
+        toast.success(
+          admin.usersPage?.toasts?.roleUpdated || "User role updated",
+        );
       } else {
-        toast.error("Failed to update role");
+        toast.error(
+          admin.usersPage?.toasts?.roleUpdateFailed || "Failed to update role",
+        );
       }
     } catch {
-      toast.error("Failed to update role");
+      toast.error(
+        admin.usersPage?.toasts?.roleUpdateFailed || "Failed to update role",
+      );
     } finally {
       setUpdating(null);
     }
   };
 
   const getRoleBadge = (role: string) => {
+    const roles = admin.usersPage?.roles || {};
     switch (role) {
       case "owner":
         return (
           <Badge variant="default" className="gap-1 bg-violet-600">
             <Shield className="w-3 h-3" />
-            Owner
+            {roles.owner || "Owner"}
           </Badge>
         );
       case "admin":
         return (
           <Badge variant="default" className="gap-1 bg-blue-600">
             <Shield className="w-3 h-3" />
-            Admin
+            {roles.admin || "Admin"}
           </Badge>
         );
       default:
         return (
           <Badge variant="info" className="gap-1">
             <User className="w-3 h-3" />
-            Member
+            {roles.member || "Member"}
           </Badge>
         );
     }
   };
 
   const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return "Never";
+    if (!dateStr) return admin.usersPage?.never || "Never";
     return new Date(dateStr).toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -110,6 +117,8 @@ export default function AdminUsersPage() {
     );
   }
 
+  const headers = admin.usersPage?.tableHeaders || {};
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -117,15 +126,16 @@ export default function AdminUsersPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <Users className="w-6 h-6" />
-            {t.users || "User Management"}
+            {admin.usersPage?.title || "User Management"}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            {users.length} users in your organization
+            {users.length}{" "}
+            {admin.usersPage?.description || "users in your organization"}
           </p>
         </div>
         <Button variant="outline" onClick={fetchUsers} className="gap-2">
           <RefreshCw className="w-4 h-4" />
-          Refresh
+          {admin.refresh || "Refresh"}
         </Button>
       </div>
 
@@ -136,19 +146,19 @@ export default function AdminUsersPage() {
             <thead className="bg-gray-50 dark:bg-gray-800/50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  User
+                  {headers.user || "User"}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Role
+                  {headers.role || "Role"}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Joined
+                  {headers.joined || "Joined"}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Last Active
+                  {headers.lastActive || "Last Active"}
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Actions
+                  {headers.actions || "Actions"}
                 </th>
               </tr>
             </thead>
@@ -161,7 +171,7 @@ export default function AdminUsersPage() {
                   <td className="px-6 py-4">
                     <div>
                       <p className="font-medium text-gray-900 dark:text-white">
-                        {user.full_name || "No name"}
+                        {user.full_name || admin.usersPage?.noName || "No name"}
                       </p>
                       <p className="text-sm text-gray-500">{user.email}</p>
                     </div>
@@ -181,8 +191,12 @@ export default function AdminUsersPage() {
                         disabled={updating === user.id}
                         className="text-sm border border-gray-300 dark:border-gray-600 rounded-md px-2 py-1 bg-white dark:bg-gray-800"
                       >
-                        <option value="member">Member</option>
-                        <option value="admin">Admin</option>
+                        <option value="member">
+                          {admin.usersPage?.roles?.member || "Member"}
+                        </option>
+                        <option value="admin">
+                          {admin.usersPage?.roles?.admin || "Admin"}
+                        </option>
                       </select>
                     )}
                   </td>

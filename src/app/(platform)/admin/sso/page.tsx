@@ -6,21 +6,19 @@
  * View and manage enterprise SSO settings.
  */
 
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Key,
-  Building2,
-  ExternalLink,
-  Info,
-} from "lucide-react";
-import { LanguageContext } from "@/context/language-context";
+import { Key, Building2, ExternalLink, Info } from "lucide-react";
+import { useContent } from "@/hooks/use-content";
 
 export default function SSOConfigPage() {
-  const ctx = useContext(LanguageContext);
-  const t = ((ctx?.content as any)?.sso || {}) as Record<string, string>;
+  const { content } = useContent();
+  const admin = content.admin;
+  const t = admin.ssoPage || {};
+  const saml = t.samlConfig || {};
+  const setup = t.setupProcess || {};
 
   const [copied, setCopied] = useState(false);
 
@@ -56,14 +54,16 @@ export default function SSOConfigPage() {
           <Building2 className="w-5 h-5 text-violet-600 shrink-0 mt-0.5" />
           <div>
             <h3 className="font-medium text-violet-900 dark:text-violet-100">
-              Enterprise Feature
+              {t.enterpriseFeature || "Enterprise Feature"}
             </h3>
             <p className="text-sm text-violet-700 dark:text-violet-300 mt-1">
-              SAML SSO is available on the Enterprise plan. Contact our sales
-              team to enable SSO for your organization.
+              {t.enterpriseDescription ||
+                "SAML SSO is available on the Enterprise plan. Contact our sales team to enable SSO for your organization."}
             </p>
             <Button size="sm" className="mt-3" asChild>
-              <a href="mailto:sales@zeroheadache.co">Contact Sales</a>
+              <a href="mailto:sales@zeroheadache.co">
+                {t.contactSales || "Contact Sales"}
+              </a>
             </Button>
           </div>
         </div>
@@ -73,25 +73,26 @@ export default function SSOConfigPage() {
       <Card className="p-6">
         <h2 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
           <Key className="w-5 h-5" />
-          SAML 2.0 Configuration
+          {saml.title || "SAML 2.0 Configuration"}
         </h2>
 
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-          Use these values to configure your Identity Provider (IdP):
+          {saml.description ||
+            "Use these values to configure your Identity Provider (IdP):"}
         </p>
 
         <div className="space-y-4">
           <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <div className="flex items-center justify-between mb-1">
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                ACS URL (Assertion Consumer Service)
+                {saml.acsUrl || "ACS URL (Assertion Consumer Service)"}
               </span>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => copyToClipboard(acsUrl)}
               >
-                {copied ? "Copied!" : "Copy"}
+                {copied ? saml.copied || "Copied!" : saml.copy || "Copy"}
               </Button>
             </div>
             <code className="text-xs text-gray-600 dark:text-gray-400 break-all">
@@ -102,14 +103,14 @@ export default function SSOConfigPage() {
           <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
             <div className="flex items-center justify-between mb-1">
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Entity ID / Audience URI
+                {saml.entityId || "Entity ID / Audience URI"}
               </span>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => copyToClipboard(entityId)}
               >
-                Copy
+                {saml.copy || "Copy"}
               </Button>
             </div>
             <code className="text-xs text-gray-600 dark:text-gray-400 break-all">
@@ -122,7 +123,7 @@ export default function SSOConfigPage() {
       {/* Supported Providers */}
       <Card className="p-6">
         <h2 className="font-semibold text-gray-900 dark:text-white mb-4">
-          Supported Identity Providers
+          {t.supportedProviders || "Supported Identity Providers"}
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {[
@@ -147,32 +148,43 @@ export default function SSOConfigPage() {
       <Card className="p-6">
         <h2 className="font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
           <Info className="w-5 h-5" />
-          Setup Process
+          {setup.title || "Setup Process"}
         </h2>
         <ol className="space-y-3 text-sm text-gray-600 dark:text-gray-400">
           <li className="flex items-start gap-2">
             <Badge variant="default" size="sm" className="mt-0.5">
               1
             </Badge>
-            <span>Contact our team to enable SSO for your organization</span>
+            <span>
+              {setup.step1 ||
+                "Contact our team to enable SSO for your organization"}
+            </span>
           </li>
           <li className="flex items-start gap-2">
             <Badge variant="default" size="sm" className="mt-0.5">
               2
             </Badge>
-            <span>Configure your IdP with the ACS URL and Entity ID above</span>
+            <span>
+              {setup.step2 ||
+                "Configure your IdP with the ACS URL and Entity ID above"}
+            </span>
           </li>
           <li className="flex items-start gap-2">
             <Badge variant="default" size="sm" className="mt-0.5">
               3
             </Badge>
-            <span>Provide your IdP metadata URL or XML to our team</span>
+            <span>
+              {setup.step3 ||
+                "Provide your IdP metadata URL or XML to our team"}
+            </span>
           </li>
           <li className="flex items-start gap-2">
             <Badge variant="default" size="sm" className="mt-0.5">
               4
             </Badge>
-            <span>SSO will be enabled for your configured domains</span>
+            <span>
+              {setup.step4 || "SSO will be enabled for your configured domains"}
+            </span>
           </li>
         </ol>
       </Card>
@@ -180,7 +192,7 @@ export default function SSOConfigPage() {
       {/* Documentation link */}
       <Card className="p-4 flex items-center justify-between">
         <span className="text-sm text-gray-600 dark:text-gray-400">
-          Need help setting up SSO?
+          {t.helpText || "Need help setting up SSO?"}
         </span>
         <Button variant="outline" size="sm" className="gap-2" asChild>
           <a
@@ -188,7 +200,7 @@ export default function SSOConfigPage() {
             target="_blank"
             rel="noopener"
           >
-            View Documentation
+            {t.viewDocs || "View Documentation"}
             <ExternalLink className="w-3 h-3" />
           </a>
         </Button>

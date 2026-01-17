@@ -45,6 +45,13 @@ export function CreateCampaignDialog({
   onSuccess,
 }: CreateCampaignDialogProps) {
   const { content } = useContent();
+  const leadGen = content.agentUI?.leadGen || {};
+  const dialog = leadGen.dialog || {};
+  const labels = dialog.labels || {};
+  const placeholders = dialog.placeholders || {};
+  const buttons = dialog.buttons || {};
+  const toasts = dialog.toasts || {};
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<CampaignFormData>({
@@ -75,15 +82,21 @@ export function CreateCampaignDialog({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to create campaign");
+        throw new Error(
+          errorData.error || toasts.failed || "Failed to create campaign",
+        );
       }
 
-      toast.success("Campaign created! Background processing started.");
+      toast.success(
+        toasts.created || "Campaign created! Background processing started.",
+      );
       form.reset();
       onSuccess();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to create campaign"
+        error instanceof Error
+          ? error.message
+          : toasts.failed || "Failed to create campaign",
       );
     } finally {
       setIsSubmitting(false);
@@ -95,10 +108,11 @@ export function CreateCampaignDialog({
       <DialogContent className="bg-gray-900 border-white/10 text-white max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-host">
-            {content.agentUI.leadGen.createCampaign}
+            {leadGen.createCampaign || "Create Campaign"}
           </DialogTitle>
           <DialogDescription className="text-gray-400">
-            Define your target audience to start generating leads
+            {dialog.description ||
+              "Define your target audience to start generating leads"}
           </DialogDescription>
         </DialogHeader>
 
@@ -110,12 +124,14 @@ export function CreateCampaignDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-gray-300">
-                    {content.agentUI.leadGen.campaignName}
+                    {leadGen.campaignName || "Campaign Name"}
                   </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="e.g., Q1 SaaS Outreach"
+                      placeholder={
+                        placeholders.campaignName || "e.g., Q1 SaaS Outreach"
+                      }
                       className="bg-black/20 border-white/10 focus:border-cyan-500/50"
                     />
                   </FormControl>
@@ -126,7 +142,7 @@ export function CreateCampaignDialog({
 
             <div className="space-y-3 p-4 rounded-lg bg-white/5 border border-white/10">
               <h4 className="text-sm font-medium text-gray-300">
-                {content.agentUI.leadGen.targetCriteria}
+                {leadGen.targetCriteria || "Target Criteria"}
               </h4>
 
               <FormField
@@ -135,12 +151,14 @@ export function CreateCampaignDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-gray-400 text-xs">
-                      Industry
+                      {labels.industry || "Industry"}
                     </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="e.g., SaaS, FinTech"
+                        placeholder={
+                          placeholders.industry || "e.g., SaaS, FinTech"
+                        }
                         className="bg-black/20 border-white/10 focus:border-cyan-500/50"
                       />
                     </FormControl>
@@ -154,12 +172,15 @@ export function CreateCampaignDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-gray-400 text-xs">
-                      Job Title
+                      {labels.jobTitle || "Job Title"}
                     </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="e.g., CEO, Head of Marketing"
+                        placeholder={
+                          placeholders.jobTitle ||
+                          "e.g., CEO, Head of Marketing"
+                        }
                         className="bg-black/20 border-white/10 focus:border-cyan-500/50"
                       />
                     </FormControl>
@@ -173,12 +194,14 @@ export function CreateCampaignDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-gray-400 text-xs">
-                      Location
+                      {labels.location || "Location"}
                     </FormLabel>
                     <FormControl>
                       <Input
                         {...field}
-                        placeholder="e.g., United States, Europe"
+                        placeholder={
+                          placeholders.location || "e.g., United States, Europe"
+                        }
                         className="bg-black/20 border-white/10 focus:border-cyan-500/50"
                       />
                     </FormControl>
@@ -194,7 +217,7 @@ export function CreateCampaignDialog({
                 onClick={() => onOpenChange(false)}
                 className="flex-1 border-white/10 text-gray-300 hover:bg-white/5"
               >
-                Cancel
+                {buttons.cancel || "Cancel"}
               </Button>
               <Button
                 type="submit"
@@ -202,8 +225,8 @@ export function CreateCampaignDialog({
                 className="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white"
               >
                 {isSubmitting
-                  ? "Creating..."
-                  : content.agentUI.leadGen.createCampaign}
+                  ? buttons.creating || "Creating..."
+                  : leadGen.createCampaign || "Create Campaign"}
               </Button>
             </div>
           </form>

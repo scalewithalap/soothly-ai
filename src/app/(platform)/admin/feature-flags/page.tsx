@@ -6,7 +6,7 @@
  * Manage feature flags with toggles, rollout percentages, and tier restrictions.
  */
 
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +21,7 @@ import {
   ToggleLeft,
   ToggleRight,
 } from "lucide-react";
-import { LanguageContext } from "@/context/language-context";
+import { useContent } from "@/hooks/use-content";
 import { toast } from "sonner";
 
 interface FeatureFlag {
@@ -38,11 +38,9 @@ interface FeatureFlag {
 const AVAILABLE_TIERS = ["free", "starter", "growth", "scale", "enterprise"];
 
 export default function FeatureFlagsPage() {
-  const ctx = useContext(LanguageContext);
-  const t = ((ctx?.content as any)?.featureFlags || {}) as Record<
-    string,
-    string
-  >;
+  const { content } = useContent();
+  const admin = content.admin;
+  const t = admin.featureFlagsPage || {};
 
   const [flags, setFlags] = useState<FeatureFlag[]>([]);
   const [loading, setLoading] = useState(true);
@@ -87,7 +85,7 @@ export default function FeatureFlagsPage() {
 
   const saveFlag = async () => {
     if (!name) {
-      toast.error("Flag name is required");
+      toast.error(t.toasts?.nameRequired || "Flag name is required");
       return;
     }
 
@@ -109,15 +107,21 @@ export default function FeatureFlagsPage() {
       });
 
       if (res.ok) {
-        toast.success(editingId ? "Flag updated" : "Flag created");
+        toast.success(
+          editingId
+            ? t.toasts?.updated || "Flag updated"
+            : t.toasts?.created || "Flag created",
+        );
         resetForm();
         fetchFlags();
       } else {
         const data = await res.json();
-        toast.error(data.error || "Failed to save flag");
+        toast.error(
+          data.error || t.toasts?.saveFailed || "Failed to save flag",
+        );
       }
     } catch {
-      toast.error("Failed to save flag");
+      toast.error(t.toasts?.saveFailed || "Failed to save flag");
     } finally {
       setSaving(false);
     }
@@ -137,15 +141,19 @@ export default function FeatureFlagsPage() {
             f.id === flag.id ? { ...f, enabled: !f.enabled } : f,
           ),
         );
-        toast.success(flag.enabled ? "Flag disabled" : "Flag enabled");
+        toast.success(
+          flag.enabled
+            ? t.toasts?.disabled || "Flag disabled"
+            : t.toasts?.enabled || "Flag enabled",
+        );
       }
     } catch {
-      toast.error("Failed to toggle flag");
+      toast.error(t.toasts?.toggleFailed || "Failed to toggle flag");
     }
   };
 
   const deleteFlag = async (id: string) => {
-    if (!confirm("Delete this feature flag?")) return;
+    if (!confirm(t.deleteConfirm || "Delete this feature flag?")) return;
 
     try {
       const res = await fetch(`/api/admin/feature-flags?id=${id}`, {
@@ -153,10 +161,10 @@ export default function FeatureFlagsPage() {
       });
       if (res.ok) {
         setFlags((prev) => prev.filter((f) => f.id !== id));
-        toast.success("Flag deleted");
+        toast.success(t.toasts?.deleted || "Flag deleted");
       }
     } catch {
-      toast.error("Failed to delete flag");
+      toast.error(t.toasts?.deleteFailed || "Failed to delete flag");
     }
   };
 
@@ -175,6 +183,11 @@ export default function FeatureFlagsPage() {
       prev.includes(tier) ? prev.filter((t) => t !== tier) : [...prev, tier],
     );
   };
+
+  const labels = t.labels || {};
+  const placeholders = t.placeholders || {};
+  const hints = t.hints || {};
+  const status = t.status || {};
 
   if (loading) {
     return (
@@ -207,7 +220,7 @@ export default function FeatureFlagsPage() {
             ) : (
               <Plus className="w-4 h-4" />
             )}
-            {showForm ? "Cancel" : "New Flag"}
+            {showForm ? t.cancelButton || "Cancel" : t.newButton || "New Flag"}
           </Button>
         </div>
       </div>
@@ -216,35 +229,43 @@ export default function FeatureFlagsPage() {
       {showForm && (
         <Card className="p-6">
           <h2 className="text-lg font-semibold mb-4">
-            {editingId ? "Edit Flag" : "Create Feature Flag"}
+            {editingId
+              ? t.editFormTitle || "Edit Flag"
+              : t.createFormTitle || "Create Feature Flag"}
           </h2>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <Label htmlFor="name">Flag Name</Label>
+              <Label htmlFor="name">{labels.name || "Flag Name"}</Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="new_feature_enabled"
+                placeholder={placeholders.name || "new_feature_enabled"}
                 className="mt-1 font-mono"
                 disabled={!!editingId}
               />
               <p className="text-xs text-gray-500 mt-1">
-                Lowercase with underscores
+                {hints.nameFormat || "Lowercase with underscores"}
               </p>
             </div>
             <div>
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">
+                {labels.description || "Description"}
+              </Label>
               <Input
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enable new feature for users"
+                placeholder={
+                  placeholders.description || "Enable new feature for users"
+                }
                 className="mt-1"
               />
             </div>
             <div>
-              <Label>Rollout Percentage: {rolloutPercentage}%</Label>
+              <Label>
+                {labels.rollout || "Rollout Percentage"}: {rolloutPercentage}%
+              </Label>
               <input
                 type="range"
                 min="0"
@@ -262,11 +283,11 @@ export default function FeatureFlagsPage() {
                   onChange={(e) => setEnabled(e.target.checked)}
                   className="w-4 h-4 rounded"
                 />
-                Enabled
+                {labels.enabled || "Enabled"}
               </Label>
             </div>
             <div className="md:col-span-2">
-              <Label>Allowed Tiers</Label>
+              <Label>{labels.allowedTiers || "Allowed Tiers"}</Label>
               <div className="flex flex-wrap gap-2 mt-2">
                 {AVAILABLE_TIERS.map((tier) => (
                   <button
@@ -284,16 +305,20 @@ export default function FeatureFlagsPage() {
                 ))}
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                Empty = available to all tiers
+                {hints.emptyTiers || "Empty = available to all tiers"}
               </p>
             </div>
           </div>
           <div className="flex gap-2 mt-4">
             <Button onClick={saveFlag} disabled={saving}>
-              {saving ? "Saving..." : editingId ? "Update Flag" : "Create Flag"}
+              {saving
+                ? t.savingButton || "Saving..."
+                : editingId
+                  ? t.updateButton || "Update Flag"
+                  : t.saveButton || "Create Flag"}
             </Button>
             <Button variant="outline" onClick={resetForm}>
-              Cancel
+              {t.cancelButton || "Cancel"}
             </Button>
           </div>
         </Card>
@@ -304,9 +329,11 @@ export default function FeatureFlagsPage() {
         {flags.length === 0 ? (
           <Card className="p-8 text-center">
             <Flag className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-            <p className="text-gray-500">No feature flags configured</p>
+            <p className="text-gray-500">
+              {t.emptyState || "No feature flags configured"}
+            </p>
             <Button onClick={() => setShowForm(true)} className="mt-4">
-              Create Your First Flag
+              {t.emptyStateAction || "Create Your First Flag"}
             </Button>
           </Card>
         ) : (
@@ -341,14 +368,17 @@ export default function FeatureFlagsPage() {
                       variant={flag.enabled ? "success" : "default"}
                       size="sm"
                     >
-                      {flag.enabled ? "Active" : "Inactive"}
+                      {flag.enabled
+                        ? status.active || "Active"
+                        : status.inactive || "Inactive"}
                     </Badge>
                     <Badge variant="info" size="sm">
-                      {flag.rollout_percentage}% rollout
+                      {flag.rollout_percentage}% {t.rolloutLabel || "rollout"}
                     </Badge>
                     {flag.allowed_tiers.length > 0 && (
                       <span className="text-xs text-gray-500">
-                        Tiers: {flag.allowed_tiers.join(", ")}
+                        {t.tiersLabel || "Tiers"}:{" "}
+                        {flag.allowed_tiers.join(", ")}
                       </span>
                     )}
                   </div>
@@ -359,7 +389,7 @@ export default function FeatureFlagsPage() {
                     variant="outline"
                     onClick={() => editFlag(flag)}
                   >
-                    Edit
+                    {t.editButton || "Edit"}
                   </Button>
                   <Button
                     size="sm"

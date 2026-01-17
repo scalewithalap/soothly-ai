@@ -6,7 +6,7 @@
  * MFA enrollment and management for premium users.
  */
 
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,7 +20,7 @@ import {
   Lock,
   AlertTriangle,
 } from "lucide-react";
-import { LanguageContext } from "@/context/language-context";
+import { useContent } from "@/lib/content";
 import { toast } from "sonner";
 
 interface MfaFactor {
@@ -31,8 +31,8 @@ interface MfaFactor {
 }
 
 export default function SecuritySettingsPage() {
-  const ctx = useContext(LanguageContext);
-  const t = ((ctx?.content as any)?.security || {}) as Record<string, string>;
+  const { dict } = useContent();
+  const t = dict.settings.security;
 
   const [loading, setLoading] = useState(true);
   const [factors, setFactors] = useState<MfaFactor[]>([]);
@@ -80,7 +80,7 @@ export default function SecuritySettingsPage() {
         if (data.error === "mfa/tier_required") {
           setTierError(data.message);
         } else {
-          toast.error(data.message || "Failed to start enrollment");
+          toast.error(data.message || t.mfa.toasts.enableError);
         }
         setEnrolling(false);
         return;
@@ -90,7 +90,7 @@ export default function SecuritySettingsPage() {
       setSecret(data.secret);
       setFactorId(data.factorId);
     } catch {
-      toast.error("Failed to start MFA enrollment");
+      toast.error(t.mfa.toasts.enableError);
       setEnrolling(false);
     }
   };
@@ -107,22 +107,23 @@ export default function SecuritySettingsPage() {
       });
 
       if (res.ok) {
-        toast.success("MFA successfully enabled!");
+        toast.success(t.mfa.toasts.enableSuccess);
         resetEnrollment();
         fetchMfaStatus();
       } else {
         const data = await res.json();
-        toast.error(data.message || "Invalid code");
+        toast.error(data.message || t.mfa.toasts.verifyError);
       }
     } catch {
-      toast.error("Verification failed");
+      toast.error(t.mfa.toasts.verifyError);
     } finally {
       setVerifying(false);
     }
   };
 
   const removeFactor = async (id: string) => {
-    if (!confirm("Remove this authentication method?")) return;
+    if (!confirm(t.mfa.removeConfirm || "Remove this authentication method?"))
+      return;
 
     try {
       const res = await fetch(`/api/auth/mfa/unenroll?factorId=${id}`, {
@@ -130,13 +131,13 @@ export default function SecuritySettingsPage() {
       });
 
       if (res.ok) {
-        toast.success("MFA disabled");
+        toast.success(t.mfa.toasts.removeSuccess);
         fetchMfaStatus();
       } else {
-        toast.error("Failed to remove MFA");
+        toast.error(t.mfa.toasts.removeError);
       }
     } catch {
-      toast.error("Failed to remove MFA");
+      toast.error(t.mfa.toasts.removeError);
     }
   };
 
@@ -162,11 +163,9 @@ export default function SecuritySettingsPage() {
       <div>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
           <Shield className="w-6 h-6" />
-          {t.title || "Security Settings"}
+          {t.title}
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          {t.description || "Manage your account security and authentication"}
-        </p>
+        <p className="text-gray-600 dark:text-gray-400">{t.mfa.description}</p>
       </div>
 
       {/* MFA Section */}
@@ -178,17 +177,15 @@ export default function SecuritySettingsPage() {
             </div>
             <div>
               <h2 className="font-semibold text-gray-900 dark:text-white">
-                Two-Factor Authentication
+                {t.mfa.title}
               </h2>
-              <p className="text-sm text-gray-500">
-                Add an extra layer of security using an authenticator app
-              </p>
+              <p className="text-sm text-gray-500">{t.mfa.setupDescription}</p>
             </div>
           </div>
           {hasMfa && (
             <Badge variant="success" size="sm">
               <CheckCircle className="w-3 h-3 mr-1" />
-              Enabled
+              {t.mfa.enabled}
             </Badge>
           )}
         </div>
@@ -201,7 +198,7 @@ export default function SecuritySettingsPage() {
               <span className="font-medium">{tierError}</span>
             </div>
             <Button size="sm" className="mt-2" asChild>
-              <a href="/billing">Upgrade Plan</a>
+              <a href="/billing">{dict.dashboard.creditBalance.upgradeCTA}</a>
             </Button>
           </div>
         )}
@@ -217,7 +214,9 @@ export default function SecuritySettingsPage() {
                 <div className="flex items-center gap-2">
                   <Smartphone className="w-4 h-4 text-gray-500" />
                   <span className="text-sm">
-                    {factor.friendly_name || "Authenticator App"}
+                    {factor.friendly_name ||
+                      t.mfa.authenticatorApp ||
+                      "Authenticator App"}
                   </span>
                   <Badge variant="success" size="sm">
                     {factor.status}
@@ -245,7 +244,7 @@ export default function SecuritySettingsPage() {
             </div>
             <div className="text-center">
               <p className="text-sm text-gray-500 mb-2">
-                Can&apos;t scan? Enter this code manually:
+                {t.mfa.manualEntry || "Can't scan? Enter this code manually:"}
               </p>
               <code className="text-xs bg-gray-100 dark:bg-gray-800 p-2 rounded break-all">
                 {secret}
@@ -257,7 +256,7 @@ export default function SecuritySettingsPage() {
                 onChange={(e) =>
                   setVerifyCode(e.target.value.replace(/\D/g, "").slice(0, 6))
                 }
-                placeholder="Enter 6-digit code"
+                placeholder={t.mfa.verifyCode}
                 maxLength={6}
                 className="text-center text-lg tracking-widest"
               />
@@ -268,7 +267,7 @@ export default function SecuritySettingsPage() {
                 {verifying ? (
                   <RefreshCw className="w-4 h-4 animate-spin" />
                 ) : (
-                  "Verify"
+                  t.mfa.verifyButton
                 )}
               </Button>
             </div>
@@ -277,7 +276,7 @@ export default function SecuritySettingsPage() {
               onClick={resetEnrollment}
               className="w-full"
             >
-              Cancel
+              {dict.settings.mcp.cancelButton || "Cancel"}
             </Button>
           </div>
         ) : !hasMfa ? (
@@ -291,7 +290,7 @@ export default function SecuritySettingsPage() {
             ) : (
               <Shield className="w-4 h-4" />
             )}
-            Enable Two-Factor Authentication
+            {t.mfa.enableButton || "Enable Two-Factor Authentication"}
           </Button>
         ) : null}
       </Card>
@@ -302,13 +301,26 @@ export default function SecuritySettingsPage() {
           <AlertTriangle className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
           <div>
             <h3 className="font-medium text-blue-900 dark:text-blue-100">
-              Security Recommendations
+              {t.recommendations?.title || "Security Recommendations"}
             </h3>
             <ul className="mt-2 text-sm text-blue-700 dark:text-blue-300 space-y-1">
-              <li>• Use a strong, unique password</li>
-              <li>• Enable two-factor authentication</li>
-              <li>• Keep your recovery codes in a safe place</li>
-              <li>• Review your active sessions regularly</li>
+              <li>
+                • {t.recommendations?.tip1 || "Use a strong, unique password"}
+              </li>
+              <li>
+                •{" "}
+                {t.recommendations?.tip2 || "Enable two-factor authentication"}
+              </li>
+              <li>
+                •{" "}
+                {t.recommendations?.tip3 ||
+                  "Keep your recovery codes in a safe place"}
+              </li>
+              <li>
+                •{" "}
+                {t.recommendations?.tip4 ||
+                  "Review your active sessions regularly"}
+              </li>
             </ul>
           </div>
         </div>

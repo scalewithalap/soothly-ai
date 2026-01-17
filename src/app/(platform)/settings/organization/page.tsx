@@ -26,14 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Building2, Globe, Clock, Trash2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-
-const organizationSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  default_language: z.string(),
-  timezone: z.string(),
-});
-
-type OrganizationFormData = z.infer<typeof organizationSchema>;
+import { useContent } from "@/lib/content";
 
 const LANGUAGES = [
   { value: "en", label: "English" },
@@ -58,6 +51,17 @@ const TIMEZONES = [
 ];
 
 export default function OrganizationSettingsPage() {
+  const { dict } = useContent();
+  const t = dict.settings.organization;
+
+  const organizationSchema = z.object({
+    name: z.string().min(2, t.validation.nameTooShort),
+    default_language: z.string(),
+    timezone: z.string(),
+  });
+
+  type OrganizationFormData = z.infer<typeof organizationSchema>;
+
   const [loading, setLoading] = useState(true);
   const [org, setOrg] = useState<{
     id: string;
@@ -126,13 +130,15 @@ export default function OrganizationSettingsPage() {
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || "Failed to update organization");
+        throw new Error(errorData.error || t.toasts.updateError);
       }
 
-      toast.success("Organization settings updated");
+      toast.success(t.toasts.updateSuccess);
       fetchOrganization();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to update");
+      toast.error(
+        error instanceof Error ? error.message : t.toasts.updateError,
+      );
     }
   };
 
@@ -154,10 +160,10 @@ export default function OrganizationSettingsPage() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Organization Details
+              {t.title}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Manage your organization&apos;s information
+              {t.description}
             </p>
           </div>
         </div>
@@ -169,9 +175,9 @@ export default function OrganizationSettingsPage() {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Organization Name</FormLabel>
+                  <FormLabel>{t.nameLabel}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="Acme Inc." />
+                    <Input {...field} placeholder={t.namePlaceholder} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -180,18 +186,18 @@ export default function OrganizationSettingsPage() {
 
             <div className="pt-2">
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                Current Plan
+                {dict.settings.billing?.currentPlan?.title || "Current Plan"}
               </p>
               <p className="text-lg font-semibold text-violet-600 dark:text-violet-400 capitalize">
                 {org?.subscription_tier
                   ? org.subscription_tier.charAt(0).toUpperCase() +
                     org.subscription_tier.slice(1)
-                  : "Free"}
+                  : dict.settings.billing?.availablePlans?.free || "Free"}
               </p>
             </div>
 
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? "Saving..." : "Save Changes"}
+              {form.formState.isSubmitting ? t.savingButton : t.saveButton}
             </Button>
           </form>
         </Form>
@@ -205,10 +211,11 @@ export default function OrganizationSettingsPage() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Localization
+              {t.localization?.title || "Localization"}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Set your default language and timezone
+              {t.localization?.description ||
+                "Set your default language and timezone"}
             </p>
           </div>
         </div>
@@ -220,11 +227,11 @@ export default function OrganizationSettingsPage() {
               name="default_language"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Default Language</FormLabel>
+                  <FormLabel>{t.languageLabel}</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select language" />
+                        <SelectValue placeholder={t.languagePlaceholder} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -236,7 +243,8 @@ export default function OrganizationSettingsPage() {
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    Default language for your organization
+                    {t.localization?.languageDesc ||
+                      "Default language for your organization"}
                   </FormDescription>
                 </FormItem>
               )}
@@ -249,12 +257,12 @@ export default function OrganizationSettingsPage() {
                 <FormItem>
                   <FormLabel className="flex items-center gap-2">
                     <Clock className="w-4 h-4" />
-                    Timezone
+                    {t.timezoneLabel}
                   </FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select timezone" />
+                        <SelectValue placeholder={t.timezonePlaceholder} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -266,7 +274,8 @@ export default function OrganizationSettingsPage() {
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    Used for scheduling and activity timestamps
+                    {t.localization?.timezoneDesc ||
+                      "Used for scheduling and activity timestamps"}
                   </FormDescription>
                 </FormItem>
               )}
@@ -283,22 +292,23 @@ export default function OrganizationSettingsPage() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-red-600 dark:text-red-400">
-              Danger Zone
+              {t.dangerZone?.title || dict.settings.profile.dangerZone.title}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Destructive actions for your organization
+              {t.dangerZone?.description ||
+                "Destructive actions for your organization"}
             </p>
           </div>
         </div>
 
         <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30">
           <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
-            Deleting your organization will remove all data including team
-            members, agents, and generated content. This action cannot be
-            undone.
+            {t.dangerZone?.deleteWarning ||
+              "Deleting your organization will remove all data including team members, agents, and generated content. This action cannot be undone."}
           </p>
           <Button variant="destructive" disabled>
-            Delete Organization (Contact Support)
+            {t.dangerZone?.deleteButton ||
+              "Delete Organization (Contact Support)"}
           </Button>
         </div>
       </Card>

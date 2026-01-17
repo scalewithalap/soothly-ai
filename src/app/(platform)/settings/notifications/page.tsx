@@ -187,10 +187,12 @@ export default function NotificationsSettingsPage() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Discord
+                {content.settings.notifications.channels?.discord?.title ||
+                  "Discord"}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Send notifications to a Discord channel
+                {content.settings.notifications.channels?.discord
+                  ?.description || "Send notifications to a Discord channel"}
               </p>
             </div>
           </div>
@@ -211,7 +213,10 @@ export default function NotificationsSettingsPage() {
         {expandedChannels.has("discord") && (
           <div className="mt-6 space-y-4 border-t pt-4">
             <div className="flex items-center justify-between">
-              <Label>Enable Discord Notifications</Label>
+              <Label>
+                {content.settings.notifications.channels?.discord
+                  ?.enableLabel || "Enable Discord Notifications"}
+              </Label>
               <Switch
                 checked={settings.discord_enabled}
                 onCheckedChange={(v) => updateSetting("discord_enabled", v)}
@@ -246,10 +251,12 @@ export default function NotificationsSettingsPage() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Slack
+                {content.settings.notifications.channels?.slack?.title ||
+                  "Slack"}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Send notifications to a Slack channel
+                {content.settings.notifications.channels?.slack?.description ||
+                  "Send notifications to a Slack channel"}
               </p>
             </div>
           </div>
@@ -270,14 +277,20 @@ export default function NotificationsSettingsPage() {
         {expandedChannels.has("slack") && (
           <div className="mt-6 space-y-4 border-t pt-4">
             <div className="flex items-center justify-between">
-              <Label>Enable Slack Notifications</Label>
+              <Label>
+                {content.settings.notifications.channels?.slack?.enableLabel ||
+                  "Enable Slack Notifications"}
+              </Label>
               <Switch
                 checked={settings.slack_enabled}
                 onCheckedChange={(v) => updateSetting("slack_enabled", v)}
               />
             </div>
             <div>
-              <Label htmlFor="slack-webhook">Webhook URL</Label>
+              <Label htmlFor="slack-webhook">
+                {content.settings.notifications.channels?.slack?.webhookLabel ||
+                  "Webhook URL"}
+              </Label>
               <Input
                 id="slack-webhook"
                 type="url"
@@ -305,10 +318,12 @@ export default function NotificationsSettingsPage() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Telegram
+                {content.settings.notifications.channels?.telegram?.title ||
+                  "Telegram"}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Send notifications via Telegram Bot
+                {content.settings.notifications.channels?.telegram
+                  ?.description || "Send notifications via Telegram Bot"}
               </p>
             </div>
           </div>
@@ -329,14 +344,20 @@ export default function NotificationsSettingsPage() {
         {expandedChannels.has("telegram") && (
           <div className="mt-6 space-y-4 border-t pt-4">
             <div className="flex items-center justify-between">
-              <Label>Enable Telegram Notifications</Label>
+              <Label>
+                {content.settings.notifications.channels?.telegram
+                  ?.enableLabel || "Enable Telegram Notifications"}
+              </Label>
               <Switch
                 checked={settings.telegram_enabled}
                 onCheckedChange={(v) => updateSetting("telegram_enabled", v)}
               />
             </div>
             <div>
-              <Label htmlFor="telegram-token">Bot Token</Label>
+              <Label htmlFor="telegram-token">
+                {content.settings.notifications.channels?.telegram
+                  ?.tokenLabel || "Bot Token"}
+              </Label>
               <Input
                 id="telegram-token"
                 type="password"
@@ -349,7 +370,10 @@ export default function NotificationsSettingsPage() {
               />
             </div>
             <div>
-              <Label htmlFor="telegram-chat">Chat ID</Label>
+              <Label htmlFor="telegram-chat">
+                {content.settings.notifications.channels?.telegram
+                  ?.chatIdLabel || "Chat ID"}
+              </Label>
               <Input
                 id="telegram-chat"
                 placeholder="-1001234567890"
@@ -376,10 +400,11 @@ export default function NotificationsSettingsPage() {
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Jira
+                {content.settings.notifications.channels?.jira?.title || "Jira"}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Create Jira issues for agent alerts
+                {content.settings.notifications.channels?.jira?.description ||
+                  "Create Jira issues for agent alerts"}
               </p>
             </div>
           </div>
@@ -400,7 +425,10 @@ export default function NotificationsSettingsPage() {
         {expandedChannels.has("jira") && (
           <div className="mt-6 space-y-4 border-t pt-4">
             <div className="flex items-center justify-between">
-              <Label>Enable Jira Integration</Label>
+              <Label>
+                {content.settings.notifications.channels?.jira?.enableLabel ||
+                  "Enable Jira Integration"}
+              </Label>
               <Switch
                 checked={settings.jira_enabled}
                 onCheckedChange={(v) => updateSetting("jira_enabled", v)}
@@ -408,7 +436,10 @@ export default function NotificationsSettingsPage() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="jira-url">Jira URL</Label>
+                <Label htmlFor="jira-url">
+                  {content.settings.notifications.channels?.jira?.urlLabel ||
+                    "Jira URL"}
+                </Label>
                 <Input
                   id="jira-url"
                   type="url"
@@ -421,7 +452,10 @@ export default function NotificationsSettingsPage() {
                 />
               </div>
               <div>
-                <Label htmlFor="jira-project">Project Key</Label>
+                <Label htmlFor="jira-project">
+                  {content.settings.notifications.channels?.jira
+                    ?.projectLabel || "Project Key"}
+                </Label>
                 <Input
                   id="jira-project"
                   placeholder="PROJ"
@@ -434,7 +468,10 @@ export default function NotificationsSettingsPage() {
               </div>
             </div>
             <div>
-              <Label htmlFor="jira-email">Email</Label>
+              <Label htmlFor="jira-email">
+                {content.settings.notifications.channels?.jira?.emailLabel ||
+                  "Email"}
+              </Label>
               <Input
                 id="jira-email"
                 type="email"
@@ -447,7 +484,10 @@ export default function NotificationsSettingsPage() {
               />
             </div>
             <div>
-              <Label htmlFor="jira-token">API Token</Label>
+              <Label htmlFor="jira-token">
+                {content.settings.notifications.channels?.jira?.apiTokenLabel ||
+                  "API Token"}
+              </Label>
               <Input
                 id="jira-token"
                 type="password"
@@ -471,10 +511,12 @@ export default function NotificationsSettingsPage() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Notification Types
+              {content.settings.notifications.types?.title ||
+                "Notification Types"}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Choose which events trigger notifications
+              {content.settings.notifications.types?.description ||
+                "Choose which events trigger notifications"}
             </p>
           </div>
         </div>

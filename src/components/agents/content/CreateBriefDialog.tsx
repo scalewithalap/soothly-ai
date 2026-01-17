@@ -87,6 +87,14 @@ export function CreateBriefDialog({
   onSuccess,
 }: CreateBriefDialogProps) {
   const { content } = useContent();
+  const contentUI = content.agentUI?.content || {};
+  const dialog = contentUI.dialog || {};
+  const labels = dialog.labels || {};
+  const contentTypes = dialog.contentTypes || {};
+  const placeholders = dialog.placeholders || {};
+  const buttons = dialog.buttons || {};
+  const toasts = dialog.toasts || {};
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<BriefFormData>({
@@ -111,20 +119,24 @@ export function CreateBriefDialog({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to create brief");
+        throw new Error(
+          errorData.error || toasts.failed || "Failed to create brief",
+        );
       }
 
       const modelLabel =
         AI_MODELS.find((m) => m.value === data.ai_model)?.label ||
         data.ai_model;
       toast.success(
-        `Brief created! ${modelLabel} is now generating your content.`
+        `${contentUI.createBrief || "Brief"} created! ${modelLabel} is now generating your content.`,
       );
       form.reset();
       onSuccess();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to create brief"
+        error instanceof Error
+          ? error.message
+          : toasts.failed || "Failed to create brief",
       );
     } finally {
       setIsSubmitting(false);
@@ -136,10 +148,11 @@ export function CreateBriefDialog({
       <DialogContent className="bg-gray-900 border-white/10 text-white max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-host">
-            {content.agentUI.content.createBrief}
+            {contentUI.createBrief || "Create Brief"}
           </DialogTitle>
           <DialogDescription className="text-gray-400">
-            Define your content requirements for AI generation
+            {dialog.description ||
+              "Define your content requirements for AI generation"}
           </DialogDescription>
         </DialogHeader>
 
@@ -150,11 +163,15 @@ export function CreateBriefDialog({
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-gray-300">Article Title</FormLabel>
+                  <FormLabel className="text-gray-300">
+                    {labels.articleTitle || "Article Title"}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="e.g., 10 Ways to Improve SEO"
+                      placeholder={
+                        placeholders.title || "e.g., 10 Ways to Improve SEO"
+                      }
                       className="bg-black/20 border-white/10 focus:border-purple-500/50"
                     />
                   </FormControl>
@@ -169,12 +186,14 @@ export function CreateBriefDialog({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-gray-300">
-                    {content.agentUI.content.topic}
+                    {contentUI.topic || "Topic / Keyword"}
                   </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="e.g., SEO best practices"
+                      placeholder={
+                        placeholders.keyword || "e.g., SEO best practices"
+                      }
                       className="bg-black/20 border-white/10 focus:border-purple-500/50"
                     />
                   </FormControl>
@@ -190,7 +209,7 @@ export function CreateBriefDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-gray-300">
-                      {content.agentUI.content.contentType}
+                      {contentUI.contentType || "Content Type"}
                     </FormLabel>
                     <Select
                       onValueChange={field.onChange}
@@ -202,12 +221,14 @@ export function CreateBriefDialog({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent className="bg-gray-900 border-white/10">
-                        <SelectItem value="blog_post">Blog Post</SelectItem>
+                        <SelectItem value="blog_post">
+                          {contentTypes.blogPost || "Blog Post"}
+                        </SelectItem>
                         <SelectItem value="landing_page">
-                          Landing Page
+                          {contentTypes.landingPage || "Landing Page"}
                         </SelectItem>
                         <SelectItem value="pillar_content">
-                          Pillar Content
+                          {contentTypes.pillarContent || "Pillar Content"}
                         </SelectItem>
                       </SelectContent>
                     </Select>
@@ -222,7 +243,7 @@ export function CreateBriefDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-gray-300">
-                      {content.agentUI.content.wordCount}
+                      {contentUI.wordCount || "Word Count"}
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -248,7 +269,7 @@ export function CreateBriefDialog({
                 <FormItem>
                   <FormLabel className="text-gray-300 flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-purple-400" />
-                    AI Model
+                    {labels.aiModel || "AI Model"}
                   </FormLabel>
                   <Select
                     onValueChange={field.onChange}
@@ -256,7 +277,11 @@ export function CreateBriefDialog({
                   >
                     <FormControl>
                       <SelectTrigger className="bg-black/20 border-white/10">
-                        <SelectValue placeholder="Select AI Model" />
+                        <SelectValue
+                          placeholder={
+                            placeholders.selectModel || "Select AI Model"
+                          }
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent className="bg-gray-900 border-white/10">
@@ -272,7 +297,7 @@ export function CreateBriefDialog({
                               {model.label}
                             </span>
                           </SelectItem>
-                        )
+                        ),
                       )}
 
                       {/* OpenAI Models */}
@@ -287,7 +312,7 @@ export function CreateBriefDialog({
                               {model.label}
                             </span>
                           </SelectItem>
-                        )
+                        ),
                       )}
 
                       {/* Anthropic Models */}
@@ -302,12 +327,13 @@ export function CreateBriefDialog({
                               {model.label}
                             </span>
                           </SelectItem>
-                        )
+                        ),
                       )}
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-gray-500 mt-1">
-                    Choose the AI model for article generation
+                    {dialog.modelHint ||
+                      "Choose the AI model for article generation"}
                   </p>
                   <FormMessage />
                 </FormItem>
@@ -321,7 +347,7 @@ export function CreateBriefDialog({
                 onClick={() => onOpenChange(false)}
                 className="flex-1 border-white/10 text-gray-300 hover:bg-white/5"
               >
-                Cancel
+                {buttons.cancel || "Cancel"}
               </Button>
               <Button
                 type="submit"
@@ -329,8 +355,8 @@ export function CreateBriefDialog({
                 className="flex-1 bg-purple-600 hover:bg-purple-500 text-white"
               >
                 {isSubmitting
-                  ? "Creating..."
-                  : content.agentUI.content.createBrief}
+                  ? buttons.creating || "Creating..."
+                  : contentUI.createBrief || "Create Brief"}
               </Button>
             </div>
           </form>

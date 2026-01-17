@@ -6,7 +6,7 @@
  * Manage MCP server connections - add, edit, test, and delete servers.
  */
 
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +23,7 @@ import {
   Wifi,
   WifiOff,
 } from "lucide-react";
-import { LanguageContext } from "@/context/language-context";
+import { useContent } from "@/lib/content";
 import { toast } from "sonner";
 
 interface MCPServer {
@@ -39,8 +39,8 @@ interface MCPServer {
 }
 
 export default function MCPSettingsPage() {
-  const ctx = useContext(LanguageContext);
-  const t = ((ctx?.content as any)?.mcp || {}) as Record<string, string>;
+  const { dict } = useContent();
+  const t = dict.settings.mcp;
 
   const [servers, setServers] = useState<MCPServer[]>([]);
   const [loading, setLoading] = useState(true);
@@ -86,7 +86,7 @@ export default function MCPSettingsPage() {
 
   const saveServer = async () => {
     if (!name || !url) {
-      toast.error("Name and URL are required");
+      toast.error(t.toasts.validationError);
       return;
     }
 
@@ -108,21 +108,21 @@ export default function MCPSettingsPage() {
       });
 
       if (res.ok) {
-        toast.success(editingId ? "Server updated" : "Server added");
+        toast.success(t.toasts.saveSuccess);
         resetForm();
         fetchServers();
       } else {
-        toast.error("Failed to save server");
+        toast.error(t.toasts.saveError);
       }
     } catch {
-      toast.error("Failed to save server");
+      toast.error(t.toasts.saveError);
     } finally {
       setSaving(false);
     }
   };
 
   const deleteServer = async (id: string) => {
-    if (!confirm("Delete this MCP server?")) return;
+    if (!confirm(t.deleteConfirm || "Delete this MCP server?")) return;
 
     try {
       const res = await fetch(`/api/settings/mcp?id=${id}`, {
@@ -130,10 +130,10 @@ export default function MCPSettingsPage() {
       });
       if (res.ok) {
         setServers((prev) => prev.filter((s) => s.id !== id));
-        toast.success("Server deleted");
+        toast.success(t.toasts.deleteSuccess);
       }
     } catch {
-      toast.error("Failed to delete server");
+      toast.error(t.toasts.deleteError);
     }
   };
 
@@ -155,16 +155,16 @@ export default function MCPSettingsPage() {
       const data = await res.json();
 
       if (res.ok && data.result?.status === "healthy") {
-        toast.success(`Connection healthy (${data.result.latency}ms)`);
+        toast.success(t.toasts.testSuccess);
         if (server) fetchServers();
       } else if (data.result?.status === "degraded") {
-        toast.warning("Connection degraded");
+        toast.warning(t.health?.degraded || "Connection degraded");
         if (server) fetchServers();
       } else {
-        toast.error(`Connection failed: ${data.result?.error || "Unknown"}`);
+        toast.error(t.toasts.testError);
       }
     } catch {
-      toast.error("Connection test failed");
+      toast.error(t.toasts.testError);
     } finally {
       setTestingServer(null);
     }
@@ -185,25 +185,26 @@ export default function MCPSettingsPage() {
       case "healthy":
         return (
           <Badge variant="success" className="gap-1">
-            <Wifi className="w-3 h-3" /> Healthy
+            <Wifi className="w-3 h-3" /> {t.health?.healthy || "Healthy"}
           </Badge>
         );
       case "degraded":
         return (
           <Badge variant="warning" className="gap-1">
-            <AlertTriangle className="w-3 h-3" /> Degraded
+            <AlertTriangle className="w-3 h-3" />{" "}
+            {t.health?.degraded || "Degraded"}
           </Badge>
         );
       case "unhealthy":
         return (
           <Badge variant="error" className="gap-1">
-            <WifiOff className="w-3 h-3" /> Unhealthy
+            <WifiOff className="w-3 h-3" /> {t.health?.unhealthy || "Unhealthy"}
           </Badge>
         );
       default:
         return (
           <Badge variant="default" className="gap-1">
-            Unknown
+            {t.health?.unknown || "Unknown"}
           </Badge>
         );
     }
@@ -224,12 +225,9 @@ export default function MCPSettingsPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <Server className="w-6 h-6" />
-            {t.title || "MCP Servers"}
+            {t.title}
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            {t.description ||
-              "Connect to external tool servers via MCP protocol"}
-          </p>
+          <p className="text-gray-600 dark:text-gray-400">{t.description}</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={fetchServers} className="gap-2">
@@ -241,7 +239,7 @@ export default function MCPSettingsPage() {
             ) : (
               <Plus className="w-4 h-4" />
             )}
-            {showForm ? "Cancel" : "Add Server"}
+            {showForm ? t.cancelButton : t.addButton}
           </Button>
         </div>
       </div>
@@ -250,31 +248,35 @@ export default function MCPSettingsPage() {
       {showForm && (
         <Card className="p-6">
           <h2 className="text-lg font-semibold mb-4">
-            {editingId ? "Edit Server" : "Add MCP Server"}
+            {editingId
+              ? t.editTitle || "Edit Server"
+              : t.addTitle || "Add MCP Server"}
           </h2>
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name">{t.nameLabel}</Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="My MCP Server"
+                placeholder={t.namePlaceholder}
                 className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="url">URL</Label>
+              <Label htmlFor="url">{t.urlLabel}</Label>
               <Input
                 id="url"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://mcp.example.com"
+                placeholder={t.urlPlaceholder}
                 className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="transport">Transport</Label>
+              <Label htmlFor="transport">
+                {t.transportLabel || "Transport"}
+              </Label>
               <select
                 id="transport"
                 value={transport}
@@ -283,13 +285,21 @@ export default function MCPSettingsPage() {
                 }
                 className="mt-1 w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
               >
-                <option value="sse">SSE (Server-Sent Events)</option>
-                <option value="websocket">WebSocket</option>
-                <option value="stdio">Stdio (Local)</option>
+                <option value="sse">
+                  {t.transportSSE || "SSE (Server-Sent Events)"}
+                </option>
+                <option value="websocket">
+                  {t.transportWebSocket || "WebSocket"}
+                </option>
+                <option value="stdio">
+                  {t.transportStdio || "Stdio (Local)"}
+                </option>
               </select>
             </div>
             <div>
-              <Label htmlFor="authType">Authentication</Label>
+              <Label htmlFor="authType">
+                {t.authLabel || "Authentication"}
+              </Label>
               <select
                 id="authType"
                 value={authType || "none"}
@@ -298,15 +308,17 @@ export default function MCPSettingsPage() {
                 }
                 className="mt-1 w-full px-3 py-2 border rounded-md bg-white dark:bg-gray-800"
               >
-                <option value="none">None</option>
-                <option value="api_key">API Key</option>
-                <option value="bearer">Bearer Token</option>
-                <option value="basic">Basic Auth</option>
+                <option value="none">{t.authNone || "None"}</option>
+                <option value="api_key">{t.authApiKey || "API Key"}</option>
+                <option value="bearer">{t.authBearer || "Bearer Token"}</option>
+                <option value="basic">{t.authBasic || "Basic Auth"}</option>
               </select>
             </div>
             {authType && authType !== "none" && (
               <div className="md:col-span-2">
-                <Label htmlFor="credentials">Credentials</Label>
+                <Label htmlFor="credentials">
+                  {t.credentialsLabel || "Credentials"}
+                </Label>
                 <Input
                   id="credentials"
                   type="password"
@@ -314,8 +326,9 @@ export default function MCPSettingsPage() {
                   onChange={(e) => setCredentials(e.target.value)}
                   placeholder={
                     editingId
-                      ? "Leave empty to keep existing"
-                      : "Enter credentials"
+                      ? t.credentialsPlaceholderEdit ||
+                        "Leave empty to keep existing"
+                      : t.credentialsPlaceholder || "Enter credentials"
                   }
                   className="mt-1"
                 />
@@ -324,7 +337,11 @@ export default function MCPSettingsPage() {
           </div>
           <div className="flex gap-2 mt-4">
             <Button onClick={saveServer} disabled={saving}>
-              {saving ? "Saving..." : editingId ? "Update" : "Add Server"}
+              {saving
+                ? dict.loadingStates.saving
+                : editingId
+                  ? t.updateButton || "Update"
+                  : t.addButton}
             </Button>
             <Button
               variant="outline"
@@ -336,7 +353,7 @@ export default function MCPSettingsPage() {
               ) : (
                 <Zap className="w-4 h-4 mr-2" />
               )}
-              Test Connection
+              {t.testButton}
             </Button>
           </div>
         </Card>
@@ -347,9 +364,9 @@ export default function MCPSettingsPage() {
         {servers.length === 0 ? (
           <Card className="p-8 text-center">
             <Server className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-            <p className="text-gray-500">No MCP servers configured yet</p>
+            <p className="text-gray-500">{t.emptyState}</p>
             <Button onClick={() => setShowForm(true)} className="mt-4">
-              Add Your First Server
+              {t.addFirstButton || "Add Your First Server"}
             </Button>
           </Card>
         ) : (
@@ -371,7 +388,7 @@ export default function MCPSettingsPage() {
                   </p>
                   {server.last_health_check && (
                     <p className="text-xs text-gray-400 mt-1">
-                      Last checked:{" "}
+                      {t.lastChecked || "Last checked"}:{" "}
                       {new Date(server.last_health_check).toLocaleString()}
                     </p>
                   )}
@@ -394,7 +411,7 @@ export default function MCPSettingsPage() {
                     variant="outline"
                     onClick={() => editServer(server)}
                   >
-                    Edit
+                    {t.editButton}
                   </Button>
                   <Button
                     size="sm"

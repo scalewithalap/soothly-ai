@@ -20,29 +20,31 @@ import {
 import { Avatar } from "@/components/ui/avatar";
 import { Shield, Trash2, Key } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-
-const profileSchema = z.object({
-  full_name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-});
-
-const passwordSchema = z
-  .object({
-    current_password: z
-      .string()
-      .min(8, "Password must be at least 8 characters"),
-    new_password: z.string().min(8, "Password must be at least 8 characters"),
-    confirm_password: z.string(),
-  })
-  .refine((data) => data.new_password === data.confirm_password, {
-    message: "Passwords don't match",
-    path: ["confirm_password"],
-  });
-
-type ProfileFormData = z.infer<typeof profileSchema>;
-type PasswordFormData = z.infer<typeof passwordSchema>;
+import { useContent } from "@/lib/content";
 
 export default function ProfileSettingsPage() {
+  const { dict } = useContent();
+  const t = dict.settings.profile;
+
+  const profileSchema = z.object({
+    full_name: z.string().min(2, t.validation.nameTooShort),
+    email: z.string().email(t.validation.invalidEmail),
+  });
+
+  const passwordSchema = z
+    .object({
+      current_password: z.string().min(8, t.validation.passwordTooShort),
+      new_password: z.string().min(8, t.validation.passwordTooShort),
+      confirm_password: z.string(),
+    })
+    .refine((data) => data.new_password === data.confirm_password, {
+      message: t.validation.passwordMismatch,
+      path: ["confirm_password"],
+    });
+
+  type ProfileFormData = z.infer<typeof profileSchema>;
+  type PasswordFormData = z.infer<typeof passwordSchema>;
+
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<{
     id: string;
@@ -111,14 +113,14 @@ export default function ProfileSettingsPage() {
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || "Failed to update profile");
+        throw new Error(errorData.error || t.toasts.updateError);
       }
 
-      toast.success("Profile updated successfully");
+      toast.success(t.toasts.updateSuccess);
       fetchProfile();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to update profile"
+        error instanceof Error ? error.message : t.toasts.updateError,
       );
     }
   };
@@ -136,14 +138,14 @@ export default function ProfileSettingsPage() {
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || "Failed to change password");
+        throw new Error(errorData.error || t.password.toasts.error);
       }
 
-      toast.success("Password changed successfully");
+      toast.success(t.password.toasts.success);
       passwordForm.reset();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to change password"
+        error instanceof Error ? error.message : t.password.toasts.error,
       );
     }
   };
@@ -176,10 +178,10 @@ export default function ProfileSettingsPage() {
           />
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Profile Information
+              {t.title}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Update your personal details
+              {t.description}
             </p>
           </div>
         </div>
@@ -194,9 +196,9 @@ export default function ProfileSettingsPage() {
               name="full_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Full Name</FormLabel>
+                  <FormLabel>{t.fullNameLabel}</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="John Doe" />
+                    <Input {...field} placeholder={t.fullNamePlaceholder} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -208,13 +210,11 @@ export default function ProfileSettingsPage() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email Address</FormLabel>
+                  <FormLabel>{t.emailLabel}</FormLabel>
                   <FormControl>
                     <Input {...field} type="email" disabled />
                   </FormControl>
-                  <FormDescription>
-                    Email cannot be changed. Contact support if needed.
-                  </FormDescription>
+                  <FormDescription>{t.emailDescription}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -222,8 +222,8 @@ export default function ProfileSettingsPage() {
 
             <Button type="submit" disabled={profileForm.formState.isSubmitting}>
               {profileForm.formState.isSubmitting
-                ? "Saving..."
-                : "Save Changes"}
+                ? t.savingButton
+                : t.saveButton}
             </Button>
           </form>
         </Form>
@@ -237,10 +237,10 @@ export default function ProfileSettingsPage() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Change Password
+              {t.password.title}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Update your account password
+              {t.password.description}
             </p>
           </div>
         </div>
@@ -255,9 +255,13 @@ export default function ProfileSettingsPage() {
               name="current_password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Current Password</FormLabel>
+                  <FormLabel>{t.password.currentLabel}</FormLabel>
                   <FormControl>
-                    <Input {...field} type="password" placeholder="••••••••" />
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder={t.password.placeholder}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -269,9 +273,13 @@ export default function ProfileSettingsPage() {
               name="new_password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>New Password</FormLabel>
+                  <FormLabel>{t.password.newLabel}</FormLabel>
                   <FormControl>
-                    <Input {...field} type="password" placeholder="••••••••" />
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder={t.password.placeholder}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -283,9 +291,13 @@ export default function ProfileSettingsPage() {
               name="confirm_password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Confirm New Password</FormLabel>
+                  <FormLabel>{t.password.confirmLabel}</FormLabel>
                   <FormControl>
-                    <Input {...field} type="password" placeholder="••••••••" />
+                    <Input
+                      {...field}
+                      type="password"
+                      placeholder={t.password.placeholder}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -297,8 +309,8 @@ export default function ProfileSettingsPage() {
               disabled={passwordForm.formState.isSubmitting}
             >
               {passwordForm.formState.isSubmitting
-                ? "Updating..."
-                : "Update Password"}
+                ? t.password.updatingButton
+                : t.password.updateButton}
             </Button>
           </form>
         </Form>
@@ -312,20 +324,20 @@ export default function ProfileSettingsPage() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              Two-Factor Authentication
+              {t.twoFactor.title}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Add an extra layer of security to your account
+              {t.twoFactor.description}
             </p>
           </div>
         </div>
 
         <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Two-factor authentication is not yet enabled for your account.
+            {t.twoFactor.notEnabled}
           </p>
           <Button variant="outline" className="mt-3" disabled>
-            Enable 2FA (Coming Soon)
+            {t.twoFactor.enableButton}
           </Button>
         </div>
       </Card>
@@ -338,21 +350,20 @@ export default function ProfileSettingsPage() {
           </div>
           <div>
             <h2 className="text-lg font-semibold text-red-600 dark:text-red-400">
-              Danger Zone
+              {t.dangerZone.title}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Irreversible and destructive actions
+              {t.dangerZone.description}
             </p>
           </div>
         </div>
 
         <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-900/30">
           <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
-            Once you delete your account, there is no going back. Please be
-            certain.
+            {t.dangerZone.deleteWarning}
           </p>
           <Button variant="destructive" disabled>
-            Delete Account (Contact Support)
+            {t.dangerZone.deleteButton}
           </Button>
         </div>
       </Card>

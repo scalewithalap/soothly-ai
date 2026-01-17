@@ -18,6 +18,7 @@ import {
   RefreshCw,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { useContent } from "@/hooks/use-content";
 
 interface Asset {
   id: string;
@@ -32,14 +33,6 @@ interface Asset {
   created_at: string;
 }
 
-const ASSET_TYPE_LABELS: Record<string, { label: string; color: string }> = {
-  upload: { label: "Upload", color: "bg-blue-100 text-blue-800" },
-  report: { label: "Report", color: "bg-green-100 text-green-800" },
-  export: { label: "Export", color: "bg-purple-100 text-purple-800" },
-  generated: { label: "Generated", color: "bg-orange-100 text-orange-800" },
-  scraped: { label: "Scraped", color: "bg-pink-100 text-pink-800" },
-};
-
 const MIME_TYPE_ICONS: Record<string, typeof FileText> = {
   "application/pdf": FileText,
   "image/jpeg": Image,
@@ -51,12 +44,45 @@ const MIME_TYPE_ICONS: Record<string, typeof FileText> = {
 };
 
 export default function LibraryPage() {
+  const { content } = useContent();
+  const t = content.platform?.library || {};
+  const filters = t.filters || {};
+  const assetTypes = t.assetTypes || {};
+  const emptyState = t.emptyState || {};
+  const pagination = t.pagination || {};
+
+  const ASSET_TYPE_LABELS: Record<string, { label: string; color: string }> = {
+    upload: {
+      label: assetTypes.upload || "Upload",
+      color: "bg-blue-100 text-blue-800",
+    },
+    report: {
+      label: assetTypes.report || "Report",
+      color: "bg-green-100 text-green-800",
+    },
+    export: {
+      label: assetTypes.export || "Export",
+      color: "bg-purple-100 text-purple-800",
+    },
+    generated: {
+      label: assetTypes.generated || "Generated",
+      color: "bg-orange-100 text-orange-800",
+    },
+    scraped: {
+      label: assetTypes.scraped || "Scraped",
+      color: "bg-pink-100 text-pink-800",
+    },
+  };
+
   const [assets, setAssets] = useState<Asset[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [search, setSearch] = useState("");
   const [assetTypeFilter, setAssetTypeFilter] = useState<string>("");
-  const [pagination, setPagination] = useState({ total: 0, hasMore: false });
+  const [paginationState, setPaginationState] = useState({
+    total: 0,
+    hasMore: false,
+  });
 
   const fetchAssets = useCallback(async () => {
     setLoading(true);
@@ -69,7 +95,7 @@ export default function LibraryPage() {
       if (res.ok) {
         const data = await res.json();
         setAssets(data.assets || []);
-        setPagination(data.pagination || { total: 0, hasMore: false });
+        setPaginationState(data.pagination || { total: 0, hasMore: false });
       }
     } catch (error) {
       console.error("Failed to fetch assets:", error);
@@ -83,7 +109,10 @@ export default function LibraryPage() {
   }, [fetchAssets]);
 
   const handleDelete = async (assetId: string) => {
-    if (!confirm("Are you sure you want to delete this asset?")) return;
+    if (
+      !confirm(t.deleteConfirm || "Are you sure you want to delete this asset?")
+    )
+      return;
 
     try {
       const res = await fetch("/api/library", {
@@ -129,11 +158,11 @@ export default function LibraryPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Asset Library
+            {t.title || "Asset Library"}
           </h1>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            All your uploaded files, generated reports, and scraped data in one
-            place.
+            {t.description ||
+              "All your uploaded files, generated reports, and scraped data in one place."}
           </p>
         </div>
         <Button
@@ -143,7 +172,7 @@ export default function LibraryPage() {
           className="gap-2"
         >
           <RefreshCw className="w-4 h-4" />
-          Refresh
+          {t.refresh || "Refresh"}
         </Button>
       </div>
 
@@ -152,7 +181,7 @@ export default function LibraryPage() {
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
-            placeholder="Search assets..."
+            placeholder={t.searchPlaceholder || "Search assets..."}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10"
@@ -164,12 +193,12 @@ export default function LibraryPage() {
           onChange={(e) => setAssetTypeFilter(e.target.value)}
           className="px-3 py-2 border rounded-lg text-sm bg-white dark:bg-gray-800"
         >
-          <option value="">All Types</option>
-          <option value="upload">Uploads</option>
-          <option value="report">Reports</option>
-          <option value="export">Exports</option>
-          <option value="generated">Generated</option>
-          <option value="scraped">Scraped</option>
+          <option value="">{filters.allTypes || "All Types"}</option>
+          <option value="upload">{filters.uploads || "Uploads"}</option>
+          <option value="report">{filters.reports || "Reports"}</option>
+          <option value="export">{filters.exports || "Exports"}</option>
+          <option value="generated">{filters.generated || "Generated"}</option>
+          <option value="scraped">{filters.scraped || "Scraped"}</option>
         </select>
 
         <div className="flex items-center gap-1 border rounded-lg p-1">
@@ -197,10 +226,11 @@ export default function LibraryPage() {
         <Card className="p-12 text-center">
           <File className="w-12 h-12 mx-auto text-gray-300 mb-4" />
           <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-            No assets yet
+            {emptyState.title || "No assets yet"}
           </h3>
           <p className="text-sm text-gray-500">
-            Upload files or run agents to populate your library.
+            {emptyState.description ||
+              "Upload files or run agents to populate your library."}
           </p>
         </Card>
       ) : viewMode === "grid" ? (
@@ -228,8 +258,9 @@ export default function LibraryPage() {
               </p>
               {asset.source_agent && (
                 <p className="text-xs text-gray-400 mb-3">
-                  From: <span className="capitalize">{asset.source_agent}</span>{" "}
-                  agent
+                  {t.sourceAgent || "From"}:{" "}
+                  <span className="capitalize">{asset.source_agent}</span>{" "}
+                  {t.agentSuffix || "agent"}
                 </p>
               )}
               <div className="flex items-center gap-2">
@@ -240,7 +271,7 @@ export default function LibraryPage() {
                   onClick={() => handleDownload(asset)}
                 >
                   <Download className="w-3 h-3" />
-                  Download
+                  {t.download || "Download"}
                 </Button>
                 <Button
                   size="sm"
@@ -271,7 +302,7 @@ export default function LibraryPage() {
                     {formatFileSize(asset.size_bytes)} •{" "}
                     {new Date(asset.created_at).toLocaleDateString()}
                     {asset.source_agent &&
-                      ` • From ${asset.source_agent} agent`}
+                      ` • ${t.sourceAgent || "From"} ${asset.source_agent} ${t.agentSuffix || "agent"}`}
                   </p>
                 </div>
               </div>
@@ -306,7 +337,9 @@ export default function LibraryPage() {
       {/* Pagination info */}
       {!loading && assets.length > 0 && (
         <p className="text-sm text-gray-500 text-center">
-          Showing {assets.length} of {pagination.total} assets
+          {pagination.showing || "Showing"} {assets.length}{" "}
+          {pagination.of || "of"} {paginationState.total}{" "}
+          {pagination.assets || "assets"}
         </p>
       )}
     </div>

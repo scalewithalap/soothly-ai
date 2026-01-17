@@ -304,6 +304,130 @@
     "saving": "Enregistrement..."
   },
   "settings": {
+    "profile": {
+      "title": "Informations du Profil",
+      "description": "Mettez à jour vos données personnelles",
+      "fullNameLabel": "Nom Complet",
+      "fullNamePlaceholder": "Jean Dupont",
+      "emailLabel": "Adresse E-mail",
+      "emailDescription": "L'e-mail ne peut pas être modifié. Contactez le support si nécessaire.",
+      "saveButton": "Enregistrer",
+      "savingButton": "Enregistrement...",
+      "toasts": {
+        "updateSuccess": "Profil mis à jour avec succès",
+        "updateError": "Échec de la mise à jour du profil"
+      },
+      "password": {
+        "title": "Changer le Mot de Passe",
+        "description": "Mettez à jour le mot de passe de votre compte",
+        "currentLabel": "Mot de Passe Actuel",
+        "newLabel": "Nouveau Mot de Passe",
+        "confirmLabel": "Confirmer le Nouveau Mot de Passe",
+        "placeholder": "••••••••",
+        "updateButton": "Mettre à Jour",
+        "updatingButton": "Mise à jour...",
+        "toasts": {
+          "success": "Mot de passe changé avec succès",
+          "error": "Échec du changement de mot de passe"
+        }
+      },
+      "twoFactor": {
+        "title": "Authentification à Deux Facteurs",
+        "description": "Ajoutez une couche de sécurité supplémentaire à votre compte",
+        "notEnabled": "L'authentification à deux facteurs n'est pas encore activée pour votre compte.",
+        "enableButton": "Activer 2FA (Bientôt Disponible)"
+      },
+      "dangerZone": {
+        "title": "Zone Dangereuse",
+        "description": "Actions irréversibles et destructrices",
+        "deleteWarning": "Une fois votre compte supprimé, il n'y a pas de retour en arrière. Soyez certain.",
+        "deleteButton": "Supprimer le Compte (Contacter le Support)"
+      },
+      "validation": {
+        "nameTooShort": "Le nom doit contenir au moins 2 caractères",
+        "invalidEmail": "Adresse e-mail invalide",
+        "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères",
+        "passwordMismatch": "Les mots de passe ne correspondent pas"
+      }
+    },
+    "security": {
+      "title": "Paramètres de Sécurité",
+      "mfa": {
+        "title": "Authentification Multi-Facteurs",
+        "description": "Sécurisez votre compte avec une étape de vérification supplémentaire",
+        "enabled": "MFA activée",
+        "disabled": "MFA désactivée",
+        "setupTitle": "Configurer MFA",
+        "setupDescription": "Scannez ce code QR avec votre application d'authentification",
+        "verifyCode": "Entrez le code à 6 chiffres",
+        "verifyButton": "Vérifier et Activer",
+        "verifyingButton": "Vérification...",
+        "removeButton": "Supprimer MFA",
+        "removingButton": "Suppression...",
+        "enableButton": "Activer l'Authentification à Deux Facteurs",
+        "authenticatorApp": "Application d'Authentification",
+        "manualEntry": "Impossible de scanner ? Entrez ce code manuellement :",
+        "removeConfirm": "Supprimer cette méthode d'authentification ?",
+        "toasts": {
+          "enableSuccess": "MFA activée avec succès !",
+          "enableError": "Échec du démarrage de l'inscription MFA",
+          "verifyError": "Échec de la vérification",
+          "removeSuccess": "MFA désactivée",
+          "removeError": "Échec de la suppression de MFA"
+        }
+      },
+      "recommendations": {
+        "title": "Recommandations de Sécurité",
+        "tip1": "Utilisez un mot de passe fort et unique",
+        "tip2": "Activez l'authentification à deux facteurs",
+        "tip3": "Gardez vos codes de récupération en lieu sûr",
+        "tip4": "Vérifiez régulièrement vos sessions actives"
+      }
+    },
+    "organization": {
+      "title": "Paramètres de l'Organisation",
+      "description": "Gérez les détails de votre organisation",
+      "nameLabel": "Nom de l'Organisation",
+      "namePlaceholder": "Acme Inc.",
+      "languageLabel": "Langue par Défaut",
+      "languagePlaceholder": "Sélectionner la langue",
+      "timezoneLabel": "Fuseau Horaire",
+      "timezonePlaceholder": "Sélectionner le fuseau horaire",
+      "saveButton": "Enregistrer",
+      "savingButton": "Enregistrement...",
+      "toasts": {
+        "updateSuccess": "Paramètres de l'organisation mis à jour",
+        "updateError": "Échec de la mise à jour de l'organisation"
+      },
+      "validation": {
+        "nameTooShort": "Le nom doit contenir au moins 2 caractères"
+      }
+    },
+    "mcp": {
+      "title": "Serveurs MCP",
+      "description": "Gérez les connexions aux serveurs Model Context Protocol",
+      "addButton": "Ajouter un Serveur",
+      "editButton": "Modifier",
+      "deleteButton": "Supprimer",
+      "testButton": "Tester la Connexion",
+      "nameLabel": "Nom du Serveur",
+      "namePlaceholder": "Mon Serveur MCP",
+      "urlLabel": "URL du Serveur",
+      "urlPlaceholder": "https://mcp.example.com",
+      "saveButton": "Enregistrer",
+      "cancelButton": "Annuler",
+      "emptyState": "Aucun serveur MCP configuré",
+      "emptyStateDesc": "Ajoutez un serveur pour étendre les capacités des agents",
+      "toasts": {
+        "saveSuccess": "Serveur enregistré",
+        "saveError": "Échec de l'enregistrement du serveur",
+        "deleteSuccess": "Serveur supprimé",
+        "deleteError": "Échec de la suppression du serveur",
+        "testSuccess": "Connexion réussie",
+        "testError": "Échec du test de connexion",
+        "validationError": "Le nom et l'URL sont requis"
+      }
+    },
     "team": {
       "title": "Membres de l'Équipe",
       "description": "Gérez qui a accès à votre organisation",
@@ -496,7 +620,29 @@
       "leadsFound": "Leads Trouvés",
       "enrichmentStatus": "Enrichissement",
       "score": "Score de Lead",
-      "outreachStatus": "Prospection"
+      "outreachStatus": "Prospection",
+      "dialog": {
+        "description": "Définissez votre audience cible pour commencer à générer des leads",
+        "labels": {
+          "industry": "Industrie",
+          "jobTitle": "Titre du Poste",
+          "location": "Localisation"
+        },
+        "placeholders": {
+          "campaignName": "ex. Prospection SaaS T1",
+          "industry": "ex. SaaS, FinTech",
+          "jobTitle": "ex. PDG, Directeur Marketing",
+          "location": "ex. France, Europe"
+        },
+        "buttons": {
+          "cancel": "Annuler",
+          "creating": "Création..."
+        },
+        "toasts": {
+          "created": "Campagne créée ! Traitement en cours.",
+          "failed": "Échec de la création de la campagne"
+        }
+      }
     },
     "content": {
       "title": "Contenu SEO",
@@ -506,7 +652,33 @@
       "wordCount": "Nombre de Mots",
       "generate": "Générer l'Article",
       "seoScore": "Score SEO",
-      "publish": "Publier"
+      "publish": "Publier",
+      "dialog": {
+        "description": "Définissez vos besoins de contenu pour la génération IA",
+        "labels": {
+          "articleTitle": "Titre de l'Article",
+          "aiModel": "Modèle IA"
+        },
+        "contentTypes": {
+          "blogPost": "Article de Blog",
+          "landingPage": "Page d'Atterrissage",
+          "pillarContent": "Contenu Pilier"
+        },
+        "placeholders": {
+          "title": "ex. 10 Façons d'Améliorer le SEO",
+          "keyword": "ex. Meilleures pratiques SEO",
+          "selectModel": "Sélectionner un Modèle IA"
+        },
+        "modelHint": "Choisissez le modèle IA pour la génération d'articles",
+        "buttons": {
+          "cancel": "Annuler",
+          "creating": "Création..."
+        },
+        "toasts": {
+          "created": "Brief créé ! {model} génère maintenant votre contenu.",
+          "failed": "Échec de la création du brief"
+        }
+      }
     },
     "partners": {
       "title": "Partenariats",
@@ -515,6 +687,105 @@
       "partnerType": "Type de Partenaire",
       "fitScore": "Score de Pertinence",
       "outreach": "Envoyer une Demande"
+    },
+    "common": {
+      "cancel": "Annuler",
+      "creating": "Création...",
+      "validationMinChars": "doit contenir au moins {count} caractères"
+    }
+  },
+  "platform": {
+    "onboarding": {
+      "steps": {
+        "profile": "Profil",
+        "organization": "Organisation",
+        "firstAgent": "Premier Agent",
+        "complete": "Terminé"
+      },
+      "step1": {
+        "title": "Parlez-nous de vous",
+        "description": "Personnalisons votre expérience",
+        "labels": {
+          "fullName": "Nom Complet",
+          "jobTitle": "Titre du Poste"
+        },
+        "placeholders": {
+          "fullName": "Jean Dupont",
+          "jobTitle": "Fondateur, PDG, Responsable Marketing..."
+        }
+      },
+      "step2": {
+        "title": "Votre Organisation",
+        "description": "Aidez-nous à comprendre votre entreprise",
+        "labels": {
+          "orgName": "Nom de l'Organisation",
+          "industry": "Industrie"
+        },
+        "placeholders": {
+          "orgName": "Acme Inc.",
+          "industry": "E-commerce, SaaS, Agence..."
+        }
+      },
+      "step3": {
+        "title": "Créez Votre Premier Agent",
+        "description": "Que voulez-vous automatiser ?",
+        "labels": {
+          "agentName": "Nom de l'Agent",
+          "agentGoal": "Que doit-il faire ?"
+        },
+        "placeholders": {
+          "agentName": "Générateur de Leads, Rédacteur...",
+          "agentGoal": "Trouver des leads, écrire des articles..."
+        },
+        "defaultAgentName": "Mon Premier Agent"
+      },
+      "step4": {
+        "title": "Vous êtes prêt !",
+        "description": "Votre espace de travail est prêt. Commençons à automatiser votre entreprise avec des agents IA."
+      },
+      "buttons": {
+        "back": "Retour",
+        "continue": "Continuer",
+        "getStarted": "Commencer"
+      },
+      "toasts": {
+        "welcome": "Bienvenue sur Zero Headache ! 🎉",
+        "saveFailed": "Échec de l'enregistrement"
+      }
+    },
+    "library": {
+      "title": "Bibliothèque d'Actifs",
+      "description": "Tous vos fichiers téléchargés, rapports générés et données extraites en un seul endroit.",
+      "refresh": "Actualiser",
+      "searchPlaceholder": "Rechercher des actifs...",
+      "filters": {
+        "allTypes": "Tous les Types",
+        "uploads": "Téléchargements",
+        "reports": "Rapports",
+        "exports": "Exports",
+        "generated": "Générés",
+        "scraped": "Extraits"
+      },
+      "assetTypes": {
+        "upload": "Téléchargement",
+        "report": "Rapport",
+        "export": "Export",
+        "generated": "Généré",
+        "scraped": "Extrait"
+      },
+      "emptyState": {
+        "title": "Aucun actif pour l'instant",
+        "description": "Téléchargez des fichiers ou lancez des agents pour remplir votre bibliothèque."
+      },
+      "sourceAgent": "De",
+      "agentSuffix": "agent",
+      "download": "Télécharger",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet actif ?",
+      "pagination": {
+        "showing": "Affichage de",
+        "of": "sur",
+        "assets": "actifs"
+      }
     }
   },
   "content": {

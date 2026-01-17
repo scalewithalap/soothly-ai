@@ -1,15 +1,10 @@
 "use client";
 
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  ScrollText,
-  RefreshCw,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
-import { LanguageContext } from "@/context/language-context";
+import { ScrollText, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
+import { useContent } from "@/hooks/use-content";
 
 interface AuditEntry {
   id: string;
@@ -21,8 +16,11 @@ interface AuditEntry {
 }
 
 export default function AdminAuditLogPage() {
-  const ctx = useContext(LanguageContext);
-  const t = (ctx?.content?.admin || {}) as Record<string, string>;
+  const { content } = useContent();
+  const admin = content.admin;
+  const t = admin.auditLogPage || {};
+  const headers = t.tableHeaders || {};
+  const pagination = t.pagination || {};
 
   const [entries, setEntries] = useState<AuditEntry[]>([]);
   const [total, setTotal] = useState(0);
@@ -94,15 +92,15 @@ export default function AdminAuditLogPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <ScrollText className="w-6 h-6" />
-            {t.auditLog || "Audit Log"}
+            {t.title || admin.auditLog || "Audit Log"}
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            {total} total entries
+            {total} {t.totalEntries || "total entries"}
           </p>
         </div>
         <Button variant="outline" onClick={fetchAuditLog} className="gap-2">
           <RefreshCw className="w-4 h-4" />
-          Refresh
+          {t.refresh || admin.refresh || "Refresh"}
         </Button>
       </div>
 
@@ -119,16 +117,16 @@ export default function AdminAuditLogPage() {
                 <thead className="bg-gray-50 dark:bg-gray-800/50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Time
+                      {headers.time || "Time"}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Action
+                      {headers.action || "Action"}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Entity
+                      {headers.entity || "Entity"}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Entity ID
+                      {headers.entityId || "Entity ID"}
                     </th>
                   </tr>
                 </thead>
@@ -158,7 +156,7 @@ export default function AdminAuditLogPage() {
                         colSpan={4}
                         className="px-6 py-12 text-center text-gray-500"
                       >
-                        No audit entries found
+                        {t.emptyState || "No audit entries found"}
                       </td>
                     </tr>
                   )}
@@ -170,7 +168,8 @@ export default function AdminAuditLogPage() {
             {totalPages > 1 && (
               <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-gray-700">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Page {currentPage} of {totalPages}
+                  {pagination.page || "Page"} {currentPage}{" "}
+                  {pagination.of || "of"} {totalPages}
                 </p>
                 <div className="flex gap-2">
                   <Button

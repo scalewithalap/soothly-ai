@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,7 +15,7 @@ import {
   X,
   TrendingUp,
 } from "lucide-react";
-import { LanguageContext } from "@/context/language-context";
+import { useContent } from "@/hooks/use-content";
 import { toast } from "sonner";
 
 interface Coupon {
@@ -33,8 +33,9 @@ interface Coupon {
 }
 
 export default function AdminCouponsPage() {
-  const ctx = useContext(LanguageContext);
-  const t = (ctx?.content?.coupons || {}) as Record<string, string>;
+  const { content } = useContent();
+  const admin = content.admin;
+  const t = admin.couponsPage || {};
 
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [loading, setLoading] = useState(true);
@@ -92,7 +93,7 @@ export default function AdminCouponsPage() {
 
   const createCoupon = async () => {
     if (!code || !value) {
-      toast.error("Code and value are required");
+      toast.error(t.toasts?.validationError || "Code and value are required");
       return;
     }
 
@@ -118,7 +119,7 @@ export default function AdminCouponsPage() {
       });
 
       if (res.ok) {
-        toast.success("Coupon created successfully");
+        toast.success(t.toasts?.createSuccess || "Coupon created successfully");
         setShowForm(false);
         setCode("");
         setValue("");
@@ -129,12 +130,12 @@ export default function AdminCouponsPage() {
         const data = await res.json();
         toast.error(
           data.error === "coupons/code_exists"
-            ? "Code already exists"
-            : "Failed to create coupon",
+            ? t.toasts?.codeExists || "Code already exists"
+            : t.toasts?.createFailed || "Failed to create coupon",
         );
       }
     } catch {
-      toast.error("Failed to create coupon");
+      toast.error(t.toasts?.createFailed || "Failed to create coupon");
     } finally {
       setCreating(false);
     }
@@ -167,6 +168,13 @@ export default function AdminCouponsPage() {
     );
   }
 
+  const headers = t.tableHeaders || {};
+  const labels = t.labels || {};
+  const placeholders = t.placeholders || {};
+  const types = t.types || {};
+  const analyticsLabels = t.analytics || {};
+  const status = t.status || {};
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -190,7 +198,9 @@ export default function AdminCouponsPage() {
             ) : (
               <Plus className="w-4 h-4" />
             )}
-            {showForm ? "Cancel" : "Create Coupon"}
+            {showForm
+              ? t.cancelButton || "Cancel"
+              : t.createButton || "Create Coupon"}
           </Button>
         </div>
       </div>
@@ -204,7 +214,9 @@ export default function AdminCouponsPage() {
                 <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Total Redemptions</p>
+                <p className="text-sm text-gray-500">
+                  {analyticsLabels.totalRedemptions || "Total Redemptions"}
+                </p>
                 <p className="text-2xl font-bold">
                   {analytics.summary.totalRedemptions}
                 </p>
@@ -217,7 +229,9 @@ export default function AdminCouponsPage() {
                 <DollarSign className="w-5 h-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Total Saved</p>
+                <p className="text-sm text-gray-500">
+                  {analyticsLabels.totalSaved || "Total Saved"}
+                </p>
                 <p className="text-2xl font-bold">
                   ${analytics.summary.totalSaved.toFixed(2)}
                 </p>
@@ -230,7 +244,9 @@ export default function AdminCouponsPage() {
                 <Tag className="w-5 h-5 text-violet-600 dark:text-violet-400" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Active Coupons</p>
+                <p className="text-sm text-gray-500">
+                  {analyticsLabels.activeCoupons || "Active Coupons"}
+                </p>
                 <p className="text-2xl font-bold">
                   {analytics.summary.activeCoupons}
                 </p>
@@ -243,30 +259,40 @@ export default function AdminCouponsPage() {
       {/* Create Form */}
       {showForm && (
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">Create New Coupon</h2>
+          <h2 className="text-lg font-semibold mb-4">
+            {t.createFormTitle || "Create New Coupon"}
+          </h2>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
             <div>
-              <label className="block text-sm font-medium mb-1">Code</label>
+              <label className="block text-sm font-medium mb-1">
+                {labels.code || "Code"}
+              </label>
               <Input
                 value={code}
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
-                placeholder="SAVE20"
+                placeholder={placeholders.code || "SAVE20"}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Type</label>
+              <label className="block text-sm font-medium mb-1">
+                {labels.type || "Type"}
+              </label>
               <select
                 value={type}
                 onChange={(e) => setType(e.target.value as typeof type)}
                 className="w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-white dark:bg-gray-800"
               >
-                <option value="percentage">Percentage</option>
-                <option value="fixed">Fixed Amount</option>
-                <option value="credits">Credits</option>
+                <option value="percentage">
+                  {types.percentage || "Percentage"}
+                </option>
+                <option value="fixed">{types.fixed || "Fixed Amount"}</option>
+                <option value="credits">{types.credits || "Credits"}</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Value</label>
+              <label className="block text-sm font-medium mb-1">
+                {labels.value || "Value"}
+              </label>
               <Input
                 type="number"
                 value={value}
@@ -275,29 +301,33 @@ export default function AdminCouponsPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1">Max Uses</label>
+              <label className="block text-sm font-medium mb-1">
+                {labels.maxUses || "Max Uses"}
+              </label>
               <Input
                 type="number"
                 value={maxUses}
                 onChange={(e) => setMaxUses(e.target.value)}
-                placeholder="Unlimited"
+                placeholder={placeholders.unlimited || "Unlimited"}
               />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">
-                Valid Days
+                {labels.validDays || "Valid Days"}
               </label>
               <Input
                 type="number"
                 value={validDays}
                 onChange={(e) => setValidDays(e.target.value)}
-                placeholder="Forever"
+                placeholder={placeholders.forever || "Forever"}
               />
             </div>
           </div>
           <div className="mt-4">
             <Button onClick={createCoupon} disabled={creating}>
-              {creating ? "Creating..." : "Create Coupon"}
+              {creating
+                ? t.creating || "Creating..."
+                : t.createButton || "Create Coupon"}
             </Button>
           </div>
         </Card>
@@ -310,19 +340,19 @@ export default function AdminCouponsPage() {
             <thead className="bg-gray-50 dark:bg-gray-800/50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Code
+                  {headers.code || "Code"}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Type
+                  {headers.type || "Type"}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Value
+                  {headers.value || "Value"}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Uses
+                  {headers.uses || "Uses"}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Status
+                  {headers.status || "Status"}
                 </th>
               </tr>
             </thead>
@@ -351,7 +381,9 @@ export default function AdminCouponsPage() {
                   </td>
                   <td className="px-6 py-4">
                     <Badge variant={coupon.is_active ? "success" : "default"}>
-                      {coupon.is_active ? "Active" : "Inactive"}
+                      {coupon.is_active
+                        ? status.active || "Active"
+                        : status.inactive || "Inactive"}
                     </Badge>
                   </td>
                 </tr>
@@ -362,7 +394,7 @@ export default function AdminCouponsPage() {
                     colSpan={5}
                     className="px-6 py-12 text-center text-gray-500"
                   >
-                    No coupons created yet
+                    {t.emptyState || "No coupons created yet"}
                   </td>
                 </tr>
               )}

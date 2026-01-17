@@ -70,7 +70,7 @@ export default function IntegrationsSettingsPage() {
       toast.success(content.settings.integrations.apiKeys.generatedSuccess);
     } catch (error) {
       console.error("Failed to generate API key:", error);
-      toast.error("Failed to generate API key!");
+      toast.error(content.settings.integrations.apiKeys.generateError);
     } finally {
       setIsGenerating(false);
     }
@@ -86,7 +86,7 @@ export default function IntegrationsSettingsPage() {
       setApiKeys((prev) => prev.filter((k) => k.id !== keyId));
       toast.success(content.settings.integrations.apiKeys.revokedSuccess);
     } catch {
-      toast.error("Failed to revoke API key!");
+      toast.error(content.settings.integrations.apiKeys.revokeError);
     }
   };
 
@@ -183,7 +183,8 @@ export default function IntegrationsSettingsPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   <span className="text-xs text-gray-500">
-                    Created {new Date(key.created_at).toLocaleDateString()}
+                    {content.settings.integrations.apiKeys.createdLabel}{" "}
+                    {new Date(key.created_at).toLocaleDateString()}
                   </span>
                   <Button
                     size="sm"
