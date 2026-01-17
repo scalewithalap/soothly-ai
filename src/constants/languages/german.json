@@ -569,5 +569,28 @@
       "upgradeNow": "Jetzt Upgraden",
       "cancelAnytime": "Jederzeit kündbar. Keine Fragen gestellt."
     }
+  },
+  "superagentPage": {
+    "title": "Superagent",
+    "description": "Ihr KI-Orchestrator mit Zugriff auf alle Agentendaten. Erhalten Sie einheitliche Einblicke, koordinieren Sie Aktionen und treffen Sie strategische Entscheidungen aus einer Konversation.",
+    "premiumBadge": "Premium-Funktion",
+    "featuresTitle": "Was der Superagent Kann",
+    "feature1": "Agentenübergreifende Intelligenz",
+    "feature1Desc": "Erkennen Sie Muster über alle Ihre Agenten, die einzelne Agenten nicht erkennen können.",
+    "feature2": "Einheitliches Kontrollzentrum",
+    "feature2Desc": "Steuern Sie alle Agenten über eine einzige Konversationsschnittstelle.",
+    "feature3": "Geschäftsgesundheits-Dashboard",
+    "feature3Desc": "Erhalten Sie Echtzeit-Einblicke in Leads, Inhalte, Finanzen und Betrieb.",
+    "feature4": "Strategische Empfehlungen",
+    "feature4Desc": "Erhalten Sie priorisierte Aktionspunkte basierend auf all Ihren Daten.",
+    "upgradeTitle": "Superagent Freischalten",
+    "upgradeDesc": "Wechseln Sie zu einem kostenpflichtigen Plan, um auf den Superagenten zuzugreifen und alle Ihre KI-Agenten von einem Ort aus zu steuern.",
+    "upgradeButton": "Pläne Ansehen",
+    "agentStatus": "Agentenstatus",
+    "clickToView": "Klicken zum Anzeigen",
+    "online": "Online",
+    "quickActions": "Schnellaktionen",
+    "viewAssets": "Asset-Bibliothek Anzeigen",
+    "viewCredits": "Kreditnutzung"
   }
 }

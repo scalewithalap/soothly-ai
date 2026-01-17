@@ -8,6 +8,7 @@ import type {
   AgentEvent,
 } from "./types";
 import { AgentCommunicator } from "./AgentCommunicator";
+import { AgentDataAccess } from "../data/AgentDataAccess";
 
 export abstract class BaseAgent {
   abstract readonly name: AgentType;
@@ -18,11 +19,89 @@ export abstract class BaseAgent {
   protected orgId: string;
   protected db: SupabaseClient<Database>;
   protected communicator: AgentCommunicator;
+  protected dataAccess: AgentDataAccess;
+  private dataAccessInitialized: boolean = false;
 
   constructor(orgId: string, db: SupabaseClient<Database>) {
     this.orgId = orgId;
     this.db = db;
     this.communicator = AgentCommunicator.getInstance();
+    // DataAccess initialized lazily since we need the agent name from subclass
+    this.dataAccess = null as unknown as AgentDataAccess;
+  }
+
+  /**
+   * Initialize the agent data access layer
+   * Call this once the agent name is available
+   */
+  protected async initDataAccess(): Promise<void> {
+    if (this.dataAccessInitialized) return;
+
+    this.dataAccess = new AgentDataAccess({
+      orgId: this.orgId,
+      agentType: this.name,
+    });
+    await this.dataAccess.init();
+    this.dataAccessInitialized = true;
+  }
+
+  /**
+   * Query data with automatic isolation enforcement
+   * Wrapper around AgentDataAccess.query() for convenience
+   */
+  protected async queryIsolated<T = Record<string, unknown>>(
+    table: string,
+    options?: {
+      select?: string;
+      filter?: Record<string, unknown>;
+      limit?: number;
+      orderBy?: { column: string; ascending?: boolean };
+    },
+  ): Promise<{ data: T[] | null; error: Error | null }> {
+    if (!this.dataAccessInitialized) {
+      await this.initDataAccess();
+    }
+    return this.dataAccess.query<T>(table, options);
+  }
+
+  /**
+   * Insert data with automatic org_id and agent_type tagging
+   */
+  protected async insertIsolated<T = Record<string, unknown>>(
+    table: string,
+    data: Record<string, unknown> | Record<string, unknown>[],
+  ): Promise<{ data: T | null; error: Error | null }> {
+    if (!this.dataAccessInitialized) {
+      await this.initDataAccess();
+    }
+    return this.dataAccess.insert<T>(table, data);
+  }
+
+  /**
+   * Update data with isolation enforcement
+   */
+  protected async updateIsolated<T = Record<string, unknown>>(
+    table: string,
+    id: string,
+    data: Record<string, unknown>,
+  ): Promise<{ data: T | null; error: Error | null }> {
+    if (!this.dataAccessInitialized) {
+      await this.initDataAccess();
+    }
+    return this.dataAccess.update<T>(table, id, data);
+  }
+
+  /**
+   * Delete data with isolation enforcement
+   */
+  protected async deleteIsolated(
+    table: string,
+    id: string,
+  ): Promise<{ success: boolean; error: Error | null }> {
+    if (!this.dataAccessInitialized) {
+      await this.initDataAccess();
+    }
+    return this.dataAccess.delete(table, id);
   }
 
   /**
@@ -78,7 +157,7 @@ export abstract class BaseAgent {
    */
   protected async hasEnoughCredits(
     action: string,
-    quantity: number = 1
+    quantity: number = 1,
   ): Promise<boolean> {
     const cost = (this.creditCost[action] || 0) * quantity;
 
@@ -114,7 +193,7 @@ export abstract class BaseAgent {
     action: string,
     quantity: number = 1,
     referenceId?: string,
-    referenceType?: string
+    referenceType?: string,
   ): Promise<boolean> {
     const cost = (this.creditCost[action] || 0) * quantity;
 
@@ -161,14 +240,13 @@ export abstract class BaseAgent {
   }
 
   /**
-   * @deprecated Use hasEnoughCredits() before task and consumeCreditsAfterSuccess() after.
-   * This method is kept for backwards compatibility but should not be used.
+   * Charge credits for an action (alias for consumeCreditsAfterSuccess)
+   * Used by agent implementations for credit deduction
    */
   protected async chargeCredits(
     action: string,
-    quantity: number = 1
+    quantity: number = 1,
   ): Promise<boolean> {
-    // Redirect to new method for backwards compatibility
     return this.consumeCreditsAfterSuccess(action, quantity);
   }
 
@@ -192,7 +270,7 @@ export abstract class BaseAgent {
    */
   protected async emit(
     eventType: string,
-    payload: Record<string, unknown>
+    payload: Record<string, unknown>,
   ): Promise<void> {
     await this.communicator.broadcast({
       id: crypto.randomUUID(),
@@ -208,7 +286,7 @@ export abstract class BaseAgent {
    */
   protected subscribe(
     eventType: string,
-    handler: (event: AgentEvent) => void | Promise<void>
+    handler: (event: AgentEvent) => void | Promise<void>,
   ): () => void {
     return this.communicator.subscribe(eventType, handler);
   }
@@ -219,7 +297,7 @@ export abstract class BaseAgent {
   protected async log(
     level: "info" | "warn" | "error",
     message: string,
-    meta?: Record<string, unknown>
+    meta?: Record<string, unknown>,
   ): Promise<void> {
     const logEntry = {
       timestamp: new Date().toISOString(),

@@ -172,6 +172,10 @@ export class AppError extends Error {
   static notFound(resource = "Resource"): AppError {
     return new AppError(ErrorCodes.NOT_FOUND, `${resource} not found`, 404);
   }
+
+  static subscriptionRequired(message = "Subscription required"): AppError {
+    return new AppError(ErrorCodes.BILLING_SUBSCRIPTION_REQUIRED, message, 403);
+  }
 }
 
 /**

@@ -4,6 +4,9 @@ import { createClient } from "@/lib/supabase/server";
 import { createAgentStream, createStreamResponse } from "@/lib/ai/agent-stream";
 import { requireAuth, isErrorResponse } from "@/lib/auth";
 import { AppError, handleApiError } from "@/lib/errors";
+import { getSystemPromptWithFallback, isSuperagent } from "@/agents/prompts";
+import { getOpenAI } from "@/lib/ai";
+import { createKnowledgeBase } from "@/lib/ai/knowledge-base";
 import type { AgentType } from "@/agents/base/types";
 
 // Validate request body
@@ -21,7 +24,7 @@ const ChatRequestSchema = z.object({
     .optional(),
 });
 
-// Valid agent types
+// Valid agent types (including superagent)
 const VALID_AGENT_TYPES: AgentType[] = [
   "leads",
   "content",
@@ -31,6 +34,7 @@ const VALID_AGENT_TYPES: AgentType[] = [
   "receivables",
   "spend",
   "pricing",
+  "superagent",
 ];
 
 export async function POST(
@@ -53,6 +57,25 @@ export async function POST(
 
     const { orgId } = authResult;
     const supabase = await createClient();
+
+    // Check yearly subscription for Superagent
+    if (isSuperagent(agentType)) {
+      const { data: orgData } = await supabase
+        .from("organizations")
+        .select("subscription_tier")
+        .eq("id", orgId)
+        .single();
+
+      // Check if user has yearly plan (starter, growth, scale have price_yearly)
+      const yearlyEligibleTiers = ["starter", "growth", "scale", "enterprise"];
+      const tier = orgData?.subscription_tier || "free";
+
+      if (!yearlyEligibleTiers.includes(tier)) {
+        return AppError.subscriptionRequired(
+          "Superagent requires a paid yearly plan",
+        ).toResponse();
+      }
+    }
 
     // Validate request body
     const body = await request.json();
@@ -100,16 +123,64 @@ export async function POST(
       console.error("Failed to save user message:", userMsgError);
     }
 
-    // Create async generator for response (placeholder - integrate with actual LLM)
-    async function* generateResponse(): AsyncGenerator<string, void, unknown> {
-      // TODO: Replace with actual LLM call using agent configuration
-      const response = `I'm the ${agentType} agent. I received your message: "${message.slice(0, 50)}${message.length > 50 ? "..." : ""}". ${attachments?.length ? `I also see ${attachments.length} attachment(s).` : ""} This is a placeholder response that will be replaced with actual AI processing.`;
+    // Get the system prompt for this agent
+    const systemPrompt = getSystemPromptWithFallback(agentType);
 
-      // Simulate streaming
-      const words = response.split(" ");
-      for (const word of words) {
-        yield word + " ";
-        await new Promise((resolve) => setTimeout(resolve, 50));
+    // For Superagent, fetch RAG context from knowledge base
+    let ragContext = "";
+    if (isSuperagent(agentType)) {
+      try {
+        const kb = createKnowledgeBase(orgId);
+        ragContext = await kb.getContext(message, {
+          limit: 5,
+          threshold: 0.65,
+        });
+      } catch (ragError) {
+        console.error("RAG context fetch failed:", ragError);
+        // Continue without RAG context
+      }
+    }
+
+    // Create async generator for response with actual AI
+    async function* generateResponse(): AsyncGenerator<string, void, unknown> {
+      try {
+        const ai = getOpenAI();
+
+        // Build context for the message
+        let contextMessage = message;
+
+        if (attachments?.length) {
+          contextMessage += `\n\n[User has attached ${attachments.length} file(s): ${attachments.map((a) => a.name).join(", ")}]`;
+        }
+
+        // Inject RAG context for Superagent
+        if (ragContext) {
+          contextMessage = `[KNOWLEDGE BASE CONTEXT]\n${ragContext}\n\n[END KNOWLEDGE BASE CONTEXT]\n\n${contextMessage}`;
+        }
+
+        // Call LLM with system prompt via chat method
+        const result = await ai.chat(
+          [{ role: "user", content: contextMessage }],
+          {
+            systemPrompt,
+            model: "gemini-3-flash",
+            temperature: 0.7,
+            maxTokens: 4000,
+          },
+        );
+
+        // Stream the response word by word for natural feel
+        const content = result.content;
+        const words = content.split(/(\s+)/);
+
+        for (const word of words) {
+          yield word;
+          // Small delay for streaming effect
+          await new Promise((resolve) => setTimeout(resolve, 15));
+        }
+      } catch (error) {
+        console.error("AI completion error:", error);
+        yield "I apologize, but I encountered an error processing your request. Please try again.";
       }
     }
 
@@ -134,17 +205,20 @@ export async function POST(
     if (waitUntil) {
       waitUntil(
         (async () => {
-          // Wait for stream to complete by reading it (this happens client-side)
-          // This is a simplified version - in production, use a more robust approach
+          // Wait for stream to complete
           await new Promise((resolve) => setTimeout(resolve, 5000));
 
           // Update task status
+          const creditsConsumed = isSuperagent(agentType)
+            ? Math.ceil(totalTokens / 50) // 2x cost for Superagent
+            : Math.ceil(totalTokens / 100);
+
           await supabase
             .from("agent_tasks")
             .update({
               status: "completed",
               completed_at: new Date().toISOString(),
-              credits_consumed: Math.ceil(totalTokens / 100), // 1 credit per 100 tokens
+              credits_consumed: creditsConsumed,
             })
             .eq("id", task.id);
         })(),

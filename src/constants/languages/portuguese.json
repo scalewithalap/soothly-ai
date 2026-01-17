@@ -567,5 +567,28 @@
       "upgradeNow": "Fazer Upgrade Agora",
       "cancelAnytime": "Cancele a qualquer momento. Sem perguntas."
     }
+  },
+  "superagentPage": {
+    "title": "Superagente",
+    "description": "Seu orquestrador de IA com acesso a todos os dados dos agentes. Obtenha insights unificados, coordene ações e tome decisões estratégicas a partir de uma única conversa.",
+    "premiumBadge": "Recurso Premium",
+    "featuresTitle": "O Que o Superagente Pode Fazer",
+    "feature1": "Inteligência Entre Agentes",
+    "feature1Desc": "Veja padrões em todos os seus agentes que agentes individuais não conseguem detectar.",
+    "feature2": "Centro de Comando Unificado",
+    "feature2Desc": "Controle todos os agentes a partir de uma única interface de conversa.",
+    "feature3": "Painel de Saúde do Negócio",
+    "feature3Desc": "Obtenha insights em tempo real sobre leads, conteúdo, finanças e operações.",
+    "feature4": "Recomendações Estratégicas",
+    "feature4Desc": "Receba itens de ação priorizados com base em todos os seus dados.",
+    "upgradeTitle": "Desbloquear Superagente",
+    "upgradeDesc": "Atualize para qualquer plano pago para acessar o Superagente e controlar todos os seus agentes de IA de um só lugar.",
+    "upgradeButton": "Ver Planos",
+    "agentStatus": "Status do Agente",
+    "clickToView": "Clique para ver",
+    "online": "Online",
+    "quickActions": "Ações Rápidas",
+    "viewAssets": "Ver Biblioteca de Ativos",
+    "viewCredits": "Uso de Créditos"
   }
 }

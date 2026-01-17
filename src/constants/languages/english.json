@@ -635,5 +635,28 @@
       "startingAt": "Starting at",
       "upgradeNow": "Upgrade Now"
     }
+  },
+  "superagentPage": {
+    "title": "Superagent",
+    "description": "Your AI Agents Manager with access to all agent data. Get unified insights, coordinate actions, and make strategic decisions from one conversation.",
+    "premiumBadge": "Premium Feature",
+    "featuresTitle": "What Superagent Can Do",
+    "feature1": "Cross-Agent Intelligence",
+    "feature1Desc": "See patterns across all your agents that individual agents can't detect.",
+    "feature2": "Unified Command Center",
+    "feature2Desc": "Control all agents from one conversation interface.",
+    "feature3": "Business Health Dashboard",
+    "feature3Desc": "Get real-time insights across leads, content, finance, and operations.",
+    "feature4": "Strategic Recommendations",
+    "feature4Desc": "Receive prioritized action items based on all your data.",
+    "upgradeTitle": "Unlock Superagent",
+    "upgradeDesc": "Upgrade to any paid plan to access Superagent and take control of all your AI agents from one place.",
+    "upgradeButton": "View Plans",
+    "agentStatus": "Agent Status",
+    "clickToView": "Click to view",
+    "online": "Online",
+    "quickActions": "Quick Actions",
+    "viewAssets": "View Assets Library",
+    "viewCredits": "Credit Usage"
   }
 }

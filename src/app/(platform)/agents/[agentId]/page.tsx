@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeft,
   Activity,
@@ -17,9 +18,17 @@ import {
   Settings,
   Play,
   Pause,
+  MessageSquare,
+  BarChart3,
+  Brain,
+  TrendingUp,
+  AlertCircle,
 } from "lucide-react";
+import { ChatInterface } from "@/components/agents/ChatInterface";
 import { useContent } from "@/hooks/use-content";
 import { toast } from "sonner";
+import type { NormalAgentType } from "@/agents/base/types";
+import { AGENT_METADATA } from "@/agents/base/types";
 
 interface AgentConfig {
   agent_type: string;
@@ -38,49 +47,45 @@ interface AgentStats {
   estimatedHoursSaved: number;
 }
 
-interface Thought {
-  id: string;
-  thought_type: string;
-  message: string;
-  icon: string;
-  created_at: string;
-}
-
-interface Activity {
+interface ActivityItem {
   id: string;
   status: string;
   description: string;
   created_at: string;
 }
 
-// Agent names mapping
-const AGENT_NAMES: Record<string, string> = {
-  leadGeneration: "Lead Generation",
-  seoContent: "SEO Content",
-  partnerships: "Partnerships",
-  contractReview: "Contract Review",
-  regulatoryMonitoring: "Regulatory Monitoring",
-  accountsReceivable: "Accounts Receivable",
-  spendAnalysis: "Spend Analysis",
-  dynamicPricing: "Dynamic Pricing",
-  dataScraper: "Data Scraper",
+// Agent icon mapping
+const AGENT_ICONS: Record<string, React.ReactNode> = {
+  leads: <TrendingUp className="w-5 h-5" />,
+  content: <Brain className="w-5 h-5" />,
+  partners: <Activity className="w-5 h-5" />,
+  contracts: <AlertCircle className="w-5 h-5" />,
+  compliance: <AlertCircle className="w-5 h-5" />,
+  receivables: <DollarSign className="w-5 h-5" />,
+  spend: <BarChart3 className="w-5 h-5" />,
+  pricing: <TrendingUp className="w-5 h-5" />,
 };
 
-export default function AgentStatsPage() {
+export default function AgentDetailPage() {
   const params = useParams();
   const router = useRouter();
   const agentId = params.agentId as string;
   const { content } = useContent();
-  const t = content.agentsPage?.statsPage || {};
-  const tAuto = content.agentsPage?.autonomy || {};
-  const tToasts = content.agentsPage?.toasts || {};
 
+  // Type-safe content access with fallbacks
+  const agentsContent = (content as Record<string, unknown>).agentsPage as
+    | Record<string, Record<string, string>>
+    | undefined;
+  const t = agentsContent?.statsPage || {};
+  const tAuto = agentsContent?.autonomy || {};
+  const tToasts = agentsContent?.toasts || {};
+  const tTabs = agentsContent?.tabs || {};
+
+  const [activeTab, setActiveTab] = useState("overview");
   const [loading, setLoading] = useState(true);
   const [config, setConfig] = useState<AgentConfig | null>(null);
   const [stats, setStats] = useState<AgentStats | null>(null);
-  const [thoughts, setThoughts] = useState<Thought[]>([]);
-  const [activities, setActivities] = useState<Activity[]>([]);
-
+  const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [toggling, setToggling] = useState(false);
 
   // Fetch agent data
@@ -105,78 +110,53 @@ export default function AgentStatsPage() {
     fetchData();
   }, [agentId]);
 
-  // Fetch thoughts separately for real-time updates
-  useEffect(() => {
-    async function fetchThoughts() {
-      try {
-        const response = await fetch(
-          `/api/agents/${agentId}/thoughts?limit=50`,
-        );
-        if (!response.ok) return;
-
-        const { data } = await response.json();
-        setThoughts(data.thoughts || []);
-      } catch (error) {
-        console.error("Failed to fetch thoughts:", error);
-      }
-    }
-
-    fetchThoughts();
-    // Poll for new thoughts every 5 seconds
-    const interval = setInterval(fetchThoughts, 5000);
-    return () => clearInterval(interval);
-  }, [agentId]);
-
-  // Toggle agent active state
-  const handleToggle = async (action: "activate" | "deactivate") => {
+  // Handle toggle
+  async function handleToggle(action: "activate" | "deactivate") {
     setToggling(true);
     try {
-      const response = await fetch("/api/agents/toggle", {
+      const response = await fetch(`/api/agents/${agentId}/toggle`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ agentType: agentId, action }),
+        body: JSON.stringify({ action }),
       });
 
-      if (!response.ok) throw new Error("Failed to toggle");
+      if (!response.ok) throw new Error("Toggle failed");
 
       const { data } = await response.json();
-      setConfig(data.config);
-      toast.success(
-        action === "activate" ? tToasts.activated : tToasts.deactivated,
+      setConfig((prev) =>
+        prev ? { ...prev, is_active: data.is_active } : null,
       );
-    } catch (error) {
-      console.error("Failed to toggle agent:", error);
-      toast.error(tToasts.error || "Failed to update agent");
+      toast.success(
+        action === "activate"
+          ? tToasts.activated || "Agent activated"
+          : tToasts.deactivated || "Agent paused",
+      );
+    } catch {
+      toast.error(tToasts.toggleFailed || "Failed to toggle agent");
     } finally {
       setToggling(false);
     }
-  };
+  }
 
-  // Set autonomy level
-  const handleAutonomyChange = async (
+  // Handle autonomy change
+  async function handleAutonomyChange(
     level: "wait" | "ai_decides" | "always_proceed",
-  ) => {
+  ) {
     try {
-      const response = await fetch("/api/agents/toggle", {
+      const response = await fetch(`/api/agents/${agentId}/autonomy`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          agentType: agentId,
-          action: "set_autonomy",
-          autonomyLevel: level,
-        }),
+        body: JSON.stringify({ autonomy_level: level }),
       });
 
-      if (!response.ok) throw new Error("Failed to update autonomy");
+      if (!response.ok) throw new Error("Update failed");
 
-      const { data } = await response.json();
-      setConfig(data.config);
+      setConfig((prev) => (prev ? { ...prev, autonomy_level: level } : null));
       toast.success(tToasts.autonomyUpdated || "Autonomy level updated");
-    } catch (error) {
-      console.error("Failed to update autonomy:", error);
-      toast.error(tToasts.error || "Failed to update");
+    } catch {
+      toast.error(tToasts.autonomyFailed || "Failed to update autonomy");
     }
-  };
+  }
 
   if (loading) {
     return (
@@ -186,7 +166,10 @@ export default function AgentStatsPage() {
     );
   }
 
-  const agentName = AGENT_NAMES[agentId] || agentId;
+  // Get agent metadata
+  const agentMeta = AGENT_METADATA[agentId as NormalAgentType];
+  const agentName = agentMeta?.displayName || agentId;
+  const agentIcon = AGENT_ICONS[agentId] || <Brain className="w-5 h-5" />;
 
   return (
     <div className="space-y-6">
@@ -202,16 +185,26 @@ export default function AgentStatsPage() {
             <ArrowLeft className="w-4 h-4" />
             {t.backToAgents || "Back to Agents"}
           </Button>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-              {agentName}
-            </h1>
-            <p className="text-sm text-gray-500">
-              {t.title || "Agent Statistics"}
-            </p>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400">
+              {agentIcon}
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                {agentName}
+              </h1>
+              <p className="text-sm text-gray-500">
+                {agentMeta?.shortDescription || t.title || "Agent Statistics"}
+              </p>
+            </div>
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <Badge variant={config?.is_active ? "success" : "warning"}>
+            {config?.is_active
+              ? t.statusActive || "Active"
+              : t.statusPaused || "Paused"}
+          </Badge>
           {config?.is_active ? (
             <Button
               variant="outline"
@@ -224,7 +217,7 @@ export default function AgentStatsPage() {
               ) : (
                 <Pause className="w-4 h-4" />
               )}
-              Pause Agent
+              {t.pauseAgent || "Pause Agent"}
             </Button>
           ) : (
             <Button
@@ -237,206 +230,214 @@ export default function AgentStatsPage() {
               ) : (
                 <Play className="w-4 h-4" />
               )}
-              Launch Agent
+              {t.activateAgent || "Activate Agent"}
             </Button>
           )}
         </div>
       </div>
 
-      {/* Stats Overview */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-green-100 dark:bg-green-900/30">
-              <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">
-                {t.successRate || "Success Rate"}
-              </p>
-              <p className="text-xl font-bold text-gray-900 dark:text-white">
-                {stats?.successRate || 0}%
-              </p>
-            </div>
-          </div>
-        </Card>
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-              <Activity className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">
-                {t.totalRuns || "Total Runs"}
-              </p>
-              <p className="text-xl font-bold text-gray-900 dark:text-white">
-                {stats?.totalRuns?.toLocaleString() || 0}
-              </p>
-            </div>
-          </div>
-        </Card>
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-purple-100 dark:bg-purple-900/30">
-              <Zap className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">
-                {t.avgCreditsPerRun || "Avg Credits/Run"}
-              </p>
-              <p className="text-xl font-bold text-gray-900 dark:text-white">
-                {stats?.avgCreditsPerRun || 0}
-              </p>
-            </div>
-          </div>
-        </Card>
-        <Card className="p-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30">
-              <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">
-                {t.hoursSaved || "Hours Saved"}
-              </p>
-              <p className="text-xl font-bold text-gray-900 dark:text-white">
-                {stats?.estimatedHoursSaved || 0}h
-              </p>
-            </div>
-          </div>
-        </Card>
-      </div>
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full max-w-md grid-cols-3">
+          <TabsTrigger value="overview" className="gap-2">
+            <BarChart3 className="w-4 h-4" />
+            {tTabs.overview || "Overview"}
+          </TabsTrigger>
+          <TabsTrigger value="chat" className="gap-2">
+            <MessageSquare className="w-4 h-4" />
+            {tTabs.chat || "Chat"}
+          </TabsTrigger>
+          <TabsTrigger value="settings" className="gap-2">
+            <Settings className="w-4 h-4" />
+            {tTabs.settings || "Settings"}
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Value Generated Banner */}
-      <Card className="p-6 bg-linear-to-r from-violet-500 to-purple-600 text-white">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm text-white/80">Total Value Generated</p>
-            <p className="text-3xl font-bold">
-              ${(config?.total_value_generated || 0).toLocaleString()}
-            </p>
-          </div>
-          <DollarSign className="w-12 h-12 text-white/30" />
-        </div>
-      </Card>
-
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Autonomy Controls */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-            <Settings className="w-5 h-5" />
-            {tAuto.title || "Autonomy Level"}
-          </h3>
-          <div className="space-y-3">
-            {[
-              {
-                level: "wait" as const,
-                label: tAuto.wait,
-                desc: tAuto.waitDesc,
-              },
-              {
-                level: "ai_decides" as const,
-                label: tAuto.aiDecides,
-                desc: tAuto.aiDecidesDesc,
-              },
-              {
-                level: "always_proceed" as const,
-                label: tAuto.alwaysProceed,
-                desc: tAuto.alwaysProceedDesc,
-              },
-            ].map(({ level, label, desc }) => (
-              <button
-                key={level}
-                onClick={() => handleAutonomyChange(level)}
-                className={`w-full p-4 rounded-xl border text-left transition-all ${
-                  config?.autonomy_level === level
-                    ? "border-violet-500 bg-violet-50 dark:bg-violet-900/20"
-                    : "border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-900 dark:text-white">
-                      {label || level}
-                    </p>
-                    <p className="text-sm text-gray-500">{desc}</p>
-                  </div>
-                  {config?.autonomy_level === level && (
-                    <Badge variant="default">Active</Badge>
-                  )}
-                </div>
-              </button>
-            ))}
-          </div>
-        </Card>
-
-        {/* Thought Stream */}
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            {t.thoughtStream || "Thought Stream"}
-          </h3>
-          <div className="h-[300px] overflow-y-auto space-y-2">
-            {thoughts.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">
-                {t.noThoughts ||
-                  "No activity yet. Launch the agent to see its thinking process."}
-              </p>
-            ) : (
-              thoughts.map((thought) => (
-                <div
-                  key={thought.id}
-                  className="flex items-start gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50"
-                >
-                  <span className="text-lg">{thought.icon}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-900 dark:text-white font-mono">
-                      {thought.message}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {new Date(thought.created_at).toLocaleTimeString()}
-                    </p>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </Card>
-      </div>
-
-      {/* Recent Activity */}
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-          {t.recentActivity || "Recent Activity"}
-        </h3>
-        {activities.length === 0 ? (
-          <p className="text-gray-500 text-center py-8">No recent activity</p>
-        ) : (
-          <div className="space-y-3">
-            {activities.slice(0, 10).map((activity) => (
-              <div
-                key={activity.id}
-                className="flex items-center justify-between p-3 rounded-lg border border-gray-100 dark:border-gray-800"
-              >
-                <div className="flex items-center gap-3">
-                  {activity.status === "completed" ? (
-                    <CheckCircle className="w-5 h-5 text-green-500" />
-                  ) : activity.status === "failed" ? (
-                    <XCircle className="w-5 h-5 text-red-500" />
-                  ) : (
-                    <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />
-                  )}
-                  <span className="text-sm text-gray-700 dark:text-gray-300">
-                    {activity.description}
-                  </span>
-                </div>
-                <span className="text-xs text-gray-500">
-                  {new Date(activity.created_at).toLocaleDateString()}
+        {/* Overview Tab */}
+        <TabsContent value="overview" className="mt-6 space-y-6">
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card className="p-4">
+              <div className="flex items-center gap-2 text-gray-500 mb-2">
+                <Activity className="w-4 h-4" />
+                <span className="text-sm">
+                  {t.successRate || "Success Rate"}
                 </span>
               </div>
-            ))}
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {stats?.successRate || 0}%
+              </p>
+            </Card>
+            <Card className="p-4">
+              <div className="flex items-center gap-2 text-gray-500 mb-2">
+                <Zap className="w-4 h-4" />
+                <span className="text-sm">{t.totalRuns || "Total Runs"}</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {stats?.totalRuns || 0}
+              </p>
+            </Card>
+            <Card className="p-4">
+              <div className="flex items-center gap-2 text-gray-500 mb-2">
+                <DollarSign className="w-4 h-4" />
+                <span className="text-sm">
+                  {t.creditsUsed || "Credits Used"}
+                </span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {config?.total_credits_used || 0}
+              </p>
+            </Card>
+            <Card className="p-4">
+              <div className="flex items-center gap-2 text-gray-500 mb-2">
+                <Clock className="w-4 h-4" />
+                <span className="text-sm">{t.hoursSaved || "Hours Saved"}</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {stats?.estimatedHoursSaved || 0}h
+              </p>
+            </Card>
           </div>
-        )}
-      </Card>
+
+          {/* Recent Activity */}
+          <Card className="p-6">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+              {t.recentActivity || "Recent Activity"}
+            </h3>
+            {activities.length === 0 ? (
+              <p className="text-gray-500 text-center py-8">
+                {t.noActivity || "No recent activity"}
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {activities.slice(0, 5).map((activity) => (
+                  <div
+                    key={activity.id}
+                    className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50"
+                  >
+                    {activity.status === "success" ? (
+                      <CheckCircle className="w-4 h-4 text-green-500" />
+                    ) : (
+                      <XCircle className="w-4 h-4 text-red-500" />
+                    )}
+                    <span className="flex-1 text-sm text-gray-700 dark:text-gray-300">
+                      {activity.description}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {new Date(activity.created_at).toLocaleString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Card>
+        </TabsContent>
+
+        {/* Chat Tab */}
+        <TabsContent value="chat" className="mt-6">
+          <ChatInterface
+            agentType={agentId as NormalAgentType}
+            agentName={agentName}
+            agentIcon={agentIcon}
+            className="h-[600px]"
+          />
+        </TabsContent>
+
+        {/* Settings Tab */}
+        <TabsContent value="settings" className="mt-6 space-y-6">
+          {/* Autonomy Control */}
+          <Card className="p-6">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+              {tAuto.title || "Autonomy Level"}
+            </h3>
+            <p className="text-sm text-gray-500 mb-4">
+              {tAuto.description ||
+                "Control how much independence this agent has"}
+            </p>
+            <div className="grid md:grid-cols-3 gap-4">
+              {[
+                {
+                  value: "wait",
+                  label: tAuto.waitLabel || "Ask First",
+                  desc: tAuto.waitDesc || "Agent asks before every action",
+                },
+                {
+                  value: "ai_decides",
+                  label: tAuto.aiDecidesLabel || "AI Decides",
+                  desc: tAuto.aiDecidesDesc || "Agent decides when to ask",
+                },
+                {
+                  value: "always_proceed",
+                  label: tAuto.alwaysProceedLabel || "Full Autonomy",
+                  desc: tAuto.alwaysProceedDesc || "Agent acts independently",
+                },
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() =>
+                    handleAutonomyChange(
+                      option.value as "wait" | "ai_decides" | "always_proceed",
+                    )
+                  }
+                  className={`p-4 rounded-xl border-2 text-left transition-all ${
+                    config?.autonomy_level === option.value
+                      ? "border-violet-500 bg-violet-50 dark:bg-violet-900/20"
+                      : "border-gray-200 dark:border-gray-700 hover:border-violet-200"
+                  }`}
+                >
+                  <p className="font-medium text-gray-900 dark:text-white">
+                    {option.label}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">{option.desc}</p>
+                </button>
+              ))}
+            </div>
+          </Card>
+
+          {/* Agent Info */}
+          <Card className="p-6">
+            <h3 className="font-semibold text-gray-900 dark:text-white mb-4">
+              {t.agentInfo || "Agent Information"}
+            </h3>
+            <div className="grid md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="text-gray-500">
+                  {t.lastRun || "Last Run"}:
+                </span>
+                <span className="ml-2 text-gray-900 dark:text-white">
+                  {config?.last_run_at
+                    ? new Date(config.last_run_at).toLocaleString()
+                    : t.never || "Never"}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-500">
+                  {t.tasksCompleted || "Tasks Completed"}:
+                </span>
+                <span className="ml-2 text-gray-900 dark:text-white">
+                  {config?.total_tasks_completed || 0}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-500">
+                  {t.valueGenerated || "Value Generated"}:
+                </span>
+                <span className="ml-2 text-gray-900 dark:text-white">
+                  ${config?.total_value_generated?.toLocaleString() || 0}
+                </span>
+              </div>
+              <div>
+                <span className="text-gray-500">
+                  {t.avgCredits || "Avg Credits/Run"}:
+                </span>
+                <span className="ml-2 text-gray-900 dark:text-white">
+                  {stats?.avgCreditsPerRun || 0}
+                </span>
+              </div>
+            </div>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
