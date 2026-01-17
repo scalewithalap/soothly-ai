@@ -658,5 +658,94 @@
     "quickActions": "Quick Actions",
     "viewAssets": "View Assets Library",
     "viewCredits": "Credit Usage"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "users": "Users",
+    "organizations": "Organizations",
+    "auditLog": "Audit Log",
+    "stats": {
+      "totalUsers": "Total Users",
+      "tasksThisMonth": "Tasks This Month",
+      "messagesThisMonth": "Messages This Month",
+      "creditBalance": "Credit Balance"
+    },
+    "actions": {
+      "updateRole": "Update Role",
+      "viewDetails": "View Details"
+    },
+    "unauthorized": "You don't have permission to access this page."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markRead": "Mark as read",
+    "markAllRead": "Mark all as read",
+    "noNotifications": "No notifications yet",
+    "viewAll": "View all notifications",
+    "types": {
+      "agent_completed": "Agent completed",
+      "agent_failed": "Agent failed",
+      "credit_low": "Credits running low",
+      "credit_depleted": "Credits depleted",
+      "team_invite": "Team invite",
+      "subscription_renewed": "Subscription renewed",
+      "system": "System notification"
+    }
+  },
+  "gdpr": {
+    "export": "Export My Data",
+    "exportDescription": "Download all your personal data in JSON format.",
+    "exportSuccess": "Your data export is ready.",
+    "exportButton": "Download Export",
+    "deleteAccount": "Delete Account",
+    "deleteWarning": "This action cannot be undone."
+  },
+  "apiKeys": {
+    "title": "API Keys",
+    "description": "Manage API keys for programmatic access.",
+    "create": "Create API Key",
+    "name": "Key Name",
+    "namePlaceholder": "My Integration",
+    "permissions": "Permissions",
+    "readOnly": "Read Only",
+    "readWrite": "Read & Write",
+    "rateLimit": "Rate Limit",
+    "rateLimitDesc": "Requests per minute",
+    "expiresIn": "Expires In",
+    "never": "Never",
+    "copyWarning": "Copy this key now. You won't be able to see it again.",
+    "revoke": "Revoke Key",
+    "revokeConfirm": "Are you sure you want to revoke this API key?",
+    "lastUsed": "Last Used",
+    "usageCount": "Usage Count"
+  },
+  "webhooks": {
+    "title": "Webhooks",
+    "description": "Receive real-time notifications when events happen.",
+    "create": "Create Webhook",
+    "name": "Webhook Name",
+    "url": "Webhook URL",
+    "urlPlaceholder": "https://your-server.com/webhook",
+    "events": "Events",
+    "secret": "Secret",
+    "secretWarning": "Copy this secret now. You won't be able to see it again.",
+    "test": "Send Test",
+    "testSuccess": "Test webhook sent successfully.",
+    "disable": "Disable",
+    "enable": "Enable"
+  },
+  "coupons": {
+    "title": "Discount Coupons",
+    "code": "Coupon Code",
+    "codePlaceholder": "SAVE20",
+    "apply": "Apply Coupon",
+    "applying": "Applying...",
+    "applied": "Coupon applied!",
+    "invalid": "Invalid coupon code",
+    "expired": "This coupon has expired",
+    "alreadyUsed": "You have already used this coupon",
+    "minPurchase": "Minimum purchase not met",
+    "discount": "Discount",
+    "youSave": "You save"
   }
 }
