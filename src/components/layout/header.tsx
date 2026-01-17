@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect, useContext } from "react";
-import { Bell, Search, Zap, Crown } from "lucide-react";
+import { Search, Zap, Crown } from "lucide-react";
 import { useContent } from "@/hooks/use-content";
 import { AccountDropdown } from "./AccountDropdown";
+import { NotificationBell } from "./NotificationBell";
 import { LanguageContext } from "@/context/language-context";
 
 export function Header() {
@@ -102,10 +103,7 @@ export function Header() {
         </div>
 
         {/* Notifications */}
-        <button className="relative p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white dark:border-gray-900" />
-        </button>
+        <NotificationBell />
 
         {/* Account Dropdown */}
         <div className="pl-2 border-l border-gray-200 dark:border-gray-800">

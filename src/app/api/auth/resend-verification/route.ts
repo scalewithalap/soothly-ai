@@ -3,11 +3,12 @@ import crypto from "crypto";
 import { apiSuccess, withErrorHandler, validateBody } from "@/lib/validation";
 import { AppError, ErrorCodes } from "@/lib/errors";
 import { forgotPasswordSchema } from "@/lib/validation/schemas";
+import { sendNotificationEmail } from "@/lib/email/service";
 
 // Use service role for admin operations
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 // POST: Resend verification email
@@ -19,7 +20,7 @@ export const POST = withErrorHandler(async (request: Request) => {
   // Find user
   const { data: user } = await supabase
     .from("users")
-    .select("id, email, email_verified")
+    .select("id, email, email_verified, full_name")
     .eq("email", normalizedEmail)
     .single();
 
@@ -35,7 +36,7 @@ export const POST = withErrorHandler(async (request: Request) => {
     throw new AppError(
       ErrorCodes.VALIDATION_ERROR,
       "Email is already verified",
-      400
+      400,
     );
   }
 
@@ -54,9 +55,13 @@ export const POST = withErrorHandler(async (request: Request) => {
   // Send verification email
   const verifyUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/auth/verify-email?token=${token}`;
 
-  // TODO: Send email using your email service
-  // For now, log the URL (in production, use AWS SES or similar)
-  console.log(`Verification URL for ${email}: ${verifyUrl}`);
+  await sendNotificationEmail({
+    email: normalizedEmail,
+    title: "Verify your email address",
+    message: `Hi ${user.full_name || "there"}! Please verify your email address to complete your registration and start using Zero Headache.`,
+    actionUrl: verifyUrl,
+    actionLabel: "Verify Email",
+  });
 
   return apiSuccess({
     success: true,

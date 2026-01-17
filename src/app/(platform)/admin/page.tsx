@@ -10,15 +10,45 @@ import {
   Activity,
   RefreshCw,
   TrendingUp,
+  BarChart3,
 } from "lucide-react";
 import { LanguageContext } from "@/context/language-context";
 import Link from "next/link";
+import {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 interface AdminStats {
   totalUsers: number;
   tasksThisMonth: number;
   messagesThisMonth: number;
   creditBalance: number;
+}
+
+interface Analytics {
+  creditUsage: { date: string; value: number }[];
+  messages: { date: string; value: number }[];
+  dau: { date: string; count: number }[];
+  tasks: {
+    byStatus: Record<string, number>;
+    byAgent: Record<string, number>;
+    total: number;
+  };
+  summary: {
+    totalCreditsUsed: number;
+    totalMessages: number;
+    totalTasks: number;
+    avgDailyActiveUsers: number;
+  };
 }
 
 export default function AdminDashboardPage() {
@@ -29,11 +59,14 @@ export default function AdminDashboardPage() {
   >;
 
   const [stats, setStats] = useState<AdminStats | null>(null);
+  const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [chartDays, setChartDays] = useState(30);
 
   useEffect(() => {
     fetchStats();
+    fetchAnalytics();
   }, []);
 
   const fetchStats = async () => {
@@ -51,9 +84,22 @@ export default function AdminDashboardPage() {
     }
   };
 
+  const fetchAnalytics = async () => {
+    try {
+      const res = await fetch(`/api/admin/analytics?days=${chartDays}`);
+      if (res.ok) {
+        const data = await res.json();
+        setAnalytics(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch analytics:", error);
+    }
+  };
+
   const handleRefresh = () => {
     setRefreshing(true);
     fetchStats();
+    fetchAnalytics();
   };
 
   if (loading) {
@@ -191,6 +237,137 @@ export default function AdminDashboardPage() {
           </Link>
         </div>
       </Card>
+
+      {/* Analytics Charts */}
+      {analytics && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <BarChart3 className="w-5 h-5" />
+              Analytics Overview
+            </h2>
+            <div className="flex gap-2">
+              {[7, 30, 90].map((d) => (
+                <Button
+                  key={d}
+                  variant={chartDays === d ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => {
+                    setChartDays(d);
+                    fetchAnalytics();
+                  }}
+                >
+                  {d}d
+                </Button>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Credit Usage Chart */}
+            <Card className="p-4">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
+                Credit Usage
+              </h3>
+              <div className="h-48">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={analytics.creditUsage}>
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fontSize: 10 }}
+                      tickFormatter={(v) => v.slice(5)}
+                    />
+                    <YAxis tick={{ fontSize: 10 }} width={40} />
+                    <Tooltip />
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#8b5cf6"
+                      strokeWidth={2}
+                      dot={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </Card>
+
+            {/* Message Volume Chart */}
+            <Card className="p-4">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
+                Message Volume
+              </h3>
+              <div className="h-48">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={analytics.messages}>
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fontSize: 10 }}
+                      tickFormatter={(v) => v.slice(5)}
+                    />
+                    <YAxis tick={{ fontSize: 10 }} width={40} />
+                    <Tooltip />
+                    <Area
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#06b6d4"
+                      fill="#06b6d4"
+                      fillOpacity={0.2}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </Card>
+
+            {/* Tasks by Agent Chart */}
+            <Card className="p-4">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
+                Tasks by Agent
+              </h3>
+              <div className="h-48">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={Object.entries(analytics.tasks.byAgent).map(
+                      ([name, count]) => ({ name, count }),
+                    )}
+                  >
+                    <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                    <YAxis tick={{ fontSize: 10 }} width={40} />
+                    <Tooltip />
+                    <Bar dataKey="count" fill="#10b981" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </Card>
+
+            {/* DAU Chart */}
+            <Card className="p-4">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
+                Daily Active Users
+              </h3>
+              <div className="h-48">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={analytics.dau}>
+                    <XAxis
+                      dataKey="date"
+                      tick={{ fontSize: 10 }}
+                      tickFormatter={(v) => v.slice(5)}
+                    />
+                    <YAxis tick={{ fontSize: 10 }} width={40} />
+                    <Tooltip />
+                    <Area
+                      type="monotone"
+                      dataKey="count"
+                      stroke="#f59e0b"
+                      fill="#f59e0b"
+                      fillOpacity={0.2}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </Card>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

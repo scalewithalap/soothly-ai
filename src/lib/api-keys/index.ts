@@ -54,9 +54,7 @@ export function hashApiKey(key: string): string {
 /**
  * Create a new API key
  */
-export async function createApiKey(
-  params: CreateApiKeyParams,
-): Promise<{
+export async function createApiKey(params: CreateApiKeyParams): Promise<{
   success: boolean;
   key?: string;
   data?: ApiKeyResult;
@@ -200,6 +198,119 @@ export async function revokeApiKey(
   return !error;
 }
 
+/**
+ * Rotate an API key - generates new key while keeping same ID/settings
+ */
+export async function rotateApiKey(
+  orgId: string,
+  keyId: string,
+): Promise<{
+  success: boolean;
+  key?: string;
+  error?: string;
+}> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+  const supabase = createClient(supabaseUrl, serviceRoleKey, {
+    auth: { persistSession: false },
+  });
+
+  // Generate new key
+  const { key, hash, prefix } = generateApiKey();
+
+  // Call the RPC to rotate
+  const { data, error } = await supabase.rpc("rotate_api_key", {
+    p_key_id: keyId,
+    p_new_hash: hash,
+    p_new_prefix: prefix,
+  });
+
+  if (error || !data?.success) {
+    console.error("Failed to rotate API key:", error || data?.error);
+    return { success: false, error: error?.message || data?.error };
+  }
+
+  return { success: true, key };
+}
+
+/**
+ * Get usage statistics for an API key
+ */
+export async function getApiKeyUsageStats(
+  orgId: string,
+  keyId: string,
+  days: number = 30,
+): Promise<{
+  success: boolean;
+  stats?: {
+    total_requests: number;
+    successful_requests: number;
+    failed_requests: number;
+    avg_response_time_ms: number;
+    unique_ips: number;
+  };
+  daily_usage?: Array<{ date: string; requests: number }>;
+  error?: string;
+}> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+  const supabase = createClient(supabaseUrl, serviceRoleKey, {
+    auth: { persistSession: false },
+  });
+
+  const { data, error } = await supabase.rpc("get_api_key_usage_stats", {
+    p_key_id: keyId,
+    p_days: days,
+  });
+
+  if (error || !data?.success) {
+    console.error("Failed to get API key stats:", error || data?.error);
+    return { success: false, error: error?.message || data?.error };
+  }
+
+  return {
+    success: true,
+    stats: data.stats,
+    daily_usage: data.daily_usage,
+  };
+}
+
+/**
+ * Log API key usage
+ */
+export async function logApiKeyUsage(params: {
+  apiKeyId: string;
+  orgId: string;
+  endpoint: string;
+  method: string;
+  statusCode: number;
+  responseTimeMs: number;
+  ipAddress?: string;
+  userAgent?: string;
+  errorCode?: string;
+}): Promise<void> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+  const supabase = createClient(supabaseUrl, serviceRoleKey, {
+    auth: { persistSession: false },
+  });
+
+  await supabase.from("api_key_usage_logs").insert({
+    api_key_id: params.apiKeyId,
+    org_id: params.orgId,
+    endpoint: params.endpoint,
+    method: params.method,
+    status_code: params.statusCode,
+    response_time_ms: params.responseTimeMs,
+    ip_address: params.ipAddress,
+    user_agent: params.userAgent,
+    error_code: params.errorCode,
+  });
+}
+
 const apiKeyService = {
   generateApiKey,
   hashApiKey,
@@ -207,6 +318,9 @@ const apiKeyService = {
   validateApiKey,
   listApiKeys,
   revokeApiKey,
+  rotateApiKey,
+  getApiKeyUsageStats,
+  logApiKeyUsage,
 };
 
 export default apiKeyService;

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Host_Grotesk, Manrope } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/components/providers/language-provider";
+import { PostHogProvider } from "@/components/providers/PostHogProvider";
 import { Toaster } from "@/components/ui/sonner";
 
 const hostGrotesk = Host_Grotesk({
@@ -29,7 +30,9 @@ export default function RootLayout({
       <body
         className={`${hostGrotesk.variable} ${manrope.variable} antialiased`}
       >
-        <LanguageProvider>{children}</LanguageProvider>
+        <PostHogProvider>
+          <LanguageProvider>{children}</LanguageProvider>
+        </PostHogProvider>
         <Toaster position="top-right" richColors closeButton />
       </body>
     </html>

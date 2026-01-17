@@ -14,6 +14,9 @@ import {
   RefreshCw,
   X,
   Check,
+  RotateCcw,
+  BarChart3,
+  History,
 } from "lucide-react";
 import { LanguageContext } from "@/context/language-context";
 import { toast } from "sonner";
@@ -27,6 +30,7 @@ interface ApiKey {
   createdAt: string;
   lastUsedAt: string | null;
   usageCount: number;
+  expiresAt: string | null;
 }
 
 interface WebhookData {
@@ -54,6 +58,8 @@ export default function AdminSettingsPage() {
   const [keyName, setKeyName] = useState("");
   const [creatingKey, setCreatingKey] = useState(false);
   const [newKey, setNewKey] = useState<string | null>(null);
+  const [rotatingKey, setRotatingKey] = useState<string | null>(null);
+  const [keyToRotate, setKeyToRotate] = useState<string | null>(null);
 
   // Webhooks state
   const [webhooks, setWebhooks] = useState<WebhookData[]>([]);
@@ -64,6 +70,29 @@ export default function AdminSettingsPage() {
   const [webhookEvents, setWebhookEvents] = useState<string[]>([]);
   const [creatingWebhook, setCreatingWebhook] = useState(false);
   const [availableEvents, setAvailableEvents] = useState<string[]>([]);
+
+  // Deliveries modal state
+  const [selectedWebhook, setSelectedWebhook] = useState<WebhookData | null>(
+    null,
+  );
+  const [deliveries, setDeliveries] = useState<
+    Array<{
+      id: string;
+      event_type: string;
+      status: string;
+      attempts: number;
+      response_status: number | null;
+      created_at: string;
+    }>
+  >([]);
+  const [deliveryStats, setDeliveryStats] = useState<{
+    total: number;
+    success: number;
+    failed: number;
+    successRate: number;
+  } | null>(null);
+  const [deliveriesLoading, setDeliveriesLoading] = useState(false);
+  const [retryingDelivery, setRetryingDelivery] = useState<string | null>(null);
 
   useEffect(() => {
     fetchApiKeys();
@@ -143,6 +172,26 @@ export default function AdminSettingsPage() {
     }
   };
 
+  const rotateApiKey = async (id: string) => {
+    setRotatingKey(id);
+    try {
+      const res = await fetch(`/api/keys/${id}`, { method: "POST" });
+      if (res.ok) {
+        const data = await res.json();
+        setNewKey(data.key);
+        setKeyToRotate(null);
+        fetchApiKeys();
+        toast.success("API key rotated successfully");
+      } else {
+        toast.error("Failed to rotate API key");
+      }
+    } catch {
+      toast.error("Failed to rotate API key");
+    } finally {
+      setRotatingKey(null);
+    }
+  };
+
   const createWebhook = async () => {
     if (!webhookName || !webhookUrl || webhookEvents.length === 0) {
       toast.error("Name, URL, and at least one event are required");
@@ -187,6 +236,48 @@ export default function AdminSettingsPage() {
       }
     } catch {
       toast.error("Failed to delete webhook");
+    }
+  };
+
+  const viewDeliveries = async (webhook: WebhookData) => {
+    setSelectedWebhook(webhook);
+    setDeliveriesLoading(true);
+    try {
+      const res = await fetch(`/api/webhooks/${webhook.id}/deliveries`);
+      if (res.ok) {
+        const data = await res.json();
+        setDeliveries(data.deliveries);
+        setDeliveryStats(data.stats);
+      }
+    } catch (error) {
+      console.error("Failed to fetch deliveries:", error);
+    } finally {
+      setDeliveriesLoading(false);
+    }
+  };
+
+  const retryDelivery = async (deliveryId: string) => {
+    if (!selectedWebhook) return;
+    setRetryingDelivery(deliveryId);
+    try {
+      const res = await fetch(
+        `/api/webhooks/${selectedWebhook.id}/deliveries`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ deliveryId }),
+        },
+      );
+      if (res.ok) {
+        toast.success("Retry initiated");
+        viewDeliveries(selectedWebhook);
+      } else {
+        toast.error("Retry failed");
+      }
+    } catch {
+      toast.error("Retry failed");
+    } finally {
+      setRetryingDelivery(null);
     }
   };
 
@@ -315,6 +406,9 @@ export default function AdminSettingsPage() {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
                     Usage
                   </th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">
+                    Status
+                  </th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">
                     Actions
                   </th>
@@ -323,29 +417,95 @@ export default function AdminSettingsPage() {
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {apiKeys.map((key) => (
                   <tr key={key.id}>
-                    <td className="px-4 py-3 font-medium">{key.name}</td>
+                    <td className="px-4 py-3">
+                      <div className="font-medium">{key.name}</div>
+                      <div className="text-xs text-gray-500">
+                        Created {new Date(key.createdAt).toLocaleDateString()}
+                      </div>
+                    </td>
                     <td className="px-4 py-3 font-mono text-sm text-gray-500">
                       {key.keyPrefix}...
                     </td>
-                    <td className="px-4 py-3 text-sm text-gray-600">
-                      {key.usageCount} requests
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <BarChart3 className="w-4 h-4 text-gray-400" />
+                        <span className="text-sm">
+                          {key.usageCount} requests
+                        </span>
+                      </div>
+                      {key.lastUsedAt && (
+                        <div className="text-xs text-gray-500">
+                          Last used{" "}
+                          {new Date(key.lastUsedAt).toLocaleDateString()}
+                        </div>
+                      )}
                     </td>
-                    <td className="px-4 py-3 text-right">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => revokeApiKey(key.id)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                    <td className="px-4 py-3">
+                      {(() => {
+                        const isExpired =
+                          key.expiresAt &&
+                          new Date(key.expiresAt).getTime() < Date.now();
+                        if (isExpired) {
+                          return <Badge variant="warning">Expired</Badge>;
+                        } else if (key.expiresAt) {
+                          return (
+                            <Badge variant="info">
+                              Expires{" "}
+                              {new Date(key.expiresAt).toLocaleDateString()}
+                            </Badge>
+                          );
+                        } else {
+                          return <Badge variant="success">Active</Badge>;
+                        }
+                      })()}
+                    </td>
+                    <td className="px-4 py-3 text-right space-x-1">
+                      {keyToRotate === key.id ? (
+                        <div className="inline-flex gap-1">
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => rotateApiKey(key.id)}
+                            disabled={rotatingKey === key.id}
+                          >
+                            {rotatingKey === key.id ? "Rotating..." : "Confirm"}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setKeyToRotate(null)}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      ) : (
+                        <>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => setKeyToRotate(key.id)}
+                            title="Rotate Key"
+                          >
+                            <RotateCcw className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => revokeApiKey(key.id)}
+                            className="text-red-600 hover:text-red-700"
+                            title="Revoke Key"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}
                 {apiKeys.length === 0 && (
                   <tr>
                     <td
-                      colSpan={4}
+                      colSpan={5}
                       className="px-4 py-8 text-center text-gray-500"
                     >
                       No API keys created yet
@@ -473,12 +633,21 @@ export default function AdminSettingsPage() {
                         {webhook.is_active ? "Active" : "Inactive"}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-4 py-3 text-right space-x-1">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => viewDeliveries(webhook)}
+                        title="View Deliveries"
+                      >
+                        <History className="w-4 h-4" />
+                      </Button>
                       <Button
                         size="sm"
                         variant="ghost"
                         onClick={() => deleteWebhook(webhook.id)}
                         className="text-red-600 hover:text-red-700"
+                        title="Delete Webhook"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -498,6 +667,93 @@ export default function AdminSettingsPage() {
               </tbody>
             </table>
           </Card>
+
+          {/* Deliveries Modal */}
+          {selectedWebhook && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <Card className="w-full max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+                <div className="p-4 border-b flex justify-between items-center">
+                  <div>
+                    <h3 className="font-semibold">
+                      {selectedWebhook.name} - Deliveries
+                    </h3>
+                    {deliveryStats && (
+                      <p className="text-sm text-gray-500">
+                        {deliveryStats.successRate}% success rate (
+                        {deliveryStats.success}/{deliveryStats.total})
+                      </p>
+                    )}
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => setSelectedWebhook(null)}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="flex-1 overflow-auto p-4">
+                  {deliveriesLoading ? (
+                    <div className="flex justify-center py-8">
+                      <RefreshCw className="w-6 h-6 animate-spin text-gray-400" />
+                    </div>
+                  ) : deliveries.length === 0 ? (
+                    <p className="text-center text-gray-500 py-8">
+                      No deliveries yet
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      {deliveries.map((d) => (
+                        <div
+                          key={d.id}
+                          className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg"
+                        >
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <Badge
+                                variant={
+                                  d.status === "success"
+                                    ? "success"
+                                    : d.status === "pending_retry"
+                                      ? "warning"
+                                      : "info"
+                                }
+                              >
+                                {d.status}
+                              </Badge>
+                              <span className="text-sm font-mono">
+                                {d.event_type}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {new Date(d.created_at).toLocaleString()} ·{" "}
+                              {d.attempts} attempt(s)
+                              {d.response_status &&
+                                ` · HTTP ${d.response_status}`}
+                            </p>
+                          </div>
+                          {d.status !== "success" && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => retryDelivery(d.id)}
+                              disabled={retryingDelivery === d.id}
+                            >
+                              {retryingDelivery === d.id ? (
+                                <RefreshCw className="w-3 h-3 animate-spin" />
+                              ) : (
+                                "Retry"
+                              )}
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </Card>
+            </div>
+          )}
         </div>
       )}
     </div>
