@@ -1288,5 +1288,172 @@
     "minPurchase": "Minimum purchase not met",
     "discount": "Discount",
     "youSave": "You save"
+  },
+  "agentPlatform": {
+    "workflows": {
+      "title": "Workflows",
+      "subtitle": "Build and manage multi-agent automation pipelines",
+      "create": "Create Workflow",
+      "empty": "No workflows yet",
+      "emptyDesc": "Create your first workflow to automate multi-step processes",
+      "name": "Workflow Name",
+      "namePlaceholder": "e.g., Lead Qualification Pipeline",
+      "description": "Description",
+      "descriptionPlaceholder": "What does this workflow do?",
+      "trigger": "Trigger Type",
+      "triggerManual": "Manual",
+      "triggerSchedule": "Scheduled",
+      "triggerWebhook": "Webhook",
+      "triggerEvent": "Event-driven",
+      "statusTitle": "Status",
+      "status": {
+        "draft": "Draft",
+        "active": "Active",
+        "paused": "Paused",
+        "archived": "Archived"
+      },
+      "run": {
+        "start": "Run Workflow",
+        "cancel": "Cancel Run",
+        "running": "Running",
+        "completed": "Completed",
+        "failed": "Failed",
+        "pending": "Pending"
+      },
+      "builder": {
+        "title": "Workflow Builder",
+        "addNode": "Add Step",
+        "agentNode": "Agent Action",
+        "conditionNode": "Condition",
+        "delayNode": "Delay",
+        "reviewNode": "Human Review",
+        "save": "Save Workflow",
+        "publish": "Publish",
+        "test": "Test Run"
+      },
+      "toasts": {
+        "created": "Workflow created successfully",
+        "updated": "Workflow updated",
+        "deleted": "Workflow deleted",
+        "started": "Workflow run started",
+        "error": "Failed to save workflow"
+      }
+    },
+    "approvals": {
+      "title": "Approval Queue",
+      "subtitle": "Review and approve pending agent actions",
+      "empty": "No pending approvals",
+      "emptyDesc": "Agent actions requiring approval will appear here",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "expired": "Expired",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approving": "Approving...",
+      "rejecting": "Rejecting...",
+      "comment": "Add a comment (optional)",
+      "commentPlaceholder": "Reason for decision...",
+      "requestedBy": "Requested by",
+      "expiresIn": "Expires in",
+      "riskLevel": {
+        "low": "Low Risk",
+        "medium": "Medium Risk",
+        "high": "High Risk",
+        "critical": "Critical"
+      },
+      "toasts": {
+        "approved": "Action approved",
+        "rejected": "Action rejected",
+        "error": "Failed to process approval"
+      }
+    },
+    "traces": {
+      "title": "Execution Traces",
+      "subtitle": "Monitor agent activity, performance, and costs",
+      "empty": "No traces yet",
+      "emptyDesc": "Agent execution traces will appear here",
+      "traceId": "Trace ID",
+      "agent": "Agent",
+      "action": "Action",
+      "status": "Status",
+      "duration": "Duration",
+      "tokens": "Tokens",
+      "cost": "Cost",
+      "filters": {
+        "allAgents": "All Agents",
+        "allStatus": "All Status",
+        "dateRange": "Date Range"
+      },
+      "statusState": {
+        "running": "Running",
+        "success": "Success",
+        "error": "Error"
+      },
+      "stats": {
+        "title": "Statistics",
+        "totalTraces": "Total Traces",
+        "totalTokens": "Total Tokens",
+        "totalCost": "Total Cost",
+        "avgDuration": "Avg Duration",
+        "errorRate": "Error Rate"
+      }
+    },
+    "guardrails": {
+      "title": "Guardrails",
+      "subtitle": "Configure safety policies for agent behavior",
+      "empty": "No guardrail policies",
+      "emptyDesc": "Create policies to control agent actions",
+      "create": "Create Policy",
+      "name": "Policy Name",
+      "namePlaceholder": "e.g., Cost Limit Policy",
+      "description": "Description",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "priority": "Priority",
+      "appliesTo": "Applies To",
+      "allAgents": "All Agents",
+      "allActions": "All Actions",
+      "rules": "Rules",
+      "addRule": "Add Rule",
+      "ruleTypes": {
+        "costCap": "Cost Cap",
+        "actionLimit": "Action Limit",
+        "piiDetection": "PII Detection",
+        "contentPolicy": "Content Policy",
+        "inputValidation": "Input Validation",
+        "outputFilter": "Output Filter"
+      },
+      "actions": {
+        "block": "Block",
+        "warn": "Warn",
+        "requireApproval": "Require Approval",
+        "log": "Log Only"
+      },
+      "violations": {
+        "title": "Violations",
+        "empty": "No violations recorded",
+        "policy": "Policy",
+        "rule": "Rule",
+        "action": "Action Taken",
+        "timestamp": "Timestamp"
+      },
+      "toasts": {
+        "created": "Policy created",
+        "updated": "Policy updated",
+        "deleted": "Policy deleted",
+        "error": "Failed to save policy"
+      }
+    },
+    "common": {
+      "viewDetails": "View Details",
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "loading": "Loading...",
+      "noData": "No data available"
+    }
   }
 }

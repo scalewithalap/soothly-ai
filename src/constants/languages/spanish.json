@@ -863,5 +863,166 @@
     "quickActions": "Acciones Rápidas",
     "viewAssets": "Ver Biblioteca de Activos",
     "viewCredits": "Uso de Créditos"
+  },
+  "agentPlatform": {
+    "workflows": {
+      "title": "Flujos de Trabajo",
+      "subtitle": "Construye y gestiona pipelines de automatización multi-agente",
+      "create": "Crear Flujo de Trabajo",
+      "empty": "Sin flujos de trabajo aún",
+      "emptyDesc": "Crea tu primer flujo de trabajo para automatizar procesos de múltiples pasos",
+      "name": "Nombre del Flujo",
+      "namePlaceholder": "ej., Pipeline de Calificación de Leads",
+      "description": "Descripción",
+      "descriptionPlaceholder": "¿Qué hace este flujo de trabajo?",
+      "trigger": "Tipo de Disparador",
+      "triggerManual": "Manual",
+      "triggerSchedule": "Programado",
+      "triggerWebhook": "Webhook",
+      "triggerEvent": "Basado en eventos",
+      "status": {
+        "draft": "Borrador",
+        "active": "Activo",
+        "paused": "Pausado",
+        "archived": "Archivado"
+      },
+      "run": {
+        "start": "Ejecutar Flujo",
+        "cancel": "Cancelar Ejecución",
+        "running": "Ejecutando",
+        "completed": "Completado",
+        "failed": "Fallido",
+        "pending": "Pendiente"
+      },
+      "builder": {
+        "title": "Constructor de Flujos",
+        "addNode": "Añadir Paso",
+        "agentNode": "Acción de Agente",
+        "conditionNode": "Condición",
+        "delayNode": "Retraso",
+        "reviewNode": "Revisión Humana",
+        "save": "Guardar Flujo",
+        "publish": "Publicar",
+        "test": "Ejecutar Prueba"
+      },
+      "toasts": {
+        "created": "Flujo de trabajo creado exitosamente",
+        "updated": "Flujo de trabajo actualizado",
+        "deleted": "Flujo de trabajo eliminado",
+        "started": "Ejecución del flujo iniciada",
+        "error": "Error al guardar el flujo de trabajo"
+      }
+    },
+    "approvals": {
+      "title": "Cola de Aprobaciones",
+      "subtitle": "Revisa y aprueba acciones pendientes de agentes",
+      "empty": "Sin aprobaciones pendientes",
+      "emptyDesc": "Las acciones de agentes que requieren aprobación aparecerán aquí",
+      "pending": "Pendiente",
+      "approved": "Aprobado",
+      "rejected": "Rechazado",
+      "expired": "Expirado",
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "approving": "Aprobando...",
+      "rejecting": "Rechazando...",
+      "comment": "Añadir comentario (opcional)",
+      "commentPlaceholder": "Motivo de la decisión...",
+      "requestedBy": "Solicitado por",
+      "expiresIn": "Expira en",
+      "riskLevel": {
+        "low": "Riesgo Bajo",
+        "medium": "Riesgo Medio",
+        "high": "Riesgo Alto",
+        "critical": "Crítico"
+      },
+      "toasts": {
+        "approved": "Acción aprobada",
+        "rejected": "Acción rechazada",
+        "error": "Error al procesar la aprobación"
+      }
+    },
+    "traces": {
+      "title": "Trazas de Ejecución",
+      "subtitle": "Monitorea actividad, rendimiento y costos de agentes",
+      "empty": "Sin trazas aún",
+      "emptyDesc": "Las trazas de ejecución de agentes aparecerán aquí",
+      "traceId": "ID de Traza",
+      "agent": "Agente",
+      "action": "Acción",
+      "status": "Estado",
+      "duration": "Duración",
+      "tokens": "Tokens",
+      "cost": "Costo",
+      "filters": {
+        "allAgents": "Todos los Agentes",
+        "allStatus": "Todos los Estados",
+        "dateRange": "Rango de Fechas"
+      },
+      "stats": {
+        "title": "Estadísticas",
+        "totalTraces": "Total de Trazas",
+        "totalTokens": "Total de Tokens",
+        "totalCost": "Costo Total",
+        "avgDuration": "Duración Promedio",
+        "errorRate": "Tasa de Errores"
+      }
+    },
+    "guardrails": {
+      "title": "Guardarraíles",
+      "subtitle": "Configura políticas de seguridad para el comportamiento de agentes",
+      "empty": "Sin políticas de guardarraíles",
+      "emptyDesc": "Crea políticas para controlar las acciones de agentes",
+      "create": "Crear Política",
+      "name": "Nombre de la Política",
+      "namePlaceholder": "ej., Política de Límite de Costos",
+      "description": "Descripción",
+      "enabled": "Habilitado",
+      "disabled": "Deshabilitado",
+      "priority": "Prioridad",
+      "appliesTo": "Aplica A",
+      "allAgents": "Todos los Agentes",
+      "allActions": "Todas las Acciones",
+      "rules": "Reglas",
+      "addRule": "Añadir Regla",
+      "ruleTypes": {
+        "costCap": "Límite de Costo",
+        "actionLimit": "Límite de Acciones",
+        "piiDetection": "Detección de PII",
+        "contentPolicy": "Política de Contenido",
+        "inputValidation": "Validación de Entrada",
+        "outputFilter": "Filtro de Salida"
+      },
+      "actions": {
+        "block": "Bloquear",
+        "warn": "Advertir",
+        "requireApproval": "Requerir Aprobación",
+        "log": "Solo Registrar"
+      },
+      "violations": {
+        "title": "Violaciones",
+        "empty": "Sin violaciones registradas",
+        "policy": "Política",
+        "rule": "Regla",
+        "action": "Acción Tomada",
+        "timestamp": "Fecha y Hora"
+      },
+      "toasts": {
+        "created": "Política creada",
+        "updated": "Política actualizada",
+        "deleted": "Política eliminada",
+        "error": "Error al guardar la política"
+      }
+    },
+    "common": {
+      "viewDetails": "Ver Detalles",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "cancel": "Cancelar",
+      "save": "Guardar",
+      "saving": "Guardando...",
+      "loading": "Cargando...",
+      "noData": "Sin datos disponibles"
+    }
   }
 }

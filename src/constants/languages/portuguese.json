@@ -861,5 +861,166 @@
     "quickActions": "Ações Rápidas",
     "viewAssets": "Ver Biblioteca de Ativos",
     "viewCredits": "Uso de Créditos"
+  },
+  "agentPlatform": {
+    "workflows": {
+      "title": "Fluxos de Trabalho",
+      "subtitle": "Crie e gerencie pipelines de automação multi-agente",
+      "create": "Criar Fluxo de Trabalho",
+      "empty": "Nenhum fluxo de trabalho ainda",
+      "emptyDesc": "Crie seu primeiro fluxo de trabalho para automatizar processos em várias etapas",
+      "name": "Nome do Fluxo",
+      "namePlaceholder": "ex. Pipeline de Qualificação de Leads",
+      "description": "Descrição",
+      "descriptionPlaceholder": "O que este fluxo faz?",
+      "trigger": "Tipo de Gatilho",
+      "triggerManual": "Manual",
+      "triggerSchedule": "Agendado",
+      "triggerWebhook": "Webhook",
+      "triggerEvent": "Baseado em Evento",
+      "status": {
+        "draft": "Rascunho",
+        "active": "Ativo",
+        "paused": "Pausado",
+        "archived": "Arquivado"
+      },
+      "run": {
+        "start": "Executar",
+        "cancel": "Cancelar",
+        "running": "Executando",
+        "completed": "Concluído",
+        "failed": "Falhou",
+        "pending": "Pendente"
+      },
+      "builder": {
+        "title": "Criador de Fluxos",
+        "addNode": "Adicionar Etapa",
+        "agentNode": "Ação do Agente",
+        "conditionNode": "Condição",
+        "delayNode": "Atraso",
+        "reviewNode": "Revisão Humana",
+        "save": "Salvar",
+        "publish": "Publicar",
+        "test": "Testar"
+      },
+      "toasts": {
+        "created": "Fluxo de trabalho criado com sucesso",
+        "updated": "Fluxo de trabalho atualizado",
+        "deleted": "Fluxo de trabalho excluído",
+        "started": "Execução do fluxo iniciada",
+        "error": "Falha ao salvar fluxo de trabalho"
+      }
+    },
+    "approvals": {
+      "title": "Fila de Aprovação",
+      "subtitle": "Revise e aprove ações pendentes dos agentes",
+      "empty": "Nenhuma aprovação pendente",
+      "emptyDesc": "Ações de agentes que requerem aprovação aparecerão aqui",
+      "pending": "Pendente",
+      "approved": "Aprovado",
+      "rejected": "Rejeitado",
+      "expired": "Expirado",
+      "approve": "Aprovar",
+      "reject": "Rejeitar",
+      "approving": "Aprovando...",
+      "rejecting": "Rejeitando...",
+      "comment": "Adicionar comentário (opcional)",
+      "commentPlaceholder": "Motivo da decisão...",
+      "requestedBy": "Solicitado por",
+      "expiresIn": "Expira em",
+      "riskLevel": {
+        "low": "Baixo Risco",
+        "medium": "Médio Risco",
+        "high": "Alto Risco",
+        "critical": "Crítico"
+      },
+      "toasts": {
+        "approved": "Ação aprovada",
+        "rejected": "Ação rejeitada",
+        "error": "Falha ao processar aprovação"
+      }
+    },
+    "traces": {
+      "title": "Rastreamento de Execução",
+      "subtitle": "Monitore a atividade, desempenho e custos dos agentes",
+      "empty": "Nenhum rastreamento ainda",
+      "emptyDesc": "Rastreamentos de execução dos agentes aparecerão aqui",
+      "traceId": "ID do Rastreamento",
+      "agent": "Agente",
+      "action": "Ação",
+      "status": "Status",
+      "duration": "Duração",
+      "tokens": "Tokens",
+      "cost": "Custo",
+      "filters": {
+        "allAgents": "Todos os Agentes",
+        "allStatus": "Todos os Status",
+        "dateRange": "Período"
+      },
+      "stats": {
+        "title": "Estatísticas",
+        "totalTraces": "Total de Rastreamentos",
+        "totalTokens": "Total de Tokens",
+        "totalCost": "Custo Total",
+        "avgDuration": "Duração Média",
+        "errorRate": "Taxa de Erro"
+      }
+    },
+    "guardrails": {
+      "title": "Diretrizes de Segurança",
+      "subtitle": "Configure diretrizes de segurança para o comportamento do agente",
+      "empty": "Nenhuma diretriz",
+      "emptyDesc": "Crie diretrizes para controlar ações dos agentes",
+      "create": "Criar Diretriz",
+      "name": "Nome da Diretriz",
+      "namePlaceholder": "ex. Limite de Custo",
+      "description": "Descrição",
+      "enabled": "Ativado",
+      "disabled": "Desativado",
+      "priority": "Prioridade",
+      "appliesTo": "Aplica-se a",
+      "allAgents": "Todos os Agentes",
+      "allActions": "Todas as Ações",
+      "rules": "Regras",
+      "addRule": "Adicionar Regra",
+      "ruleTypes": {
+        "costCap": "Limite de Custo",
+        "actionLimit": "Limite de Ação",
+        "piiDetection": "Detecção de PII",
+        "contentPolicy": "Política de Conteúdo",
+        "inputValidation": "Validação de Entrada",
+        "outputFilter": "Filtro de Saída"
+      },
+      "actions": {
+        "block": "Bloquear",
+        "warn": "Avisar",
+        "requireApproval": "Exigir Aprovação",
+        "log": "Apenas Registrar"
+      },
+      "violations": {
+        "title": "Violações",
+        "empty": "Nenhuma violação registrada",
+        "policy": "Diretriz",
+        "rule": "Regra",
+        "action": "Ação Tomada",
+        "timestamp": "Carimbo de Tempo"
+      },
+      "toasts": {
+        "created": "Diretriz criada",
+        "updated": "Diretriz atualizada",
+        "deleted": "Diretriz excluída",
+        "error": "Falha ao salvar diretriz"
+      }
+    },
+    "common": {
+      "viewDetails": "Ver Detalhes",
+      "edit": "Editar",
+      "delete": "Excluir",
+      "cancel": "Cancelar",
+      "save": "Salvar",
+      "saving": "Salvando...",
+      "loading": "Carregando...",
+      "noData": "Nenhum dado disponível"
+    }
   }
 }

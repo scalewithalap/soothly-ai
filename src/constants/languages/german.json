@@ -863,5 +863,166 @@
     "quickActions": "Schnellaktionen",
     "viewAssets": "Asset-Bibliothek Anzeigen",
     "viewCredits": "Kreditnutzung"
+  },
+  "agentPlatform": {
+    "workflows": {
+      "title": "Workflows",
+      "subtitle": "Erstellen und verwalten Sie Multi-Agenten-Automatisierungspipelines",
+      "create": "Workflow erstellen",
+      "empty": "Noch keine Workflows",
+      "emptyDesc": "Erstellen Sie Ihren ersten Workflow, um mehrstufige Prozesse zu automatisieren",
+      "name": "Workflow-Name",
+      "namePlaceholder": "z.B. Lead-Qualifizierungs-Pipeline",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Was macht dieser Workflow?",
+      "trigger": "Auslösertyp",
+      "triggerManual": "Manuell",
+      "triggerSchedule": "Geplant",
+      "triggerWebhook": "Webhook",
+      "triggerEvent": "Ereignisbasiert",
+      "status": {
+        "draft": "Entwurf",
+        "active": "Aktiv",
+        "paused": "Pausiert",
+        "archived": "Archiviert"
+      },
+      "run": {
+        "start": "Ausführen",
+        "cancel": "Abbrechen",
+        "running": "Läuft",
+        "completed": "Abgeschlossen",
+        "failed": "Fehlgeschlagen",
+        "pending": "Ausstehend"
+      },
+      "builder": {
+        "title": "Workflow-Builder",
+        "addNode": "Schritt hinzufügen",
+        "agentNode": "Agenten-Aktion",
+        "conditionNode": "Bedingung",
+        "delayNode": "Verzögerung",
+        "reviewNode": "Menschliche Überprüfung",
+        "save": "Speichern",
+        "publish": "Veröffentlichen",
+        "test": "Testen"
+      },
+      "toasts": {
+        "created": "Workflow erfolgreich erstellt",
+        "updated": "Workflow aktualisiert",
+        "deleted": "Workflow gelöscht",
+        "started": "Workflow-Ausführung gestartet",
+        "error": "Fehler beim Speichern des Workflows"
+      }
+    },
+    "approvals": {
+      "title": "Genehmigungswarteschlange",
+      "subtitle": "Überprüfen und genehmigen Sie ausstehende Agentenaktionen",
+      "empty": "Keine ausstehenden Genehmigungen",
+      "emptyDesc": "Agentenaktionen, die eine Genehmigung erfordern, erscheinen hier",
+      "pending": "Ausstehend",
+      "approved": "Genehmigt",
+      "rejected": "Abgelehnt",
+      "expired": "Abgelaufen",
+      "approve": "Genehmigen",
+      "reject": "Ablehnen",
+      "approving": "Genehmige...",
+      "rejecting": "Lehne ab...",
+      "comment": "Kommentar hinzufügen (optional)",
+      "commentPlaceholder": "Grund für die Entscheidung...",
+      "requestedBy": "Angefordert von",
+      "expiresIn": "Läuft ab in",
+      "riskLevel": {
+        "low": "Geringes Risiko",
+        "medium": "Mittleres Risiko",
+        "high": "Hohes Risiko",
+        "critical": "Kritisch"
+      },
+      "toasts": {
+        "approved": "Aktion genehmigt",
+        "rejected": "Aktion abgelehnt",
+        "error": "Fehler bei der Genehmigungsverarbeitung"
+      }
+    },
+    "traces": {
+      "title": "Ausführungs-Traces",
+      "subtitle": "Überwachen Sie Agentenaktivität, Leistung und Kosten",
+      "empty": "Noch keine Traces",
+      "emptyDesc": "Agentenausführungs-Traces erscheinen hier",
+      "traceId": "Trace-ID",
+      "agent": "Agent",
+      "action": "Aktion",
+      "status": "Status",
+      "duration": "Dauer",
+      "tokens": "Tokens",
+      "cost": "Kosten",
+      "filters": {
+        "allAgents": "Alle Agenten",
+        "allStatus": "Alle Status",
+        "dateRange": "Datumsbereich"
+      },
+      "stats": {
+        "title": "Statistiken",
+        "totalTraces": "Gesamte Traces",
+        "totalTokens": "Gesamte Tokens",
+        "totalCost": "Gesamtkosten",
+        "avgDuration": "Durchschnittsdauer",
+        "errorRate": "Fehlerrate"
+      }
+    },
+    "guardrails": {
+      "title": "Sicherheitsrichtlinien",
+      "subtitle": "Konfigurieren Sie Sicherheitsrichtlinien für das Agentenverhalten",
+      "empty": "Keine Richtlinien",
+      "emptyDesc": "Erstellen Sie Richtlinien, um Agentenaktionen zu kontrollieren",
+      "create": "Richtlinie erstellen",
+      "name": "Richtlinienname",
+      "namePlaceholder": "z.B. Kostenlimit-Richtlinie",
+      "description": "Beschreibung",
+      "enabled": "Aktiviert",
+      "disabled": "Deaktiviert",
+      "priority": "Priorität",
+      "appliesTo": "Gilt für",
+      "allAgents": "Alle Agenten",
+      "allActions": "Alle Aktionen",
+      "rules": "Regeln",
+      "addRule": "Regel hinzufügen",
+      "ruleTypes": {
+        "costCap": "Kostenlimit",
+        "actionLimit": "Aktionslimit",
+        "piiDetection": "PII-Erkennung",
+        "contentPolicy": "Inhaltsrichtlinie",
+        "inputValidation": "Eingabevalidierung",
+        "outputFilter": "Ausgabefilter"
+      },
+      "actions": {
+        "block": "Blockieren",
+        "warn": "Warnen",
+        "requireApproval": "Genehmigung erforderlich",
+        "log": "Nur protokollieren"
+      },
+      "violations": {
+        "title": "Verstöße",
+        "empty": "Keine Verstöße aufgezeichnet",
+        "policy": "Richtlinie",
+        "rule": "Regel",
+        "action": "Aktion ergriffen",
+        "timestamp": "Zeitstempel"
+      },
+      "toasts": {
+        "created": "Richtlinie erstellt",
+        "updated": "Richtlinie aktualisiert",
+        "deleted": "Richtlinie gelöscht",
+        "error": "Fehler beim Speichern der Richtlinie"
+      }
+    },
+    "common": {
+      "viewDetails": "Details anzeigen",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "cancel": "Abbrechen",
+      "save": "Speichern",
+      "saving": "Speichere...",
+      "loading": "Lade...",
+      "noData": "Keine Daten verfügbar"
+    }
   }
 }

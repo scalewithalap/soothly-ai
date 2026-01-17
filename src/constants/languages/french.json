@@ -861,5 +861,166 @@
     "quickActions": "Actions Rapides",
     "viewAssets": "Voir la Bibliothèque d'Actifs",
     "viewCredits": "Utilisation des Crédits"
+  },
+  "agentPlatform": {
+    "workflows": {
+      "title": "Workflows",
+      "subtitle": "Construisez et gérez des pipelines d'automatisation multi-agents",
+      "create": "Créer un Workflow",
+      "empty": "Aucun workflow pour l'instant",
+      "emptyDesc": "Créez votre premier workflow pour automatiser des processus en plusieurs étapes",
+      "name": "Nom du Workflow",
+      "namePlaceholder": "ex. Pipeline de Qualification de Leads",
+      "description": "Description",
+      "descriptionPlaceholder": "Que fait ce workflow ?",
+      "trigger": "Type de Déclencheur",
+      "triggerManual": "Manuel",
+      "triggerSchedule": "Planifié",
+      "triggerWebhook": "Webhook",
+      "triggerEvent": "Événementiel",
+      "status": {
+        "draft": "Brouillon",
+        "active": "Actif",
+        "paused": "En pause",
+        "archived": "Archivé"
+      },
+      "run": {
+        "start": "Exécuter",
+        "cancel": "Annuler",
+        "running": "En cours",
+        "completed": "Terminé",
+        "failed": "Échoué",
+        "pending": "En attente"
+      },
+      "builder": {
+        "title": "Constructeur de Workflow",
+        "addNode": "Ajouter une Étape",
+        "agentNode": "Action Agent",
+        "conditionNode": "Condition",
+        "delayNode": "Délai",
+        "reviewNode": "Revue Humaine",
+        "save": "Enregistrer",
+        "publish": "Publier",
+        "test": "Test"
+      },
+      "toasts": {
+        "created": "Workflow créé avec succès",
+        "updated": "Workflow mis à jour",
+        "deleted": "Workflow supprimé",
+        "started": "Exécution du workflow démarrée",
+        "error": "Échec de l'enregistrement du workflow"
+      }
+    },
+    "approvals": {
+      "title": "File d'Approbations",
+      "subtitle": "Examinez et approuvez les actions en attente des agents",
+      "empty": "Aucune approbation en attente",
+      "emptyDesc": "Les actions des agents nécessitant une approbation apparaîtront ici",
+      "pending": "En attente",
+      "approved": "Approuvé",
+      "rejected": "Rejeté",
+      "expired": "Expiré",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "approving": "Approbation...",
+      "rejecting": "Rejet...",
+      "comment": "Ajouter un commentaire (optionnel)",
+      "commentPlaceholder": "Raison de la décision...",
+      "requestedBy": "Demandé par",
+      "expiresIn": "Expire dans",
+      "riskLevel": {
+        "low": "Risque Faible",
+        "medium": "Risque Moyen",
+        "high": "Risque Élevé",
+        "critical": "Critique"
+      },
+      "toasts": {
+        "approved": "Action approuvée",
+        "rejected": "Action rejetée",
+        "error": "Échec du traitement de l'approbation"
+      }
+    },
+    "traces": {
+      "title": "Traces d'Exécution",
+      "subtitle": "Surveillez l'activité, la performance et les coûts des agents",
+      "empty": "Aucune trace pour l'instant",
+      "emptyDesc": "Les traces d'exécution des agents apparaîtront ici",
+      "traceId": "ID de Trace",
+      "agent": "Agent",
+      "action": "Action",
+      "status": "Statut",
+      "duration": "Durée",
+      "tokens": "Tokens",
+      "cost": "Coût",
+      "filters": {
+        "allAgents": "Tous les Agents",
+        "allStatus": "Tous les Statuts",
+        "dateRange": "Période"
+      },
+      "stats": {
+        "title": "Statistiques",
+        "totalTraces": "Total des Traces",
+        "totalTokens": "Total des Tokens",
+        "totalCost": "Coût Total",
+        "avgDuration": "Durée Moyenne",
+        "errorRate": "Taux d'Erreur"
+      }
+    },
+    "guardrails": {
+      "title": "Garde-fous",
+      "subtitle": "Configurez les politiques de sécurité pour le comportement des agents",
+      "empty": "Aucune politique de garde-fou",
+      "emptyDesc": "Créez des politiques pour contrôler les actions des agents",
+      "create": "Créer une Politique",
+      "name": "Nom de la Politique",
+      "namePlaceholder": "ex. Politique de Limite de Coût",
+      "description": "Description",
+      "enabled": "Activé",
+      "disabled": "Désactivé",
+      "priority": "Priorité",
+      "appliesTo": "S'applique à",
+      "allAgents": "Tous les Agents",
+      "allActions": "Toutes les Actions",
+      "rules": "Règles",
+      "addRule": "Ajouter une Règle",
+      "ruleTypes": {
+        "costCap": "Limite de Coût",
+        "actionLimit": "Limite d'Actions",
+        "piiDetection": "Détection de PII",
+        "contentPolicy": "Politique de Contenu",
+        "inputValidation": "Validation d'Entrée",
+        "outputFilter": "Filtre de Sortie"
+      },
+      "actions": {
+        "block": "Bloquer",
+        "warn": "Avertir",
+        "requireApproval": "Exiger Approbation",
+        "log": "Journal uniquement"
+      },
+      "violations": {
+        "title": "Violations",
+        "empty": "Aucune violation enregistrée",
+        "policy": "Politique",
+        "rule": "Règle",
+        "action": "Action Prise",
+        "timestamp": "Horodatage"
+      },
+      "toasts": {
+        "created": "Politique créée",
+        "updated": "Politique mise à jour",
+        "deleted": "Politique supprimée",
+        "error": "Échec de l'enregistrement de la politique"
+      }
+    },
+    "common": {
+      "viewDetails": "Voir les Détails",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "cancel": "Annuler",
+      "save": "Enregistrer",
+      "saving": "Enregistrement...",
+      "loading": "Chargement...",
+      "noData": "Aucune donnée disponible"
+    }
   }
 }
