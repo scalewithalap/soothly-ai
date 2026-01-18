@@ -26,7 +26,7 @@ const createBriefSchema = z.object({
     .enum(["blog_post", "landing_page", "pillar_content"])
     .default("blog_post"),
   target_word_count: z.number().min(500).default(1500),
-  ai_model: aiModelEnum.default("gemini-3-pro"),
+  ai_model: aiModelEnum.default("gemini-3-flash"),
 });
 
 // GET /api/agents/content/briefs - List briefs for current org
@@ -62,7 +62,7 @@ export const GET = withErrorHandler(async () => {
     throw new AppError(
       ErrorCodes.DATABASE_ERROR,
       "Failed to fetch briefs",
-      500
+      500,
     );
   }
 
@@ -113,7 +113,7 @@ export const POST = withErrorHandler(async (request: Request) => {
     throw new AppError(
       ErrorCodes.DATABASE_ERROR,
       "Failed to create brief",
-      500
+      500,
     );
   }
 

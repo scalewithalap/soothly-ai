@@ -104,7 +104,7 @@ export function CreateBriefDialog({
       primary_keyword: "",
       content_type: "blog_post",
       target_word_count: 1500,
-      ai_model: "gemini-3-pro",
+      ai_model: "gemini-3-flash",
     },
   });
 

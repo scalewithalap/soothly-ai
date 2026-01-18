@@ -93,7 +93,7 @@ For each keyword, estimate:
 
 Return as JSON array:
 [{ "keyword": "...", "search_volume": 1000, "keyword_difficulty": 45, "relevance_score": 90 }]`,
-        { model: "gemini-3-pro", temperature: 0.5 },
+        { model: "gemini-3-flash", temperature: 0.5 },
       );
 
       try {
@@ -169,8 +169,8 @@ export const generateArticle = inngest.createFunction(
       };
     };
 
-    // Default to gemini-3-pro if no model specified
-    const selectedModel: AIModel = model || "gemini-3-pro";
+    // Default to gemini-3-flash if no model specified
+    const selectedModel: AIModel = model || "gemini-3-flash";
 
     // Step 1: Get brief details
     const brief = await step.run("get-brief", async () => {

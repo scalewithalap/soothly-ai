@@ -39,7 +39,7 @@ export function createAIProvider(config: AIProviderConfig): AIProvider {
  */
 export function getDefaultProvider(): AIProvider {
   const provider = (process.env.DEFAULT_AI_PROVIDER ||
-    "openai") as ProviderType;
+    "gemini") as ProviderType;
 
   switch (provider) {
     case "anthropic":
@@ -47,17 +47,17 @@ export function getDefaultProvider(): AIProvider {
         throw new Error("ANTHROPIC_API_KEY is required for Anthropic provider");
       }
       return new AnthropicProvider();
-    case "gemini":
-      if (!process.env.GOOGLE_AI_API_KEY) {
-        throw new Error("GOOGLE_AI_API_KEY is required for Gemini provider");
-      }
-      return new GeminiProvider();
     case "openai":
-    default:
       if (!process.env.OPENAI_API_KEY) {
         throw new Error("OPENAI_API_KEY is required for OpenAI provider");
       }
       return new OpenAIProvider();
+    case "gemini":
+    default:
+      if (!process.env.GOOGLE_AI_API_KEY) {
+        throw new Error("GOOGLE_AI_API_KEY is required for Gemini provider");
+      }
+      return new GeminiProvider();
   }
 }
 
@@ -103,7 +103,7 @@ export function getProviderForModel(model: AIModel): AIProvider {
     case "gemini":
       return getGemini();
     default:
-      return getOpenAI();
+      return getGemini();
   }
 }
 
@@ -114,7 +114,7 @@ export function getProviderForModel(model: AIModel): AIProvider {
 export async function generateWithModel(
   model: AIModel,
   prompt: string,
-  options?: Omit<CompletionOptions, "model">
+  options?: Omit<CompletionOptions, "model">,
 ): Promise<CompletionResult> {
   const provider = getProviderForModel(model);
   return provider.complete(prompt, { ...options, model });
