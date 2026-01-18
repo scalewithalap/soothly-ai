@@ -84,3 +84,4 @@ export async function GET() {
     return NextResponse.json({ error: "mfa/list_failed" }, { status: 500 });
   }
 }
+

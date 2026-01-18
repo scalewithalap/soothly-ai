@@ -105,3 +105,4 @@ export const GET = withErrorHandler(async (request: Request) => {
     chartData,
   });
 });
+

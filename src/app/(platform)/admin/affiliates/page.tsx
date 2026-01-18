@@ -277,7 +277,7 @@ export default function AdminAffiliatesPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-[#9382FF] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -352,11 +352,11 @@ export default function AdminAffiliatesPage() {
                   <p className="text-sm text-muted-foreground">
                     Pending Payouts
                   </p>
-                  <p className="text-2xl font-bold text-violet-600">
+                  <p className="text-2xl font-bold text-[#9382FF]">
                     {formatCurrency(stats.pendingPayouts)}
                   </p>
                 </div>
-                <DollarSign className="w-8 h-8 text-violet-600" />
+                <DollarSign className="w-8 h-8 text-[#9382FF]" />
               </div>
             </CardContent>
           </Card>
@@ -476,7 +476,7 @@ export default function AdminAffiliatesPage() {
                           </p>
                           <p>
                             Pending:{" "}
-                            <span className="font-medium text-violet-600">
+                            <span className="font-medium text-[#9382FF]">
                               {formatCurrency(affiliate.pending_balance)}
                             </span>
                           </p>
@@ -801,3 +801,4 @@ export default function AdminAffiliatesPage() {
     </div>
   );
 }
+

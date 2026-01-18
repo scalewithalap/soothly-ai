@@ -107,3 +107,4 @@ All agents report their data to you, but they cannot access each other's data di
 Remember: You see what no individual agent can see. Use this power to deliver insights that transform business operations.`;
 
 export default SUPERAGENT_SYSTEM_PROMPT;
+

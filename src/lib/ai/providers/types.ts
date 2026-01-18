@@ -134,3 +134,4 @@ export interface AIProviderConfig {
   apiKey: string;
   defaultModel?: AIModel;
 }
+

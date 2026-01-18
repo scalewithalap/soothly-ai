@@ -11,7 +11,7 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
       <label
         className={cn(
           "relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-colors",
-          checked ? "bg-violet-600" : "bg-gray-200 dark:bg-gray-700",
+          checked ? "bg-[#9382FF]" : "bg-gray-200 dark:bg-gray-700",
           className
         )}
       >
@@ -36,3 +36,4 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
 Switch.displayName = "Switch";
 
 export { Switch };
+

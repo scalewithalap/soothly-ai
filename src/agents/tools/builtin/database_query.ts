@@ -167,3 +167,4 @@ export const databaseQueryTool: MCPTool = {
     }
   },
 };
+

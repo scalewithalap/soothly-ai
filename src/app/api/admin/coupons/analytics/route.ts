@@ -111,3 +111,4 @@ export async function GET() {
       .map(([month, count]) => ({ month, count })),
   });
 }
+

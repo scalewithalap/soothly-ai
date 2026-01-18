@@ -228,3 +228,4 @@ export const MCPErrorCodes = {
 } as const;
 
 export type MCPErrorCode = (typeof MCPErrorCodes)[keyof typeof MCPErrorCodes];
+

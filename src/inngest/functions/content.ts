@@ -474,3 +474,4 @@ Return as JSON:
     return { success: true, seoScore: analysis.seo_score };
   },
 );
+

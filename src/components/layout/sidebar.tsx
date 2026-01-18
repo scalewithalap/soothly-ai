@@ -82,7 +82,7 @@ export function Sidebar() {
               collapsed ? "w-0 opacity-0" : "w-auto opacity-100"
             )}
           >
-            <div className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-[#9382FF] flex items-center justify-center shrink-0">
               <span className="text-white font-bold">Z</span>
             </div>
             <span className="text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap">
@@ -94,7 +94,7 @@ export function Sidebar() {
             {collapsed && (
               <Link
                 href="/dashboard"
-                className="w-8 h-8 rounded-lg bg-violet-600 flex items-center justify-center shrink-0"
+                className="w-8 h-8 rounded-lg bg-[#9382FF] flex items-center justify-center shrink-0"
               >
                 <span className="text-white font-bold">Z</span>
               </Link>
@@ -133,7 +133,7 @@ export function Sidebar() {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors relative group",
                   isActive
-                    ? "bg-violet-50 text-violet-600 dark:bg-violet-900/20 dark:text-violet-400"
+                    ? "bg-[#9382FF]/10 text-[#9382FF] dark:bg-[#9382FF]/20 dark:text-[#9382FF]"
                     : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-200",
                   collapsed && "justify-center px-2"
                 )}
@@ -187,3 +187,4 @@ export function Sidebar() {
     </>
   );
 }
+

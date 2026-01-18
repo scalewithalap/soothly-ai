@@ -49,14 +49,14 @@ export default function SSOConfigPage() {
       </div>
 
       {/* Enterprise tier notice */}
-      <Card className="p-6 bg-violet-50 dark:bg-violet-900/20 border-violet-200 dark:border-violet-800">
+      <Card className="p-6 bg-[#9382FF]/10 dark:bg-[#9382FF]/20 border-[#9382FF]/20 dark:border-[#9382FF]/30">
         <div className="flex items-start gap-3">
-          <Building2 className="w-5 h-5 text-violet-600 shrink-0 mt-0.5" />
+          <Building2 className="w-5 h-5 text-[#9382FF] shrink-0 mt-0.5" />
           <div>
-            <h3 className="font-medium text-violet-900 dark:text-violet-100">
+            <h3 className="font-medium text-[#9382FF] dark:text-[#B8AEFF]">
               {t.enterpriseFeature || "Enterprise Feature"}
             </h3>
-            <p className="text-sm text-violet-700 dark:text-violet-300 mt-1">
+            <p className="text-sm text-[#9382FF] dark:text-[#B8AEFF] mt-1">
               {t.enterpriseDescription ||
                 "SAML SSO is available on the Enterprise plan. Contact our sales team to enable SSO for your organization."}
             </p>

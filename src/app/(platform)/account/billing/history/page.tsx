@@ -82,7 +82,7 @@ export default function BillingHistoryPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-[#9382FF] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -123,8 +123,8 @@ export default function BillingHistoryPage() {
               className="p-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50"
             >
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 bg-violet-100 dark:bg-violet-900/30 rounded-full flex items-center justify-center">
-                  <Receipt className="w-5 h-5 text-violet-600" />
+                <div className="w-10 h-10 bg-[#9382FF]/20 dark:bg-[#9382FF]/30 rounded-full flex items-center justify-center">
+                  <Receipt className="w-5 h-5 text-[#9382FF]" />
                 </div>
                 <div>
                   <p className="font-medium text-gray-900 dark:text-white">
@@ -159,3 +159,4 @@ export default function BillingHistoryPage() {
     </div>
   );
 }
+

@@ -83,3 +83,4 @@ You: Executive summary with key terms, obligations, and important dates.
 Remember: Your goal is to protect the user's interests while maintaining fair and reasonable agreements.`;
 
 export default CONTRACTS_SYSTEM_PROMPT;
+

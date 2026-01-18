@@ -145,7 +145,7 @@ export default function NotificationsSettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-[#9382FF] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -156,8 +156,8 @@ export default function NotificationsSettingsPage() {
       <Card className="p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30">
-              <Mail className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+            <div className="p-2 rounded-lg bg-[#9382FF]/20 dark:bg-[#9382FF]/30">
+              <Mail className="w-5 h-5 text-[#9382FF] dark:text-[#9382FF]" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -633,3 +633,4 @@ export default function NotificationsSettingsPage() {
     </div>
   );
 }
+

@@ -214,3 +214,4 @@ export const DELETE = withErrorHandler(async (request: Request) => {
 
   return apiSuccess({ deleted: true });
 });
+

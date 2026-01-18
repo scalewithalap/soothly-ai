@@ -14,3 +14,4 @@ export default async function PartnersAgentPage() {
 
   return <PartnerDiscovery />;
 }
+

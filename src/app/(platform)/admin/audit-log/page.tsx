@@ -108,7 +108,7 @@ export default function AdminAuditLogPage() {
       <Card className="overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+            <div className="w-8 h-8 border-4 border-[#9382FF] border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
           <>
@@ -197,3 +197,4 @@ export default function AdminAuditLogPage() {
     </div>
   );
 }
+

@@ -41,8 +41,8 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="p-6">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-violet-100 dark:bg-violet-900/30 rounded-xl">
-              <Zap className="w-6 h-6 text-violet-600 dark:text-violet-400" />
+            <div className="p-3 bg-[#9382FF]/20 dark:bg-[#9382FF]/30 rounded-xl">
+              <Zap className="w-6 h-6 text-[#9382FF] dark:text-[#9382FF]" />
             </div>
             <div>
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -163,7 +163,7 @@ export default function DashboardPage() {
             <h2 className="text-xl font-bold text-gray-900 dark:text-white font-heading">
               {content.dashboard.recentActivity.title}
             </h2>
-            <Button variant="ghost" size="sm" className="text-violet-600">
+            <Button variant="ghost" size="sm" className="text-[#9382FF]">
               {content.dashboard.recentActivity.viewAll}
             </Button>
           </div>
@@ -193,7 +193,7 @@ export default function DashboardPage() {
                   key={i}
                   className="p-4 flex items-center gap-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                 >
-                  <div className="w-2 h-2 rounded-full bg-violet-500 shrink-0" />
+                  <div className="w-2 h-2 rounded-full bg-[#9382FF]/100 shrink-0" />
                   <div className="flex-1">
                     <p className="text-sm text-gray-900 dark:text-white">
                       {text}
@@ -209,3 +209,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+

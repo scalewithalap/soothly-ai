@@ -277,3 +277,4 @@ export const DELETE = withErrorHandler(async (request: Request) => {
 
   return apiSuccess({ success: true });
 });
+

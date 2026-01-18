@@ -37,3 +37,4 @@ export default async function LeadsAgentPage() {
 
   return <LeadCampaignList initialCampaigns={campaigns || []} />;
 }
+

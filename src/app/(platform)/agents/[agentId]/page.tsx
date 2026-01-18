@@ -161,7 +161,7 @@ export default function AgentDetailPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-violet-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#9382FF]" />
       </div>
     );
   }
@@ -186,7 +186,7 @@ export default function AgentDetailPage() {
             {t.backToAgents || "Back to Agents"}
           </Button>
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400">
+            <div className="p-2 rounded-lg bg-[#9382FF]/10 dark:bg-[#9382FF]/30 text-[#9382FF] dark:text-[#B8AEFF]">
               {agentIcon}
             </div>
             <div>
@@ -381,8 +381,8 @@ export default function AgentDetailPage() {
                   }
                   className={`p-4 rounded-xl border-2 text-left transition-all ${
                     config?.autonomy_level === option.value
-                      ? "border-violet-500 bg-violet-50 dark:bg-violet-900/20"
-                      : "border-gray-200 dark:border-gray-700 hover:border-violet-200"
+                      ? "border-[#9382FF] bg-[#9382FF]/10 dark:bg-[#9382FF]/20"
+                      : "border-gray-200 dark:border-gray-700 hover:border-[#9382FF]/40"
                   }`}
                 >
                   <p className="font-medium text-gray-900 dark:text-white">

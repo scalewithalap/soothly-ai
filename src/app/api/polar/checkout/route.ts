@@ -6,3 +6,4 @@ export const GET = Checkout({
   successUrl: "/billing?checkout=success&checkout_id={CHECKOUT_ID}",
   server: process.env.NODE_ENV === "production" ? "production" : "sandbox",
 });
+

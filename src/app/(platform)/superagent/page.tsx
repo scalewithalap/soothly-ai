@@ -74,7 +74,7 @@ export default function SuperagentPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[500px]">
-        <Loader2 className="w-8 h-8 animate-spin text-violet-500" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#9382FF]" />
       </div>
     );
   }
@@ -85,7 +85,7 @@ export default function SuperagentPage() {
       <div className="max-w-4xl mx-auto py-12">
         <Card className="overflow-hidden">
           {/* Premium gradient header */}
-          <div className="bg-linear-to-br from-violet-600 via-purple-600 to-indigo-700 p-8 text-white relative overflow-hidden">
+          <div className="bg-linear-to-br from-[#9382FF] via-purple-600 to-indigo-700 p-8 text-white relative overflow-hidden">
             {/* Decorative elements */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
@@ -123,7 +123,7 @@ export default function SuperagentPage() {
             <div className="grid md:grid-cols-2 gap-4 mb-8">
               {[
                 {
-                  icon: <Brain className="w-5 h-5 text-violet-500" />,
+                  icon: <Brain className="w-5 h-5 text-[#9382FF]" />,
                   title: t.feature1 || "Cross-Agent Intelligence",
                   desc:
                     t.feature1Desc ||
@@ -169,8 +169,8 @@ export default function SuperagentPage() {
             </div>
 
             {/* CTA */}
-            <div className="flex flex-col items-center text-center p-6 rounded-xl bg-linear-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20">
-              <Lock className="w-10 h-10 text-violet-500 mb-4" />
+            <div className="flex flex-col items-center text-center p-6 rounded-xl bg-linear-to-r from-[#9382FF]/10 to-[#8B5CF6]/10 dark:from-[#9382FF]/20 dark:to-[#8B5CF6]/20">
+              <Lock className="w-10 h-10 text-[#9382FF] mb-4" />
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                 {t.upgradeTitle || "Unlock Superagent"}
               </h3>
@@ -181,7 +181,7 @@ export default function SuperagentPage() {
               <Button
                 size="lg"
                 onClick={() => router.push("/billing")}
-                className="gap-2 bg-linear-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
+                className="gap-2 bg-linear-to-r from-[#9382FF] to-purple-600 hover:from-[#7B6AF0] hover:to-purple-700"
               >
                 {t.upgradeButton || "View Plans"}
                 <ArrowRight className="w-4 h-4" />
@@ -210,7 +210,7 @@ export default function SuperagentPage() {
       <div className="w-80 shrink-0 hidden lg:block">
         <Card className="h-full p-4 overflow-auto">
           <div className="flex items-center gap-2 mb-4">
-            <Bot className="w-5 h-5 text-violet-500" />
+            <Bot className="w-5 h-5 text-[#9382FF]" />
             <h3 className="font-semibold text-gray-900 dark:text-white">
               {t.agentStatus || "Agent Status"}
             </h3>
@@ -221,7 +221,7 @@ export default function SuperagentPage() {
               <button
                 key={agentType}
                 onClick={() => router.push(`/agents/${agentType}`)}
-                className="w-full flex items-center gap-3 p-3 rounded-lg border border-gray-100 dark:border-gray-800 hover:border-violet-200 dark:hover:border-violet-800 transition-colors text-left"
+                className="w-full flex items-center gap-3 p-3 rounded-lg border border-gray-100 dark:border-gray-800 hover:border-[#9382FF]/40 dark:hover:border-[#9382FF]/40 transition-colors text-left"
               >
                 <div className="p-2 rounded-lg bg-gray-50 dark:bg-gray-800">
                   {icon}

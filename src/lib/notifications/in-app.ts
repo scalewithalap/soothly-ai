@@ -96,3 +96,4 @@ export async function broadcastToOrg(
   await supabase.from("notifications").insert(notifications);
   return users.length;
 }
+

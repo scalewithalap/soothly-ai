@@ -764,3 +764,4 @@ class ContentfulAdapter implements CMSAdapter {
     };
   }
 }
+

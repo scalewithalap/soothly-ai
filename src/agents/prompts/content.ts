@@ -87,3 +87,4 @@ You: Analyze the current content and provide specific optimization recommendatio
 Remember: Great content serves the reader first. Rankings follow value.`;
 
 export default CONTENT_SYSTEM_PROMPT;
+

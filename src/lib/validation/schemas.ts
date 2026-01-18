@@ -130,3 +130,4 @@ export const updateCalendarItemSchema = z.object({
 });
 
 export type UpdateCalendarItemInput = z.infer<typeof updateCalendarItemSchema>;
+

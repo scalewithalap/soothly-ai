@@ -103,7 +103,7 @@ export function AccountDropdown() {
     }
     if (tier === "scale") {
       return (
-        <span className="px-2 py-0.5 text-xs font-medium bg-linear-to-r from-violet-500 to-purple-600 text-white rounded-full">
+        <span className="px-2 py-0.5 text-xs font-medium bg-linear-to-r from-[#9382FF] to-[#8B5CF6] text-white rounded-full">
           Scale
         </span>
       );
@@ -142,7 +142,7 @@ export function AccountDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500/20">
+        <button className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-[#9382FF]/20">
           <Avatar
             src={accountData.user?.avatarUrl}
             fallback={getInitials()}
@@ -178,7 +178,7 @@ export function AccountDropdown() {
         <div className="px-3 py-2">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-violet-500" />
+              <Zap className="w-4 h-4 text-[#9382FF]" />
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 {t.credits || "Credits"}
               </span>
@@ -240,3 +240,4 @@ export function AccountDropdown() {
     </DropdownMenu>
   );
 }
+

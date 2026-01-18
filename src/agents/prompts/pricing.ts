@@ -87,3 +87,4 @@ You: Impact assessment with response strategies and recommendations.
 Remember: Pricing is the most powerful lever for profitability.`;
 
 export default PRICING_SYSTEM_PROMPT;
+

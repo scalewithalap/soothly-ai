@@ -78,7 +78,7 @@ export default function AdminUsersPage() {
     switch (role) {
       case "owner":
         return (
-          <Badge variant="default" className="gap-1 bg-violet-600">
+          <Badge variant="default" className="gap-1 bg-[#9382FF]">
             <Shield className="w-3 h-3" />
             {roles.owner || "Owner"}
           </Badge>
@@ -112,7 +112,7 @@ export default function AdminUsersPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-[#9382FF] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -209,3 +209,4 @@ export default function AdminUsersPage() {
     </div>
   );
 }
+

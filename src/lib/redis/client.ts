@@ -67,3 +67,4 @@ export async function invalidateCache(keyOrPattern: string): Promise<void> {
     await redis.del(keyOrPattern);
   }
 }
+

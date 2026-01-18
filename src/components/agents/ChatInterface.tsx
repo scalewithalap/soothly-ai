@@ -6,14 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar } from "@/components/ui/avatar";
-import {
-  Send,
-  Loader2,
-  Bot,
-  User,
-  AlertCircle,
-  X,
-} from "lucide-react";
+import { Send, Loader2, Bot, User, AlertCircle, X } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import type { AgentType } from "@/agents/base/types";
@@ -197,7 +190,7 @@ export function ChatInterface({
     <Card className={cn("flex flex-col h-[600px]", className)}>
       {/* Header */}
       <div className="flex items-center gap-3 p-4 border-b border-gray-200 dark:border-gray-700">
-        <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30 text-violet-600 dark:text-violet-400">
+        <div className="p-2 rounded-lg bg-[#9382FF]/20 dark:bg-[#9382FF]/30 text-[#9382FF] dark:text-[#9382FF]">
           {agentIcon || <Bot className="w-5 h-5" />}
         </div>
         <div>
@@ -232,9 +225,9 @@ export function ChatInterface({
               )}
             >
               {message.role === "assistant" && (
-                <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30 h-fit">
+                <div className="p-2 rounded-lg bg-[#9382FF]/20 dark:bg-[#9382FF]/30 h-fit">
                   {agentIcon || (
-                    <Bot className="w-4 h-4 text-violet-600 dark:text-violet-400" />
+                    <Bot className="w-4 h-4 text-[#9382FF] dark:text-[#9382FF]" />
                   )}
                 </div>
               )}
@@ -243,7 +236,7 @@ export function ChatInterface({
                 className={cn(
                   "max-w-[80%] rounded-2xl px-4 py-3",
                   message.role === "user"
-                    ? "bg-violet-600 text-white"
+                    ? "bg-[#9382FF] text-white"
                     : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white",
                 )}
               >
@@ -259,7 +252,7 @@ export function ChatInterface({
                   className={cn(
                     "text-xs mt-1 opacity-70",
                     message.role === "user"
-                      ? "text-violet-200"
+                      ? "text-[#B8AEFF]"
                       : "text-gray-500",
                   )}
                 >

@@ -269,3 +269,4 @@ export class MCPToolRegistry {
 
 // Export singleton getter for convenience
 export const getToolRegistry = MCPToolRegistry.getInstance;
+

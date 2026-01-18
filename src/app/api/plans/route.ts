@@ -22,3 +22,4 @@ export const GET = withErrorHandler(async () => {
 
   return apiSuccess({ plans });
 });
+

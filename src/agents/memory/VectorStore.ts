@@ -166,3 +166,4 @@ export class VectorStore {
     return `[${embedding.join(",")}]`;
   }
 }
+

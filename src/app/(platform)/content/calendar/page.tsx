@@ -73,7 +73,7 @@ export default function ContentCalendarPage() {
         toast.success(
           date
             ? t.scheduled || "Content scheduled"
-            : t.unscheduled || "Removed from calendar"
+            : t.unscheduled || "Removed from calendar",
         );
       }
     } catch {
@@ -99,7 +99,7 @@ export default function ContentCalendarPage() {
 
   const getBriefsForDay = (day: number) => {
     const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(
-      day
+      day,
     ).padStart(2, "0")}`;
     return briefs.filter((b) => b.scheduled_date === dateStr);
   };
@@ -112,7 +112,7 @@ export default function ContentCalendarPage() {
     if (!draggedBrief) return;
 
     const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(
-      day
+      day,
     ).padStart(2, "0")}`;
     handleSchedule(draggedBrief.id, dateStr);
     setDraggedBrief(null);
@@ -140,7 +140,7 @@ export default function ContentCalendarPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-[#9382FF] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -150,8 +150,8 @@ export default function ContentCalendarPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30">
-            <Calendar className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+          <div className="p-2 rounded-lg bg-[#9382FF]/20 dark:bg-[#9382FF]/30">
+            <Calendar className="w-5 h-5 text-[#9382FF] dark:text-[#9382FF]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -209,7 +209,9 @@ export default function ContentCalendarPage() {
                     ? "border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                     : "border-transparent"
                 } ${
-                  draggedBrief && day ? "ring-2 ring-violet-300 ring-inset" : ""
+                  draggedBrief && day
+                    ? "ring-2 ring-[#9382FF]/50 ring-inset"
+                    : ""
                 }`}
                 onDragOver={(e) => day && e.preventDefault()}
                 onDrop={() => day && handleDrop(day)}
@@ -220,7 +222,7 @@ export default function ContentCalendarPage() {
                       className={`text-sm font-medium mb-1 ${
                         new Date().toDateString() ===
                         new Date(year, month, day).toDateString()
-                          ? "text-violet-600 dark:text-violet-400"
+                          ? "text-[#9382FF] dark:text-[#9382FF]"
                           : "text-gray-600 dark:text-gray-400"
                       }`}
                     >
@@ -237,7 +239,7 @@ export default function ContentCalendarPage() {
                           <GripVertical className="w-3 h-3 text-gray-400 opacity-0 group-hover:opacity-100" />
                           <div
                             className={`w-2 h-2 rounded-full ${getStatusColor(
-                              brief.status
+                              brief.status,
                             )}`}
                           />
                           <span className="text-xs truncate flex-1">
@@ -281,7 +283,7 @@ export default function ContentCalendarPage() {
                   <GripVertical className="w-4 h-4 text-gray-400" />
                   <div
                     className={`w-2 h-2 rounded-full ${getStatusColor(
-                      brief.status
+                      brief.status,
                     )}`}
                   />
                   <span className="text-sm truncate flex-1">{brief.title}</span>

@@ -145,7 +145,7 @@ export default function OrganizationSettingsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-[#9382FF] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -155,8 +155,8 @@ export default function OrganizationSettingsPage() {
       {/* Organization Info */}
       <Card className="p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30">
-            <Building2 className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+          <div className="p-2 rounded-lg bg-[#9382FF]/20 dark:bg-[#9382FF]/30">
+            <Building2 className="w-5 h-5 text-[#9382FF] dark:text-[#9382FF]" />
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -188,7 +188,7 @@ export default function OrganizationSettingsPage() {
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
                 {dict.settings.billing?.currentPlan?.title || "Current Plan"}
               </p>
-              <p className="text-lg font-semibold text-violet-600 dark:text-violet-400 capitalize">
+              <p className="text-lg font-semibold text-[#9382FF] dark:text-[#9382FF] capitalize">
                 {org?.subscription_tier
                   ? org.subscription_tier.charAt(0).toUpperCase() +
                     org.subscription_tier.slice(1)
@@ -315,3 +315,4 @@ export default function OrganizationSettingsPage() {
     </div>
   );
 }
+

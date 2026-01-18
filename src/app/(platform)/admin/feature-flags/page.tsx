@@ -192,7 +192,7 @@ export default function FeatureFlagsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-[#9382FF] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -296,7 +296,7 @@ export default function FeatureFlagsPage() {
                     onClick={() => toggleTier(tier)}
                     className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                       allowedTiers.includes(tier)
-                        ? "bg-violet-100 text-violet-700 border-violet-300"
+                        ? "bg-[#9382FF]/20 text-[#9382FF] border-[#9382FF]/30"
                         : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                     } border`}
                   >
@@ -344,7 +344,7 @@ export default function FeatureFlagsPage() {
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => toggleFlag(flag)}
-                      className="text-violet-600 hover:text-violet-700"
+                      className="text-[#9382FF] hover:text-[#7B6AF0]"
                     >
                       {flag.enabled ? (
                         <ToggleRight className="w-8 h-8" />

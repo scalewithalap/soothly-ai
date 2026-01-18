@@ -119,3 +119,4 @@ export async function generateWithModel(
   const provider = getProviderForModel(model);
   return provider.complete(prompt, { ...options, model });
 }
+

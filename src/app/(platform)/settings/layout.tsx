@@ -58,7 +58,7 @@ export default function SettingsLayout({
               className={cn(
                 "flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 -mb-px transition-colors",
                 isActive
-                  ? "border-violet-600 text-violet-600 dark:text-violet-400"
+                  ? "border-[#9382FF] text-[#9382FF] dark:text-[#9382FF]"
                   : "border-transparent text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:border-gray-300"
               )}
             >
@@ -74,3 +74,4 @@ export default function SettingsLayout({
     </div>
   );
 }
+

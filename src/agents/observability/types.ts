@@ -132,3 +132,4 @@ export const DEFAULT_COST_CONFIG: CostConfig = {
   "text-embedding-3-small": { input_per_1k: 0.00002, output_per_1k: 0 },
   "text-embedding-3-large": { input_per_1k: 0.00013, output_per_1k: 0 },
 };
+

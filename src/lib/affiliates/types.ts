@@ -68,3 +68,4 @@ export interface AffiliateStats {
   pending_balance: number;
   commission_rate: number;
 }
+

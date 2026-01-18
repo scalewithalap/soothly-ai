@@ -62,7 +62,7 @@ export default function ForgotPasswordPage() {
             dangerouslySetInnerHTML={{
               __html: content.auth.forgotPassword.successMessage.replace(
                 "{email}",
-                `<strong>${email}</strong>`
+                `<strong>${email}</strong>`,
               ),
             }}
           />
@@ -114,7 +114,7 @@ export default function ForgotPasswordPage() {
         <div className="mt-6 text-center">
           <Link
             href="/login"
-            className="text-sm text-violet-600 hover:text-violet-700 dark:text-violet-400 inline-flex items-center gap-1"
+            className="text-sm text-[#9382FF] hover:text-[#7B6AF0] dark:text-[#9382FF] inline-flex items-center gap-1"
           >
             <ArrowLeft className="w-3 h-3" />
             {content.auth.forgotPassword.backToLogin}

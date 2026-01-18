@@ -37,7 +37,7 @@ const AGENT_ICONS: Record<string, React.ReactNode> = {
 
 // Agent color mapping
 const AGENT_COLORS: Record<string, string> = {
-  leadGeneration: "from-violet-500 to-purple-600",
+  leadGeneration: "from-[#9382FF] to-[#8B5CF6]",
   seoContent: "from-blue-500 to-cyan-500",
   partnerships: "from-emerald-500 to-teal-500",
   contractReview: "from-amber-500 to-orange-500",
@@ -203,7 +203,7 @@ export default function AgentsPage() {
             placeholder={t.searchPlaceholder || "Search agents..."}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-500 text-gray-900 dark:text-white placeholder:text-gray-400"
+            className="w-full pl-10 pr-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#9382FF]/20 focus:border-[#9382FF] text-gray-900 dark:text-white placeholder:text-gray-400"
           />
         </div>
         <div className="flex gap-2">
@@ -248,7 +248,7 @@ export default function AgentsPage() {
             return (
               <Card
                 key={key}
-                className="group relative overflow-hidden border border-gray-100 dark:border-gray-800 hover:border-violet-200 dark:hover:border-violet-800 transition-all hover:shadow-lg"
+                className="group relative overflow-hidden border border-gray-100 dark:border-gray-800 hover:border-[#9382FF]/40 dark:hover:border-[#9382FF]/40 transition-all hover:shadow-lg"
               >
                 {/* Gradient accent */}
                 <div

@@ -101,7 +101,7 @@ export default function StatusPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-[#9382FF] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -116,7 +116,7 @@ export default function StatusPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Activity className="w-8 h-8 text-violet-600" />
+            <Activity className="w-8 h-8 text-[#9382FF]" />
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               Zero Headache Status
             </h1>
@@ -212,7 +212,7 @@ export default function StatusPage() {
               Last updated: {lastUpdated.toLocaleTimeString()} •{" "}
               <button
                 onClick={fetchStatus}
-                className="text-violet-600 hover:underline"
+                className="text-[#9382FF] hover:underline"
               >
                 Refresh
               </button>
@@ -224,3 +224,4 @@ export default function StatusPage() {
     </div>
   );
 }
+

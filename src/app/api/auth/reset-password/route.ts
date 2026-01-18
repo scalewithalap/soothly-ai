@@ -84,3 +84,4 @@ export const POST = withErrorHandler(async (request: Request) => {
     message: "Password reset successfully",
   });
 });
+

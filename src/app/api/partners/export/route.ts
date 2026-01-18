@@ -112,3 +112,4 @@ export const GET = withErrorHandler(async () => {
     fields: PARTNER_EXPORT_FIELDS,
   });
 });
+

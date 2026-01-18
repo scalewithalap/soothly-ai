@@ -205,8 +205,8 @@ export function FileUpload({
         className={cn(
           "relative border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200",
           isDragging
-            ? "border-violet-500 bg-violet-50 dark:bg-violet-900/20"
-            : "border-gray-300 dark:border-gray-700 hover:border-violet-400 hover:bg-gray-50 dark:hover:bg-gray-800/50",
+            ? "border-[#9382FF] bg-[#9382FF]/10 dark:bg-[#9382FF]/20"
+            : "border-gray-300 dark:border-gray-700 hover:border-[#9382FF]/60 hover:bg-gray-50 dark:hover:bg-gray-800/50",
           disabled && "opacity-50 cursor-not-allowed",
         )}
       >
@@ -223,7 +223,7 @@ export function FileUpload({
         <Upload
           className={cn(
             "w-12 h-12 mx-auto mb-4 transition-colors",
-            isDragging ? "text-violet-500" : "text-gray-400",
+            isDragging ? "text-[#9382FF]" : "text-gray-400",
           )}
         />
 

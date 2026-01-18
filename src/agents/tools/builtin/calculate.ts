@@ -206,3 +206,4 @@ function evaluateSafeExpression(expr: string): number {
     throw new Error("Failed to evaluate expression");
   }
 }
+

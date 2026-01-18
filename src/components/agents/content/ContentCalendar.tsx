@@ -127,3 +127,4 @@ export function ContentCalendar({ initialBriefs }: ContentCalendarProps) {
     </div>
   );
 }
+

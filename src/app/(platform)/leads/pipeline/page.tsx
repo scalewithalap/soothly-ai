@@ -122,7 +122,7 @@ export default function LeadPipelinePage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-[#9382FF] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -192,7 +192,7 @@ export default function LeadPipelinePage() {
               key={stage.id}
               className={`shrink-0 w-72 ${
                 draggedContact && draggedContact.pipeline_stage !== stage.id
-                  ? "ring-2 ring-violet-300 rounded-lg"
+                  ? "ring-2 ring-[#9382FF]/50 rounded-lg"
                   : ""
               }`}
               onDragOver={(e) => e.preventDefault()}
@@ -226,7 +226,7 @@ export default function LeadPipelinePage() {
                       className="p-3 cursor-move hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-start gap-3">
-                        <div className="w-8 h-8 rounded-full bg-linear-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-xs font-medium">
+                        <div className="w-8 h-8 rounded-full bg-linear-to-br from-[#9382FF] to-[#8B5CF6] flex items-center justify-center text-white text-xs font-medium">
                           {contact.first_name?.[0]}
                           {contact.last_name?.[0]}
                         </div>

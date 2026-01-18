@@ -204,3 +204,4 @@ export function handleApiError(error: unknown): NextResponse {
   console.error("Unhandled API error:", error);
   return AppError.serverError().toResponse();
 }
+

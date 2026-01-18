@@ -232,7 +232,7 @@ export default function ApiDocsPage() {
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-2 mb-2">
-            <Code2 className="w-8 h-8 text-violet-600" />
+            <Code2 className="w-8 h-8 text-[#9382FF]" />
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
               API Documentation
             </h1>
@@ -240,18 +240,18 @@ export default function ApiDocsPage() {
           <p className="text-gray-600 dark:text-gray-400">
             Reference documentation for the Zero Headache REST API
           </p>
-          <div className="mt-4 p-4 bg-violet-50 dark:bg-violet-900/20 rounded-lg">
-            <p className="text-sm text-violet-700 dark:text-violet-300">
+          <div className="mt-4 p-4 bg-[#9382FF]/10 dark:bg-[#9382FF]/20 rounded-lg">
+            <p className="text-sm text-[#9382FF] dark:text-[#B8AEFF]">
               <strong>Base URL:</strong>{" "}
-              <code className="bg-violet-100 dark:bg-violet-800 px-1 rounded">
+              <code className="bg-[#9382FF]/20 dark:bg-[#9382FF]/30 px-1 rounded">
                 {typeof window !== "undefined"
                   ? window.location.origin
                   : "https://your-domain.com"}
               </code>
             </p>
-            <p className="text-sm text-violet-700 dark:text-violet-300 mt-2">
+            <p className="text-sm text-[#9382FF] dark:text-[#B8AEFF] mt-2">
               <strong>Authentication:</strong> Include your API key in the{" "}
-              <code className="bg-violet-100 dark:bg-violet-800 px-1 rounded">
+              <code className="bg-[#9382FF]/20 dark:bg-[#9382FF]/30 px-1 rounded">
                 Authorization
               </code>{" "}
               header as <code>Bearer YOUR_API_KEY</code>

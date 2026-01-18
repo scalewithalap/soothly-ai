@@ -142,3 +142,4 @@ export const PATCH = withErrorHandler(async (request: Request) => {
 
   return apiSuccess({ brief: updated });
 });
+

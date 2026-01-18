@@ -460,3 +460,4 @@ export const sendPartnerOutreach = inngest.createFunction(
     return { success: sendResult.success, error: sendResult.error };
   },
 );
+

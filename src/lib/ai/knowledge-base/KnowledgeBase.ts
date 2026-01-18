@@ -417,3 +417,4 @@ export function createKnowledgeBase(orgId: string): KnowledgeBase {
 }
 
 export default KnowledgeBase;
+

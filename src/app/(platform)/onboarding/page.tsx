@@ -131,14 +131,14 @@ export default function OnboardingPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-violet-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-        <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#9382FF]/10 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+        <div className="w-8 h-8 border-4 border-[#9382FF] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-violet-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#9382FF]/10 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
       <Card className="max-w-xl w-full p-8">
         {/* Progress indicator */}
         <div className="flex items-center justify-between mb-8">
@@ -147,7 +147,7 @@ export default function OnboardingPage() {
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center ${
                   i <= step
-                    ? "bg-violet-600 text-white"
+                    ? "bg-[#9382FF] text-white"
                     : "bg-gray-200 text-gray-500 dark:bg-gray-700"
                 }`}
               >
@@ -156,7 +156,7 @@ export default function OnboardingPage() {
               {i < STEPS.length - 1 && (
                 <div
                   className={`w-12 h-1 mx-1 ${
-                    i < step ? "bg-violet-600" : "bg-gray-200 dark:bg-gray-700"
+                    i < step ? "bg-[#9382FF]" : "bg-gray-200 dark:bg-gray-700"
                   }`}
                 />
               )}

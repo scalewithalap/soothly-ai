@@ -6,10 +6,11 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const variantClasses: Record<NonNullable<CardProps["variant"]>, string> = {
-  default: "bg-white dark:bg-gray-800 rounded-lg shadow-sm",
+  default:
+    "bg-white dark:bg-card rounded-lg shadow-sm border border-transparent dark:border-[rgba(255,255,255,0.1)]",
   bordered:
-    "bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700",
-  elevated: "bg-white dark:bg-gray-800 rounded-lg shadow-lg",
+    "bg-white dark:bg-card rounded-lg border border-gray-200 dark:border-[rgba(255,255,255,0.1)]",
+  elevated: "bg-white dark:bg-card rounded-lg shadow-lg",
 };
 
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
@@ -87,3 +88,4 @@ const CardFooter = React.forwardRef<
 CardFooter.displayName = "CardFooter";
 
 export { CardHeader, CardFooter, CardTitle, CardDescription, CardContent };
+

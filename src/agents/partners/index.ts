@@ -1,1 +1,2 @@
 export { PartnershipAgent } from "./PartnershipAgent";
+

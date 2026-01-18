@@ -37,7 +37,7 @@ export default function LoginPage() {
         // Check for specific error types
         if (signInError.message.includes("Email not confirmed")) {
           setError(
-            "Please check your email and confirm your account before logging in."
+            "Please check your email and confirm your account before logging in.",
           );
           toast.error("Email not confirmed. Check your inbox.");
         } else {
@@ -164,7 +164,7 @@ export default function LoginPage() {
               type="checkbox"
               checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
-              className="w-4 h-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
+              className="w-4 h-4 rounded border-gray-300 text-[#9382FF] focus:ring-[#9382FF]"
             />
             <span className="text-sm text-gray-600 dark:text-gray-400">
               {content.auth.login.rememberMe}
@@ -172,7 +172,7 @@ export default function LoginPage() {
           </label>
           <Link
             href="/forgot-password"
-            className="text-sm text-violet-600 hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-300"
+            className="text-sm text-[#9382FF] hover:text-[#7B6AF0] dark:text-[#9382FF] dark:hover:text-[#B8AEFF]"
           >
             {content.auth.login.forgotPasswordLink}
           </Link>
@@ -245,7 +245,7 @@ export default function LoginPage() {
         {content.auth.login.signupPrompt}{" "}
         <Link
           href="/signup"
-          className="text-violet-600 hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-300 font-medium"
+          className="text-[#9382FF] hover:text-[#7B6AF0] dark:text-[#9382FF] dark:hover:text-[#B8AEFF] font-medium"
         >
           {content.auth.login.signupLink}
         </Link>

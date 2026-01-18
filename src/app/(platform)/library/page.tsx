@@ -220,7 +220,7 @@ export default function LibraryPage() {
       {/* Content */}
       {loading ? (
         <div className="flex items-center justify-center min-h-[300px]">
-          <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-[#9382FF] border-t-transparent rounded-full animate-spin" />
         </div>
       ) : assets.length === 0 ? (
         <Card className="p-12 text-center">
@@ -345,3 +345,4 @@ export default function LibraryPage() {
     </div>
   );
 }
+

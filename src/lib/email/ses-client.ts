@@ -20,3 +20,4 @@ export const sesClient = new SESClient({
         }
       : undefined, // Uses default credential chain (IAM role, env vars, etc.)
 });
+

@@ -155,3 +155,4 @@ export function TraceCharts({ data }: TraceChartsProps) {
     </Card>
   );
 }
+

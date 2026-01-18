@@ -227,3 +227,4 @@ export interface A2AServerConfig {
   supportedInputModes?: ContentType[];
   supportedOutputModes?: ContentType[];
 }
+

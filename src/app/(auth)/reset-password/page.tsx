@@ -64,7 +64,7 @@ function ResetPasswordForm() {
           setError(content.auth.resetPassword.errors.alreadyUsed);
         } else {
           toast.error(
-            data.message || content.auth.resetPassword.errors.generic
+            data.message || content.auth.resetPassword.errors.generic,
           );
         }
       }
@@ -172,7 +172,7 @@ function ResetPasswordForm() {
         <div className="mt-6 text-center">
           <Link
             href="/login"
-            className="text-sm text-violet-600 hover:text-violet-700 dark:text-violet-400 inline-flex items-center gap-1"
+            className="text-sm text-[#9382FF] hover:text-[#7B6AF0] dark:text-[#9382FF] inline-flex items-center gap-1"
           >
             <ArrowLeft className="w-3 h-3" />
             {content.auth.resetPassword.backToLogin}
@@ -188,7 +188,7 @@ export default function ResetPasswordPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-[#9382FF] border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >

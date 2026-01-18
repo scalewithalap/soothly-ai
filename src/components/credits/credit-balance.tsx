@@ -49,8 +49,8 @@ export function CreditBalance({
           "flex items-center gap-3 px-3 py-2.5 rounded-xl",
           isLowBalance
             ? "bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800"
-            : "bg-violet-50 dark:bg-violet-900/20 border border-violet-200 dark:border-violet-800",
-          className
+            : "bg-[#9382FF]/10 dark:bg-[#9382FF]/20 border border-[#9382FF]/20 dark:border-[#9382FF]/30",
+          className,
         )}
       >
         <div
@@ -58,13 +58,13 @@ export function CreditBalance({
             "w-8 h-8 rounded-lg flex items-center justify-center",
             isLowBalance
               ? "bg-amber-100 dark:bg-amber-800"
-              : "bg-violet-100 dark:bg-violet-800"
+              : "bg-[#9382FF]/20 dark:bg-[#9382FF]/30",
           )}
         >
           {isLowBalance ? (
             <TrendingDown className="w-4 h-4 text-amber-600 dark:text-amber-400" />
           ) : (
-            <Zap className="w-4 h-4 text-violet-600 dark:text-violet-400" />
+            <Zap className="w-4 h-4 text-[#9382FF] dark:text-[#9382FF]" />
           )}
         </div>
         <div className="flex-1 min-w-0">
@@ -73,7 +73,7 @@ export function CreditBalance({
               "text-xs font-medium",
               isLowBalance
                 ? "text-amber-600 dark:text-amber-400"
-                : "text-violet-600 dark:text-violet-400"
+                : "text-[#9382FF] dark:text-[#9382FF]",
             )}
           >
             {content.dashboard.creditBalance.title}
@@ -83,7 +83,7 @@ export function CreditBalance({
               "text-sm font-bold tabular-nums",
               isLowBalance
                 ? "text-amber-900 dark:text-amber-100"
-                : "text-violet-900 dark:text-violet-100"
+                : "text-[#9382FF] dark:text-[#F4F0FF]",
             )}
           >
             {loading ? (
@@ -112,8 +112,8 @@ export function CreditBalance({
           "p-6 rounded-2xl border",
           isLowBalance
             ? "bg-linear-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border-amber-200 dark:border-amber-800"
-            : "bg-linear-to-br from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 border-violet-200 dark:border-violet-800",
-          className
+            : "bg-linear-to-br from-[#9382FF]/10 to-[#8B5CF6]/10 dark:from-[#9382FF]/20 dark:to-[#8B5CF6]/20 border-[#9382FF]/20 dark:border-[#9382FF]/30",
+          className,
         )}
       >
         <div className="flex items-center justify-between mb-4">
@@ -122,7 +122,7 @@ export function CreditBalance({
               "w-12 h-12 rounded-xl flex items-center justify-center",
               isLowBalance
                 ? "bg-amber-100 dark:bg-amber-800"
-                : "bg-violet-100 dark:bg-violet-800"
+                : "bg-[#9382FF]/20 dark:bg-[#9382FF]/30",
             )}
           >
             <CreditCard
@@ -130,7 +130,7 @@ export function CreditBalance({
                 "w-6 h-6",
                 isLowBalance
                   ? "text-amber-600 dark:text-amber-400"
-                  : "text-violet-600 dark:text-violet-400"
+                  : "text-[#9382FF] dark:text-[#9382FF]",
               )}
             />
           </div>
@@ -145,7 +145,7 @@ export function CreditBalance({
             "text-sm font-medium mb-1",
             isLowBalance
               ? "text-amber-600 dark:text-amber-400"
-              : "text-violet-600 dark:text-violet-400"
+              : "text-[#9382FF] dark:text-[#9382FF]",
           )}
         >
           {content.dashboard.creditBalance.title}
@@ -155,7 +155,7 @@ export function CreditBalance({
             "text-3xl font-bold tabular-nums",
             isLowBalance
               ? "text-amber-900 dark:text-amber-100"
-              : "text-violet-900 dark:text-violet-100"
+              : "text-[#9382FF] dark:text-[#B8AEFF]",
           )}
         >
           {loading ? (
@@ -178,7 +178,7 @@ export function CreditBalance({
   // Compact variant - just number
   return (
     <div className={cn("flex items-center gap-2", className)}>
-      <Zap className="w-4 h-4 text-violet-500" />
+      <Zap className="w-4 h-4 text-[#9382FF]" />
       <span className="text-sm font-semibold text-gray-900 dark:text-white tabular-nums">
         {loading ? "..." : error ? "—" : balance?.toLocaleString()}
       </span>

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -184,14 +184,14 @@ export default function SignupPage() {
           {content.auth.signup.terms.prefix}
           <Link
             href="/terms"
-            className="text-violet-600 hover:text-violet-500 underline"
+            className="text-[#9382FF] hover:text-[#7B6AF0] underline"
           >
             {content.auth.signup.terms.tos}
           </Link>
           {content.auth.signup.terms.and}
           <Link
             href="/privacy"
-            className="text-violet-600 hover:text-violet-500 underline"
+            className="text-[#9382FF] hover:text-[#7B6AF0] underline"
           >
             {content.auth.signup.terms.privacy}
           </Link>
@@ -264,7 +264,7 @@ export default function SignupPage() {
         {content.auth.signup.loginPrompt}{" "}
         <Link
           href="/login"
-          className="text-violet-600 hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-300 font-medium"
+          className="text-[#9382FF] hover:text-[#7B6AF0] dark:text-[#9382FF] dark:hover:text-[#B8AEFF] font-medium"
         >
           {content.auth.signup.loginLink}
         </Link>
@@ -272,4 +272,3 @@ export default function SignupPage() {
     </motion.div>
   );
 }
-

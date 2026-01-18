@@ -170,3 +170,4 @@ export function generateReferralCode(prefix?: string): string {
   }
   return code;
 }
+

@@ -280,3 +280,4 @@ function buildAgentCompletionMessage(params: AgentNotificationParams): string {
 
   return message;
 }
+

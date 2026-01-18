@@ -34,3 +34,4 @@ export const AgentPlatformTables = {
 
 export type AgentPlatformTable =
   (typeof AgentPlatformTables)[keyof typeof AgentPlatformTables];
+

@@ -112,3 +112,4 @@ export function isErrorResponse(
 ): result is NextResponse {
   return result instanceof NextResponse;
 }
+

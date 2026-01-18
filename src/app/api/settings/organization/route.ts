@@ -100,3 +100,4 @@ export const PATCH = withErrorHandler(async (request: Request) => {
 
   return apiSuccess({ organization: org });
 });
+

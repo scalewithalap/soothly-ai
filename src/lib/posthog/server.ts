@@ -98,3 +98,4 @@ export async function shutdownPostHog(): Promise<void> {
     serverPostHog = null;
   }
 }
+

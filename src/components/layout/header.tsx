@@ -53,7 +53,7 @@ export function Header() {
       return "bg-linear-to-r from-amber-400 to-orange-500 text-white";
     }
     if (tier === "scale") {
-      return "bg-linear-to-r from-violet-500 to-purple-600 text-white";
+      return "bg-linear-to-r from-[#9382FF] to-[#8B5CF6] text-white";
     }
     if (tier === "growth") {
       return "bg-linear-to-r from-blue-500 to-cyan-500 text-white";
@@ -74,7 +74,7 @@ export function Header() {
             <input
               type="text"
               placeholder={content.header.searchPlaceholder}
-              className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/20 text-gray-900 dark:text-white placeholder:text-gray-400"
+              className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-800 border-none rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[#9382FF]/20 text-gray-900 dark:text-white placeholder:text-gray-400"
             />
           </div>
         </div>
@@ -82,12 +82,12 @@ export function Header() {
 
       <div className="flex items-center gap-3">
         {/* Credits Badge */}
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-violet-50 dark:bg-violet-900/20 rounded-full border border-violet-100 dark:border-violet-800">
-          <Zap className="w-4 h-4 text-violet-500" />
-          <span className="text-sm font-semibold text-violet-700 dark:text-violet-300 tabular-nums">
+        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#9382FF]/10 dark:bg-[#9382FF]/20 rounded-full border border-[#9382FF]/20 dark:border-[#9382FF]/30">
+          <Zap className="w-4 h-4 text-[#9382FF]" />
+          <span className="text-sm font-semibold text-[#9382FF] dark:text-[#9382FF] tabular-nums">
             {loading ? "" : credits?.toLocaleString() || 0}
           </span>
-          <span className="text-sm text-violet-600 dark:text-violet-400">
+          <span className="text-sm text-[#9382FF] dark:text-[#9382FF]">
             {t.credits || "Credits"}
           </span>
         </div>

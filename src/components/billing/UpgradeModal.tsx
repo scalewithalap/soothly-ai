@@ -60,9 +60,9 @@ export function UpgradeModal({ open, onClose, feature }: UpgradeModalProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="mt-4 p-4 rounded-xl bg-linear-to-br from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 border border-violet-200 dark:border-violet-800">
+        <div className="mt-4 p-4 rounded-xl bg-linear-to-br from-[#9382FF]/10 to-[#8B5CF6]/10 dark:from-[#9382FF]/20 dark:to-[#8B5CF6]/20 border border-[#9382FF]/20 dark:border-[#9382FF]/30">
           <div className="flex items-center gap-2 mb-4">
-            <Zap className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+            <Zap className="w-5 h-5 text-[#9382FF] dark:text-[#9382FF]" />
             <span className="font-semibold text-gray-900 dark:text-white">
               {t.proTitle || "Pro Plan Benefits"}
             </span>

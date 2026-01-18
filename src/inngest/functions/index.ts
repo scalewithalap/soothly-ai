@@ -39,3 +39,4 @@ export const functions = [
   qualifyPartner,
   sendPartnerOutreach,
 ];
+

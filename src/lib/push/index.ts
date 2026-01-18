@@ -117,3 +117,4 @@ export async function sendPushNotificationToMany(
 export function getVapidPublicKey(): string {
   return VAPID_PUBLIC_KEY;
 }
+

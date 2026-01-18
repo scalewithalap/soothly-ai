@@ -97,7 +97,7 @@ export default function AcceptInvitePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
-        <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-[#9382FF] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -153,8 +153,8 @@ export default function AcceptInvitePage() {
           </div>
         ) : invitation ? (
           <div className="text-center">
-            <div className="w-16 h-16 mx-auto rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center mb-4">
-              <Users className="w-8 h-8 text-violet-600 dark:text-violet-400" />
+            <div className="w-16 h-16 mx-auto rounded-full bg-[#9382FF]/10 dark:bg-[#9382FF]/20 flex items-center justify-center mb-4">
+              <Users className="w-8 h-8 text-[#9382FF] dark:text-[#B8AEFF]" />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
               {content.invite.valid.title}
@@ -189,7 +189,7 @@ export default function AcceptInvitePage() {
                   {content.invite.valid.signupPrompt}{" "}
                   <Link
                     href={`/signup?redirect=/invite/${token}`}
-                    className="text-violet-600 hover:underline"
+                    className="text-[#9382FF] hover:underline"
                   >
                     {content.invite.valid.signupLink}
                   </Link>

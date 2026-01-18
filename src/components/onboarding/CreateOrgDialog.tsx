@@ -102,8 +102,8 @@ export function CreateOrgDialog({ open, onComplete }: CreateOrgDialogProps) {
       >
         <DialogHeader>
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30">
-              <Building2 className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+            <div className="p-2 rounded-lg bg-[#9382FF]/20 dark:bg-[#9382FF]/30">
+              <Building2 className="w-5 h-5 text-[#9382FF] dark:text-[#9382FF]" />
             </div>
             <DialogTitle className="text-xl">
               {t.title || "Set Up Your Organization"}
@@ -190,3 +190,4 @@ export function CreateOrgDialog({ open, onComplete }: CreateOrgDialogProps) {
     </Dialog>
   );
 }
+

@@ -310,7 +310,7 @@ export default function AdminSettingsPage() {
           onClick={() => setActiveTab("api-keys")}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === "api-keys"
-              ? "border-violet-600 text-violet-600"
+              ? "border-[#9382FF] text-[#9382FF]"
               : "border-transparent text-gray-600 hover:text-gray-900"
           }`}
         >
@@ -321,7 +321,7 @@ export default function AdminSettingsPage() {
           onClick={() => setActiveTab("webhooks")}
           className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
             activeTab === "webhooks"
-              ? "border-violet-600 text-violet-600"
+              ? "border-[#9382FF] text-[#9382FF]"
               : "border-transparent text-gray-600 hover:text-gray-900"
           }`}
         >
@@ -575,7 +575,7 @@ export default function AdminSettingsPage() {
                       onClick={() => toggleEvent(event)}
                       className={`px-3 py-1 text-sm rounded-full transition-colors ${
                         webhookEvents.includes(event)
-                          ? "bg-violet-600 text-white"
+                          ? "bg-[#9382FF] text-white"
                           : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
                       }`}
                     >
@@ -759,3 +759,4 @@ export default function AdminSettingsPage() {
     </div>
   );
 }
+

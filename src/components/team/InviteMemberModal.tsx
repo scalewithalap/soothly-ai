@@ -63,8 +63,8 @@ export function InviteMemberModal({
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
-                <UserPlus className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+              <div className="w-10 h-10 rounded-xl bg-[#9382FF]/20 dark:bg-[#9382FF]/30 flex items-center justify-center">
+                <UserPlus className="w-5 h-5 text-[#9382FF] dark:text-[#9382FF]" />
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -111,7 +111,7 @@ export function InviteMemberModal({
                   onClick={() => setRole("member")}
                   className={`p-4 rounded-xl border-2 text-left transition-all ${
                     role === "member"
-                      ? "border-violet-600 bg-violet-50 dark:bg-violet-900/20"
+                      ? "border-[#9382FF] bg-[#9382FF]/10 dark:bg-[#9382FF]/20"
                       : "border-gray-200 dark:border-gray-700 hover:border-gray-300"
                   }`}
                 >
@@ -127,7 +127,7 @@ export function InviteMemberModal({
                   onClick={() => setRole("admin")}
                   className={`p-4 rounded-xl border-2 text-left transition-all ${
                     role === "admin"
-                      ? "border-violet-600 bg-violet-50 dark:bg-violet-900/20"
+                      ? "border-[#9382FF] bg-[#9382FF]/10 dark:bg-[#9382FF]/20"
                       : "border-gray-200 dark:border-gray-700 hover:border-gray-300"
                   }`}
                 >
@@ -160,3 +160,4 @@ export function InviteMemberModal({
     </>
   );
 }
+

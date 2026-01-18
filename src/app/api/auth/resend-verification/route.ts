@@ -68,3 +68,4 @@ export const POST = withErrorHandler(async (request: Request) => {
     message: "Verification email sent",
   });
 });
+

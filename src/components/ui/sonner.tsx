@@ -16,7 +16,7 @@ export function Toaster({ ...props }: ToasterProps) {
           description:
             "group-[.toast]:text-gray-500 dark:group-[.toast]:text-gray-400",
           actionButton:
-            "group-[.toast]:bg-violet-600 group-[.toast]:text-white",
+            "group-[.toast]:bg-[#9382FF] group-[.toast]:text-white",
           cancelButton:
             "group-[.toast]:bg-gray-100 group-[.toast]:text-gray-500 dark:group-[.toast]:bg-gray-800 dark:group-[.toast]:text-gray-400",
           success:
@@ -32,3 +32,4 @@ export function Toaster({ ...props }: ToasterProps) {
     />
   );
 }
+

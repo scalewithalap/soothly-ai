@@ -120,3 +120,4 @@ export function LeadCampaignList({ initialCampaigns }: LeadCampaignListProps) {
     </div>
   );
 }
+

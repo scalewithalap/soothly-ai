@@ -158,7 +158,7 @@ export function NotificationBell() {
         <div className="max-h-80 overflow-auto">
           {loading && notifications.length === 0 ? (
             <div className="flex items-center justify-center py-8">
-              <div className="w-5 h-5 border-2 border-violet-600 border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-[#9382FF] border-t-transparent rounded-full animate-spin" />
             </div>
           ) : notifications.length === 0 ? (
             <div className="py-8 text-center text-sm text-gray-500">
@@ -234,3 +234,4 @@ export function NotificationBell() {
     </Popover>
   );
 }
+

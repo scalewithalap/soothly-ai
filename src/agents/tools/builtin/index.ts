@@ -44,3 +44,4 @@ export function registerBuiltinTools(registry?: MCPToolRegistry): void {
 export function getBuiltinToolNames(): string[] {
   return builtinTools.map((t) => t.name);
 }
+

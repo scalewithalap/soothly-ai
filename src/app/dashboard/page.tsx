@@ -79,7 +79,7 @@ export default function DashboardPage() {
 
       // Fetch analytics
       const analyticsRes = await fetch(
-        `/api/analytics/agents?period=${period}`
+        `/api/analytics/agents?period=${period}`,
       );
       if (analyticsRes.ok) {
         const analyticsData = await analyticsRes.json();
@@ -154,7 +154,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-[#9382FF] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -236,8 +236,8 @@ export default function DashboardPage() {
 
         <Card className="p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-violet-100 dark:bg-violet-900/30">
-              <Zap className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+            <div className="p-2 rounded-lg bg-[#9382FF]/20 dark:bg-[#9382FF]/30">
+              <Zap className="w-5 h-5 text-[#9382FF] dark:text-[#9382FF]" />
             </div>
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -286,7 +286,7 @@ export default function DashboardPage() {
                 return (
                   <div
                     key={i}
-                    className="flex-1 bg-linear-to-t from-violet-600 to-violet-400 rounded-t transition-all hover:from-violet-500 hover:to-violet-300"
+                    className="flex-1 bg-linear-to-t from-[#9382FF] to-[#8B5CF6] rounded-t transition-all hover:from-[#7B6AF0] hover:to-[#9382FF]"
                     style={{ height: `${Math.max(height, 5)}%` }}
                     title={`${point.date}: ${point.count} tasks`}
                   />

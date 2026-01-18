@@ -163,3 +163,4 @@ export async function getAuditLog(
 const auditService = { logAuditEvent, getRequestContext, getAuditLog };
 
 export default auditService;
+

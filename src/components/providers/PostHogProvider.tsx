@@ -94,3 +94,4 @@ export function PostHogProvider({ children, user }: PostHogProviderProps) {
     </>
   );
 }
+

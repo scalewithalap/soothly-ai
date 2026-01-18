@@ -28,7 +28,7 @@ interface MemberListProps {
 
 const roleIcons: Record<string, React.ReactNode> = {
   owner: <Crown className="w-4 h-4 text-amber-500" />,
-  admin: <Shield className="w-4 h-4 text-violet-500" />,
+  admin: <Shield className="w-4 h-4 text-[#9382FF]" />,
   member: <User className="w-4 h-4 text-gray-400" />,
 };
 
@@ -57,7 +57,7 @@ export function MemberList({
 
   const handleRoleChange = async (
     memberId: string,
-    role: "admin" | "member"
+    role: "admin" | "member",
   ) => {
     setLoading(memberId);
     try {
@@ -154,7 +154,7 @@ export function MemberList({
                                 }
                                 className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
                               >
-                                <Shield className="w-4 h-4 text-violet-500" />
+                                <Shield className="w-4 h-4 text-[#9382FF]" />
                                 {content.settings.team.actions.makeAdmin}
                               </button>
                             )}

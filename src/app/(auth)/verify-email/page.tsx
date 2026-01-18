@@ -47,10 +47,10 @@ export default function VerifyEmailPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-violet-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#9382FF]/10 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
       <Card className="max-w-md w-full p-8 text-center">
-        <div className="w-16 h-16 mx-auto mb-6 bg-violet-100 dark:bg-violet-900/30 rounded-full flex items-center justify-center">
-          <Mail className="w-8 h-8 text-violet-600" />
+        <div className="w-16 h-16 mx-auto mb-6 bg-[#9382FF]/20 dark:bg-[#9382FF]/30 rounded-full flex items-center justify-center">
+          <Mail className="w-8 h-8 text-[#9382FF]" />
         </div>
 
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
@@ -88,7 +88,7 @@ export default function VerifyEmailPage() {
             Didn&apos;t receive the email? Check your spam folder or{" "}
             <button
               onClick={handleResend}
-              className="text-violet-600 hover:underline"
+              className="text-[#9382FF] hover:underline"
               disabled={resending}
             >
               click here to resend
@@ -98,7 +98,7 @@ export default function VerifyEmailPage() {
         </div>
 
         <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
-          <a href="/login" className="text-sm text-violet-600 hover:underline">
+          <a href="/login" className="text-sm text-[#9382FF] hover:underline">
             Back to login
           </a>
         </div>

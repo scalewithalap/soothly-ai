@@ -36,3 +36,4 @@ export const POST = withErrorHandler(async (request: Request) => {
 
   return apiSuccess({ success: true });
 });
+

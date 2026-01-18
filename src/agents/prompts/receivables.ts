@@ -87,3 +87,4 @@ You: Analysis with recommendations: adjusted terms, prepayment requirements, or 
 Remember: The goal is to get paid while keeping good customers.`;
 
 export default RECEIVABLES_SYSTEM_PROMPT;
+

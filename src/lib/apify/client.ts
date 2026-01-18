@@ -108,3 +108,4 @@ export async function getDatasetItems<T = unknown>(
   const { items } = await apify.dataset(datasetId).listItems({ limit });
   return items as T[];
 }
+

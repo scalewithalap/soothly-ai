@@ -72,3 +72,4 @@ export const POST = withErrorHandler(async (request: Request) => {
     message: "If this email exists, a password reset link has been sent",
   });
 });
+

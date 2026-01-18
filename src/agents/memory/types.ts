@@ -101,3 +101,4 @@ export const DEFAULT_EMBEDDING_CONFIG: EmbeddingConfig = {
   model: "text-embedding-3-small",
   dimensions: 1536,
 };
+

@@ -42,3 +42,4 @@ export const GET = withErrorHandler(async () => {
     tier: orgData.subscription_tier || "free",
   });
 });
+
