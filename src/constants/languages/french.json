@@ -1022,5 +1022,81 @@
       "loading": "Chargement...",
       "noData": "Aucune donnée disponible"
     }
+  },
+  "affiliate": {
+    "title": "Programme d'Affiliation",
+    "subtitle": "Gagnez des commissions en recommandant des clients à Zero Headache",
+    "linkCopied": "Lien de parrainage copié !",
+    "pendingApproval": "Votre candidature d'affilié est en attente d'approbation. Vous serez notifié une fois approuvé.",
+    "requestPayout": "Demander un Paiement",
+    "commissionRate": "Taux de commission",
+    "stats": {
+      "referrals": "Total des Parrainages",
+      "conversions": "Conversions",
+      "earned": "Total Gagné",
+      "pending": "Solde en Attente"
+    },
+    "referralLink": {
+      "title": "Votre Lien de Parrainage",
+      "description": "Partagez ce lien pour gagner des commissions sur les parrainages"
+    },
+    "tabs": {
+      "referrals": "Parrainages",
+      "payouts": "Paiements"
+    },
+    "referrals": {
+      "title": "Parrainages Récents",
+      "date": "Date",
+      "status": "Statut",
+      "page": "Page d'Atterrissage",
+      "empty": "Aucun parrainage pour l'instant"
+    },
+    "payouts": {
+      "title": "Historique des Paiements",
+      "date": "Date",
+      "amount": "Montant",
+      "method": "Méthode",
+      "status": "Statut",
+      "empty": "Aucun paiement pour l'instant"
+    },
+    "notAffiliate": {
+      "title": "Pas Encore Affilié",
+      "description": "Rejoignez notre programme d'affiliation pour gagner des commissions en recommandant des clients.",
+      "cta": "Postuler"
+    },
+    "apply": {
+      "title": "Rejoignez Notre Programme d'Affiliation",
+      "subtitle": "Associez-vous à nous et gagnez des commissions sur chaque parrainage",
+      "alreadyApplied": "Vous avez déjà postulé",
+      "success": "Candidature soumise avec succès !",
+      "error": "Échec de la soumission",
+      "benefits": {
+        "commission": {
+          "title": "20% de Commission",
+          "description": "Sur chaque parrainage réussi"
+        },
+        "tracking": {
+          "title": "Suivi en Temps Réel",
+          "description": "Surveillez vos parrainages en direct"
+        },
+        "payouts": {
+          "title": "Paiements Rapides",
+          "description": "Paiements hebdomadaires via PayPal"
+        }
+      },
+      "form": {
+        "title": "Formulaire de Candidature",
+        "description": "Remplissez le formulaire pour postuler à notre programme d'affiliation",
+        "paymentMethod": "Méthode de Paiement Préférée",
+        "paypalEmail": "E-mail PayPal",
+        "termsLabel": "J'accepte les conditions générales du programme d'affiliation",
+        "submit": "Soumettre la Candidature"
+      }
+    },
+    "errors": {
+      "loadFailed": "Échec du chargement des données d'affilié",
+      "minPayout": "Le paiement minimum est de 50$",
+      "payoutFailed": "Échec de la demande de paiement"
+    }
   }
 }

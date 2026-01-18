@@ -1024,5 +1024,81 @@
       "loading": "Cargando...",
       "noData": "Sin datos disponibles"
     }
+  },
+  "affiliate": {
+    "title": "Programa de Afiliados",
+    "subtitle": "Gana comisiones refiriendo clientes a Zero Headache",
+    "linkCopied": "¡Enlace de referido copiado!",
+    "pendingApproval": "Tu solicitud de afiliado está pendiente de aprobación. Te notificaremos cuando sea aprobada.",
+    "requestPayout": "Solicitar Pago",
+    "commissionRate": "Tasa de comisión",
+    "stats": {
+      "referrals": "Total de Referidos",
+      "conversions": "Conversiones",
+      "earned": "Total Ganado",
+      "pending": "Saldo Pendiente"
+    },
+    "referralLink": {
+      "title": "Tu Enlace de Referido",
+      "description": "Comparte este enlace para ganar comisiones por referidos"
+    },
+    "tabs": {
+      "referrals": "Referidos",
+      "payouts": "Pagos"
+    },
+    "referrals": {
+      "title": "Referidos Recientes",
+      "date": "Fecha",
+      "status": "Estado",
+      "page": "Página de Destino",
+      "empty": "Sin referidos aún"
+    },
+    "payouts": {
+      "title": "Historial de Pagos",
+      "date": "Fecha",
+      "amount": "Monto",
+      "method": "Método",
+      "status": "Estado",
+      "empty": "Sin pagos aún"
+    },
+    "notAffiliate": {
+      "title": "Aún No Eres Afiliado",
+      "description": "Únete a nuestro programa de afiliados para ganar comisiones refiriendo clientes.",
+      "cta": "Aplicar Ahora"
+    },
+    "apply": {
+      "title": "Únete a Nuestro Programa de Afiliados",
+      "subtitle": "Asóciate con nosotros y gana comisiones por cada referido",
+      "alreadyApplied": "Ya has aplicado",
+      "success": "¡Solicitud enviada exitosamente!",
+      "error": "Error al enviar la solicitud",
+      "benefits": {
+        "commission": {
+          "title": "20% de Comisión",
+          "description": "Por cada referido exitoso"
+        },
+        "tracking": {
+          "title": "Seguimiento en Tiempo Real",
+          "description": "Monitorea tus referidos en vivo"
+        },
+        "payouts": {
+          "title": "Pagos Rápidos",
+          "description": "Pagos semanales vía PayPal"
+        }
+      },
+      "form": {
+        "title": "Formulario de Solicitud",
+        "description": "Completa el formulario para aplicar a nuestro programa de afiliados",
+        "paymentMethod": "Método de Pago Preferido",
+        "paypalEmail": "Correo de PayPal",
+        "termsLabel": "Acepto los términos y condiciones del programa de afiliados",
+        "submit": "Enviar Solicitud"
+      }
+    },
+    "errors": {
+      "loadFailed": "Error al cargar datos del afiliado",
+      "minPayout": "El pago mínimo es $50",
+      "payoutFailed": "Error al solicitar el pago"
+    }
   }
 }

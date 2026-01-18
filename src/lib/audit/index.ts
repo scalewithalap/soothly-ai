@@ -26,7 +26,9 @@ export type EntityType =
   | "team_member"
   | "knowledge_base"
   | "upload"
-  | "notification";
+  | "notification"
+  | "affiliate"
+  | "affiliate_payout";
 
 interface AuditLogEntry {
   orgId: string;

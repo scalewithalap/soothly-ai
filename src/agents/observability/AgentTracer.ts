@@ -341,11 +341,18 @@ export class AgentTracer {
     avg_duration_ms: number;
     error_rate: number;
     by_agent: Record<string, { traces: number; tokens: number; cost: number }>;
+    daily_stats: Array<{
+      date: string;
+      traces: number;
+      tokens: number;
+      cost: number;
+      error_count: number;
+    }>;
   }> {
     let query = untypedQuery(this.db)
       .from("agent_traces")
       .select(
-        "agent_type, status, tokens_in, tokens_out, cost_usd, duration_ms",
+        "agent_type, status, tokens_in, tokens_out, cost_usd, duration_ms, started_at",
       )
       .eq("org_id", this.orgId)
       .is("parent_span_id", null);
@@ -368,6 +375,7 @@ export class AgentTracer {
         avg_duration_ms: 0,
         error_rate: 0,
         by_agent: {},
+        daily_stats: [],
       };
     }
 
@@ -375,6 +383,16 @@ export class AgentTracer {
       string,
       { traces: number; tokens: number; cost: number }
     > = {};
+    const daily_stats: Record<
+      string,
+      {
+        traces: number;
+        tokens: number;
+        cost: number;
+        error_count: number;
+      }
+    > = {};
+
     let totalTokens = 0;
     let totalCost = 0;
     let totalDuration = 0;
@@ -388,6 +406,7 @@ export class AgentTracer {
         tokens_out: number | null;
         cost_usd: number | null;
         duration_ms: number | null;
+        started_at: string;
       };
 
       const tokens = (t.tokens_in || 0) + (t.tokens_out || 0);
@@ -408,6 +427,23 @@ export class AgentTracer {
       by_agent[t.agent_type].traces++;
       by_agent[t.agent_type].tokens += tokens;
       by_agent[t.agent_type].cost += cost;
+
+      // Daily stats
+      const date = new Date(t.started_at).toISOString().split("T")[0];
+      if (!daily_stats[date]) {
+        daily_stats[date] = {
+          traces: 0,
+          tokens: 0,
+          cost: 0,
+          error_count: 0,
+        };
+      }
+      daily_stats[date].traces++;
+      daily_stats[date].tokens += tokens;
+      daily_stats[date].cost += cost;
+      if (t.status === "error") {
+        daily_stats[date].error_count++;
+      }
     }
 
     return {
@@ -417,6 +453,12 @@ export class AgentTracer {
       avg_duration_ms: data.length > 0 ? totalDuration / data.length : 0,
       error_rate: data.length > 0 ? errorCount / data.length : 0,
       by_agent,
+      daily_stats: Object.entries(daily_stats)
+        .map(([date, stat]) => ({
+          date,
+          ...stat,
+        }))
+        .sort((a, b) => a.date.localeCompare(b.date)),
     };
   }
 

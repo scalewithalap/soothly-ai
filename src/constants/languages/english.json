@@ -1455,5 +1455,81 @@
       "loading": "Loading...",
       "noData": "No data available"
     }
+  },
+  "affiliate": {
+    "title": "Affiliate Program",
+    "subtitle": "Earn commissions by referring customers to Zero Headache",
+    "linkCopied": "Referral link copied!",
+    "pendingApproval": "Your affiliate application is pending approval. You'll be notified once approved.",
+    "requestPayout": "Request Payout",
+    "commissionRate": "Commission rate",
+    "stats": {
+      "referrals": "Total Referrals",
+      "conversions": "Conversions",
+      "earned": "Total Earned",
+      "pending": "Pending Balance"
+    },
+    "referralLink": {
+      "title": "Your Referral Link",
+      "description": "Share this link to earn commissions on referrals"
+    },
+    "tabs": {
+      "referrals": "Referrals",
+      "payouts": "Payouts"
+    },
+    "referrals": {
+      "title": "Recent Referrals",
+      "date": "Date",
+      "status": "Status",
+      "page": "Landing Page",
+      "empty": "No referrals yet"
+    },
+    "payouts": {
+      "title": "Payout History",
+      "date": "Date",
+      "amount": "Amount",
+      "method": "Method",
+      "status": "Status",
+      "empty": "No payouts yet"
+    },
+    "notAffiliate": {
+      "title": "Not an Affiliate Yet",
+      "description": "Join our affiliate program to earn commissions by referring customers.",
+      "cta": "Apply Now"
+    },
+    "apply": {
+      "title": "Join Our Affiliate Program",
+      "subtitle": "Partner with us and earn commissions on every referral",
+      "alreadyApplied": "You have already applied",
+      "success": "Application submitted successfully!",
+      "error": "Failed to submit application",
+      "benefits": {
+        "commission": {
+          "title": "20% Commission",
+          "description": "On every successful referral"
+        },
+        "tracking": {
+          "title": "Real-time Tracking",
+          "description": "Monitor your referrals live"
+        },
+        "payouts": {
+          "title": "Fast Payouts",
+          "description": "Weekly payouts via PayPal"
+        }
+      },
+      "form": {
+        "title": "Application Form",
+        "description": "Fill out the form below to apply for our affiliate program",
+        "paymentMethod": "Preferred Payment Method",
+        "paypalEmail": "PayPal Email",
+        "termsLabel": "I agree to the affiliate program terms and conditions",
+        "submit": "Submit Application"
+      }
+    },
+    "errors": {
+      "loadFailed": "Failed to load affiliate data",
+      "minPayout": "Minimum payout is $50",
+      "payoutFailed": "Failed to request payout"
+    }
   }
 }

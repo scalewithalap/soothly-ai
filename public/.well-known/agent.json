@@ -1,0 +1,49 @@
+{
+  "name": "Zero Headache AI Agents SaaS",
+  "url": "https://zeroheadache.co",
+  "version": "1.0.0",
+  "description": "Multi-agent AI platform for content creation, lead generation, and business automation",
+  "provider": {
+    "name": "Zero Headache",
+    "url": "https://zeroheadache.co"
+  },
+  "capabilities": {
+    "streaming": true,
+    "pushNotifications": false,
+    "stateTransitionHistory": true
+  },
+  "authentication": [
+    {
+      "type": "bearer",
+      "name": "Authorization"
+    }
+  ],
+  "defaultInputModes": ["text"],
+  "defaultOutputModes": ["text"],
+  "skills": [
+    {
+      "id": "content-creation",
+      "name": "Content Creation",
+      "description": "Generate SEO-optimized articles, blog posts, and marketing content",
+      "inputModes": ["text"],
+      "outputModes": ["text"],
+      "tags": ["content", "seo", "marketing"]
+    },
+    {
+      "id": "lead-generation",
+      "name": "Lead Generation",
+      "description": "Discover and qualify potential leads using AI-powered web scraping",
+      "inputModes": ["text"],
+      "outputModes": ["text"],
+      "tags": ["leads", "sales", "outreach"]
+    },
+    {
+      "id": "partner-discovery",
+      "name": "Partner Discovery",
+      "description": "Find and evaluate potential business partners and affiliates",
+      "inputModes": ["text"],
+      "outputModes": ["text"],
+      "tags": ["partnerships", "affiliates", "business-development"]
+    }
+  ]
+}

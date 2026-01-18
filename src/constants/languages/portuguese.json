@@ -1022,5 +1022,81 @@
       "loading": "Carregando...",
       "noData": "Nenhum dado disponível"
     }
+  },
+  "affiliate": {
+    "title": "Programa de Afiliados",
+    "subtitle": "Ganhe comissões indicando clientes para a Zero Headache",
+    "linkCopied": "Link de indicação copiado!",
+    "pendingApproval": "Sua solicitação de afiliado está pendente de aprovação. Você será notificado quando for aprovado.",
+    "requestPayout": "Solicitar Pagamento",
+    "commissionRate": "Taxa de comissão",
+    "stats": {
+      "referrals": "Total de Indicações",
+      "conversions": "Conversões",
+      "earned": "Total Ganho",
+      "pending": "Saldo Pendente"
+    },
+    "referralLink": {
+      "title": "Seu Link de Indicação",
+      "description": "Compartilhe este link para ganhar comissões em indicações"
+    },
+    "tabs": {
+      "referrals": "Indicações",
+      "payouts": "Pagamentos"
+    },
+    "referrals": {
+      "title": "Indicações Recentes",
+      "date": "Data",
+      "status": "Status",
+      "page": "Página de Destino",
+      "empty": "Nenhuma indicação ainda"
+    },
+    "payouts": {
+      "title": "Histórico de Pagamentos",
+      "date": "Data",
+      "amount": "Valor",
+      "method": "Método",
+      "status": "Status",
+      "empty": "Nenhum pagamento ainda"
+    },
+    "notAffiliate": {
+      "title": "Ainda Não É Afiliado",
+      "description": "Junte-se ao nosso programa de afiliados para ganhar comissões indicando clientes.",
+      "cta": "Aplicar Agora"
+    },
+    "apply": {
+      "title": "Junte-se ao Nosso Programa de Afiliados",
+      "subtitle": "Seja nosso parceiro e ganhe comissões em cada indicação",
+      "alreadyApplied": "Você já se candidatou",
+      "success": "Candidatura enviada com sucesso!",
+      "error": "Falha ao enviar candidatura",
+      "benefits": {
+        "commission": {
+          "title": "20% de Comissão",
+          "description": "Em cada indicação bem-sucedida"
+        },
+        "tracking": {
+          "title": "Rastreamento em Tempo Real",
+          "description": "Monitore suas indicações ao vivo"
+        },
+        "payouts": {
+          "title": "Pagamentos Rápidos",
+          "description": "Pagamentos semanais via PayPal"
+        }
+      },
+      "form": {
+        "title": "Formulário de Candidatura",
+        "description": "Preencha o formulário para se candidatar ao nosso programa de afiliados",
+        "paymentMethod": "Método de Pagamento Preferido",
+        "paypalEmail": "E-mail do PayPal",
+        "termsLabel": "Eu concordo com os termos e condições do programa de afiliados",
+        "submit": "Enviar Candidatura"
+      }
+    },
+    "errors": {
+      "loadFailed": "Falha ao carregar dados do afiliado",
+      "minPayout": "O pagamento mínimo é $50",
+      "payoutFailed": "Falha ao solicitar pagamento"
+    }
   }
 }

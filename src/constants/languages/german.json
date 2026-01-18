@@ -1024,5 +1024,81 @@
       "loading": "Lade...",
       "noData": "Keine Daten verfügbar"
     }
+  },
+  "affiliate": {
+    "title": "Partnerprogramm",
+    "subtitle": "Verdienen Sie Provisionen, indem Sie Kunden an Zero Headache empfehlen",
+    "linkCopied": "Empfehlungslink kopiert!",
+    "pendingApproval": "Ihre Partner-Bewerbung wird geprüft. Sie werden benachrichtigt, sobald sie genehmigt wurde.",
+    "requestPayout": "Auszahlung Anfordern",
+    "commissionRate": "Provisionssatz",
+    "stats": {
+      "referrals": "Gesamte Empfehlungen",
+      "conversions": "Konversionen",
+      "earned": "Gesamt Verdient",
+      "pending": "Ausstehendes Guthaben"
+    },
+    "referralLink": {
+      "title": "Ihr Empfehlungslink",
+      "description": "Teilen Sie diesen Link, um Provisionen für Empfehlungen zu verdienen"
+    },
+    "tabs": {
+      "referrals": "Empfehlungen",
+      "payouts": "Auszahlungen"
+    },
+    "referrals": {
+      "title": "Aktuelle Empfehlungen",
+      "date": "Datum",
+      "status": "Status",
+      "page": "Landingpage",
+      "empty": "Noch keine Empfehlungen"
+    },
+    "payouts": {
+      "title": "Auszahlungsverlauf",
+      "date": "Datum",
+      "amount": "Betrag",
+      "method": "Methode",
+      "status": "Status",
+      "empty": "Noch keine Auszahlungen"
+    },
+    "notAffiliate": {
+      "title": "Noch Kein Partner",
+      "description": "Treten Sie unserem Partnerprogramm bei, um Provisionen durch Kundenempfehlungen zu verdienen.",
+      "cta": "Jetzt Bewerben"
+    },
+    "apply": {
+      "title": "Unserem Partnerprogramm Beitreten",
+      "subtitle": "Werden Sie Partner und verdienen Sie Provisionen für jede Empfehlung",
+      "alreadyApplied": "Sie haben bereits eine Bewerbung eingereicht",
+      "success": "Bewerbung erfolgreich eingereicht!",
+      "error": "Bewerbung konnte nicht eingereicht werden",
+      "benefits": {
+        "commission": {
+          "title": "20% Provision",
+          "description": "Für jede erfolgreiche Empfehlung"
+        },
+        "tracking": {
+          "title": "Echtzeit-Tracking",
+          "description": "Verfolgen Sie Ihre Empfehlungen live"
+        },
+        "payouts": {
+          "title": "Schnelle Auszahlungen",
+          "description": "Wöchentliche Auszahlungen via PayPal"
+        }
+      },
+      "form": {
+        "title": "Bewerbungsformular",
+        "description": "Füllen Sie das Formular aus, um sich für unser Partnerprogramm zu bewerben",
+        "paymentMethod": "Bevorzugte Zahlungsmethode",
+        "paypalEmail": "PayPal-E-Mail",
+        "termsLabel": "Ich akzeptiere die Bedingungen des Partnerprogramms",
+        "submit": "Bewerbung Absenden"
+      }
+    },
+    "errors": {
+      "loadFailed": "Partner-Daten konnten nicht geladen werden",
+      "minPayout": "Mindestauszahlung beträgt 50$",
+      "payoutFailed": "Auszahlung konnte nicht angefordert werden"
+    }
   }
 }

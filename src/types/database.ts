@@ -68,6 +68,162 @@ export type Database = {
           },
         ];
       };
+      a2a_tasks: {
+        Row: {
+          artifacts: Json;
+          created_at: string | null;
+          error_message: string | null;
+          external_agent_url: string | null;
+          id: string;
+          messages: Json;
+          org_id: string;
+          result: Json | null;
+          session_id: string | null;
+          status: string;
+          task_spec: Json;
+          updated_at: string | null;
+        };
+        Insert: {
+          artifacts?: Json;
+          created_at?: string | null;
+          error_message?: string | null;
+          external_agent_url?: string | null;
+          id?: string;
+          messages?: Json;
+          org_id: string;
+          result?: Json | null;
+          session_id?: string | null;
+          status?: string;
+          task_spec?: Json;
+          updated_at?: string | null;
+        };
+        Update: {
+          artifacts?: Json;
+          created_at?: string | null;
+          error_message?: string | null;
+          external_agent_url?: string | null;
+          id?: string;
+          messages?: Json;
+          org_id?: string;
+          result?: Json | null;
+          session_id?: string | null;
+          status?: string;
+          task_spec?: Json;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "a2a_tasks_org_id_fkey";
+            columns: ["org_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      memory_checkpoints: {
+        Row: {
+          id: string;
+          org_id: string;
+          agent_type: string;
+          session_id: string;
+          checkpoint_name: string;
+          state: Json;
+          metadata: Json | null;
+          parent_checkpoint_id: string | null;
+          created_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          org_id: string;
+          agent_type: string;
+          session_id: string;
+          checkpoint_name: string;
+          state: Json;
+          metadata?: Json | null;
+          parent_checkpoint_id?: string | null;
+          created_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          org_id?: string;
+          agent_type?: string;
+          session_id?: string;
+          checkpoint_name?: string;
+          state?: Json;
+          metadata?: Json | null;
+          parent_checkpoint_id?: string | null;
+          created_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "memory_checkpoints_org_id_fkey";
+            columns: ["org_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      semantic_cache: {
+        Row: {
+          id: string;
+          org_id: string;
+          query_hash: string;
+          query_text: string;
+          query_embedding: number[] | null;
+          response: Json;
+          model: string;
+          tokens_used: number | null;
+          tokens_saved: number | null;
+          hit_count: number | null;
+          similarity_threshold: number | null;
+          ttl: string;
+          created_at: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          org_id: string;
+          query_hash: string;
+          query_text: string;
+          query_embedding?: number[] | null;
+          response: Json;
+          model: string;
+          tokens_used?: number | null;
+          tokens_saved?: number | null;
+          hit_count?: number | null;
+          similarity_threshold?: number | null;
+          ttl: string;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          org_id?: string;
+          query_hash?: string;
+          query_text?: string;
+          query_embedding?: number[] | null;
+          response?: Json;
+          model?: string;
+          tokens_used?: number | null;
+          tokens_saved?: number | null;
+          hit_count?: number | null;
+          similarity_threshold?: number | null;
+          ttl?: string;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "semantic_cache_org_id_fkey";
+            columns: ["org_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       agent_config: {
         Row: {
           agent_type: string;
@@ -2233,8 +2389,8 @@ export type Database = {
           id: string;
           industry: string | null;
           name: string;
-          paddle_customer_id: string | null;
-          paddle_subscription_id: string | null;
+          polar_customer_id: string | null;
+          polar_subscription_id: string | null;
           settings: Json | null;
           subscription_status: string | null;
           subscription_tier: string | null;
@@ -2249,8 +2405,8 @@ export type Database = {
           id?: string;
           industry?: string | null;
           name: string;
-          paddle_customer_id?: string | null;
-          paddle_subscription_id?: string | null;
+          polar_customer_id?: string | null;
+          polar_subscription_id?: string | null;
           settings?: Json | null;
           subscription_status?: string | null;
           subscription_tier?: string | null;
@@ -2265,8 +2421,8 @@ export type Database = {
           id?: string;
           industry?: string | null;
           name?: string;
-          paddle_customer_id?: string | null;
-          paddle_subscription_id?: string | null;
+          polar_customer_id?: string | null;
+          polar_subscription_id?: string | null;
           settings?: Json | null;
           subscription_status?: string | null;
           subscription_tier?: string | null;
