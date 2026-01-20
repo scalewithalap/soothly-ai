@@ -134,7 +134,7 @@
       ]
     },
     "stats": {
-      "totalCredits": "Total de Tareas",
+      "totalTasks": "Total de Tareas",
       "activeAgents": "Agentes Activos",
       "timeSaved": "Tiempo Ahorrado"
     },
@@ -862,7 +862,7 @@
     "online": "En línea",
     "quickActions": "Acciones Rápidas",
     "viewAssets": "Ver Biblioteca de Activos",
-    "viewCredits": "Uso de Créditos"
+    "viewUsage": "Estadísticas de uso"
   },
   "agentPlatform": {
     "workflows": {

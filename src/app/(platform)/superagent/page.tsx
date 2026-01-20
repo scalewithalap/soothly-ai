@@ -266,7 +266,7 @@ export default function SuperagentPage() {
                 onClick={() => router.push("/billing/ledger")}
               >
                 <BarChart3 className="w-4 h-4" />
-                {t.viewCredits || "Usage Stats"}
+                {t.viewUsage || "Usage Stats"}
               </Button>
             </div>
           </div>

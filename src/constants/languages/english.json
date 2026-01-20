@@ -130,13 +130,11 @@
       "actions": ["Create lead campaign", "Generate content", "Find partners"]
     },
     "stats": {
-      "totalCredits": "Total Tasks",
+      "totalTasks": "Total Tasks",
       "activeAgents": "Active Agents",
       "timeSaved": "Time Saved",
-      "totalTasks": "Total Tasks",
       "completed": "Completed",
-      "running": "Running",
-      "creditsUsed": "Failed"
+      "running": "Running"
     },
     "recentActivity": {
       "title": "Recent activity",
@@ -185,9 +183,9 @@
   },
   "header": {
     "searchPlaceholder": "Search...",
-    "credits": "Usage",
+    "usage": "Usage",
     "account": {
-      "credits": "Usage",
+      "usage": "Usage",
       "plan": "Plan",
       "profile": "Profile",
       "billing": "Billing",
@@ -259,7 +257,7 @@
     "statusPaused": "Paused",
     "statusSetup": "Setup Required",
     "lastRunLabel": "Last run",
-    "creditsUsedLabel": "Runs",
+    "runsLabel": "Runs",
     "tasksCompletedLabel": "Tasks",
     "valueGeneratedLabel": "Value Generated",
     "autonomy": {
@@ -277,14 +275,14 @@
       "overview": "Overview",
       "successRate": "Success Rate",
       "totalRuns": "Total Runs",
-      "avgCreditsPerRun": "Avg Runs",
+      "avgUsage": "Avg Usage",
       "hoursSaved": "Hours Saved",
       "recentActivity": "Recent Activity",
       "thoughtStream": "Thought Stream",
       "noThoughts": "No activity yet. Launch the agent to see its thinking process.",
       "performanceChart": "Performance (Last 30 Days)",
       "tasksLabel": "Tasks",
-      "creditsLabel": "Runs",
+      "usageConsumed": "Usage Consumed",
       "valueLabel": "Value ($)"
     },
     "toasts": {
@@ -915,7 +913,7 @@
     "online": "Online",
     "quickActions": "Quick Actions",
     "viewAssets": "View Assets Library",
-    "viewCredits": "Credit Usage"
+    "viewUsage": "Usage Stats"
   },
   "admin": {
     "title": "Admin Dashboard",
@@ -926,7 +924,7 @@
       "totalUsers": "Total Users",
       "tasksThisMonth": "Tasks This Month",
       "messagesThisMonth": "Messages This Month",
-      "creditBalance": "Credit Balance"
+      "usageRemaining": "Usage Remaining"
     },
     "actions": {
       "updateRole": "Update Role",
@@ -983,7 +981,7 @@
       "types": {
         "percentage": "Percentage",
         "fixed": "Fixed Amount",
-        "credits": "Credits"
+        "bonus": "Bonus"
       },
       "status": {
         "active": "Active",
@@ -1132,8 +1130,8 @@
     "types": {
       "agent_completed": "Agent completed",
       "agent_failed": "Agent failed",
-      "credit_low": "Credits running low",
-      "credit_depleted": "Credits depleted",
+      "usage_running_low": "Usage running low",
+      "usage_limit_reached": "Usage limit reached",
       "team_invite": "Team invite",
       "subscription_renewed": "Subscription renewed",
       "system": "System notification"

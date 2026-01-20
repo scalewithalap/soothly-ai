@@ -291,7 +291,7 @@ export default function AgentsPage() {
                       </div>
                       <div className="text-center border-x border-gray-200 dark:border-gray-700">
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {t.creditsUsedLabel || "Runs"}
+                          {t.runsLabel || "Runs"}
                         </p>
                         <p className="text-sm font-medium text-gray-900 dark:text-white">
                           {data.runsCompleted.toLocaleString()}
