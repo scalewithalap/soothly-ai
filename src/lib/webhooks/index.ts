@@ -10,8 +10,7 @@ import { createHmac, randomBytes } from "crypto";
 export const WEBHOOK_EVENTS = [
   "agent.task.completed",
   "agent.task.failed",
-  "credit.low",
-  "credit.depleted",
+  "usage.limit.reached",
   "subscription.renewed",
   "subscription.cancelled",
   "team.member.added",
@@ -379,4 +378,3 @@ const webhookService = {
 };
 
 export default webhookService;
-

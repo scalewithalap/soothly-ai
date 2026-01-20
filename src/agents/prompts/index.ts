@@ -1,6 +1,16 @@
 /**
  * Agent System Prompts Index
  * Centralized export of all agent prompts with helper functions
+ *
+ * Prompt files use legacy names but are mapped to new agent types:
+ * - leads.ts → lead_gen
+ * - content.ts → seo
+ * - partners.ts → partnership
+ * - contracts.ts → proposal
+ * - compliance.ts → competitor_intel
+ * - receivables.ts → revenue_recovery
+ * - spend.ts → onboarding
+ * - pricing.ts → customer_success
  */
 
 import { LEADS_SYSTEM_PROMPT } from "./leads";
@@ -12,27 +22,31 @@ import { RECEIVABLES_SYSTEM_PROMPT } from "./receivables";
 import { SPEND_SYSTEM_PROMPT } from "./spend";
 import { PRICING_SYSTEM_PROMPT } from "./pricing";
 import { SUPERAGENT_SYSTEM_PROMPT } from "./superagent";
-import type { AgentType } from "../base/types";
+import type { AgentType, AnyAgentType } from "../base/types";
+import { normalizeAgentType, NORMAL_AGENT_TYPES } from "../base/types";
 
-// Map agent types to their system prompts
-export const AGENT_PROMPTS: Record<AgentType | "superagent", string> = {
-  leads: LEADS_SYSTEM_PROMPT,
-  content: CONTENT_SYSTEM_PROMPT,
-  partners: PARTNERS_SYSTEM_PROMPT,
-  contracts: CONTRACTS_SYSTEM_PROMPT,
-  compliance: COMPLIANCE_SYSTEM_PROMPT,
-  receivables: RECEIVABLES_SYSTEM_PROMPT,
-  spend: SPEND_SYSTEM_PROMPT,
-  pricing: PRICING_SYSTEM_PROMPT,
+// Map agent types to their system prompts (new names per agents-ecosystem.md)
+export const AGENT_PROMPTS: Record<AgentType, string> = {
+  lead_gen: LEADS_SYSTEM_PROMPT,
+  seo: CONTENT_SYSTEM_PROMPT,
+  partnership: PARTNERS_SYSTEM_PROMPT,
+  proposal: CONTRACTS_SYSTEM_PROMPT,
+  competitor_intel: COMPLIANCE_SYSTEM_PROMPT,
+  revenue_recovery: RECEIVABLES_SYSTEM_PROMPT,
+  onboarding: SPEND_SYSTEM_PROMPT,
+  customer_success: PRICING_SYSTEM_PROMPT,
   superagent: SUPERAGENT_SYSTEM_PROMPT,
 };
 
 /**
  * Get the system prompt for an agent type
+ * Supports both new and legacy agent type names
  * Returns undefined if agent type is not recognized
  */
 export function getSystemPrompt(agentType: string): string | undefined {
-  return AGENT_PROMPTS[agentType as keyof typeof AGENT_PROMPTS];
+  // Normalize legacy types to new types
+  const normalizedType = normalizeAgentType(agentType as AnyAgentType);
+  return AGENT_PROMPTS[normalizedType];
 }
 
 /**
@@ -61,23 +75,15 @@ This is a generic prompt. Please contact support to configure a specialized prom
  * Check if an agent type requires Superagent (yearly subscription)
  */
 export function isSuperagent(agentType: string): boolean {
-  return agentType === "superagent";
+  const normalized = normalizeAgentType(agentType as AnyAgentType);
+  return normalized === "superagent";
 }
 
 /**
  * Get list of all normal (non-superagent) agent types
  */
 export function getNormalAgentTypes(): AgentType[] {
-  return [
-    "leads",
-    "content",
-    "partners",
-    "contracts",
-    "compliance",
-    "receivables",
-    "spend",
-    "pricing",
-  ];
+  return [...NORMAL_AGENT_TYPES];
 }
 
 // Re-export individual prompts for direct use
@@ -92,4 +98,3 @@ export {
   PRICING_SYSTEM_PROMPT,
   SUPERAGENT_SYSTEM_PROMPT,
 };
-

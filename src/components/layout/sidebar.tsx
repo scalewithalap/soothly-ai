@@ -6,7 +6,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useContent } from "@/hooks/use-content";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
-import { CreditBalance } from "@/components/credits/credit-balance";
 import { createClient } from "@/lib/supabase/client";
 import {
   LayoutDashboard,
@@ -70,7 +69,7 @@ export function Sidebar() {
         className={cn(
           "fixed inset-y-0 left-0 z-50 flex flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 lg:static",
           collapsed ? "w-20" : "w-64",
-          mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
         )}
       >
         {/* Header */}
@@ -79,7 +78,7 @@ export function Sidebar() {
             href="/dashboard"
             className={cn(
               "flex items-center gap-3 overflow-hidden transition-all",
-              collapsed ? "w-0 opacity-0" : "w-auto opacity-100"
+              collapsed ? "w-0 opacity-0" : "w-auto opacity-100",
             )}
           >
             <div className="w-8 h-8 rounded-lg bg-[#9382FF] flex items-center justify-center shrink-0">
@@ -135,7 +134,7 @@ export function Sidebar() {
                   isActive
                     ? "bg-[#9382FF]/10 text-[#9382FF] dark:bg-[#9382FF]/20 dark:text-[#9382FF]"
                     : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-200",
-                  collapsed && "justify-center px-2"
+                  collapsed && "justify-center px-2",
                 )}
                 title={collapsed ? item.name : undefined}
               >
@@ -154,14 +153,6 @@ export function Sidebar() {
 
         {/* Footer */}
         <div className="p-4 border-t border-gray-200 dark:border-gray-800 space-y-4">
-          {/* Credit Balance */}
-          {!collapsed && <CreditBalance variant="sidebar" />}
-          {collapsed && (
-            <div className="flex justify-center" title="Credits">
-              <CreditBalance variant="compact" />
-            </div>
-          )}
-
           {!collapsed && (
             <div className="flex justify-center">
               <LanguageSwitcher />
@@ -173,7 +164,7 @@ export function Sidebar() {
             disabled={signingOut}
             className={cn(
               "flex items-center gap-3 w-full px-3 py-2 rounded-lg text-gray-600 dark:text-gray-400 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 transition-colors disabled:opacity-50",
-              collapsed && "justify-center px-2"
+              collapsed && "justify-center px-2",
             )}
             title={collapsed ? content.sidebar.signOut : undefined}
           >
@@ -187,4 +178,3 @@ export function Sidebar() {
     </>
   );
 }
-

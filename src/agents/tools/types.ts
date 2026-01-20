@@ -33,7 +33,7 @@ export interface ToolAnnotations {
   idempotentHint?: boolean;
   /** If true, this tool may take a long time to execute */
   longRunningHint?: boolean;
-  /** Estimated cost in credits for this tool */
+  /** Estimated usage cost for this tool */
   costHint?: number;
 }
 
@@ -228,4 +228,3 @@ export const MCPErrorCodes = {
 } as const;
 
 export type MCPErrorCode = (typeof MCPErrorCodes)[keyof typeof MCPErrorCodes];
-

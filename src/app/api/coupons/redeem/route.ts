@@ -12,7 +12,7 @@ import { createClient } from "@supabase/supabase-js";
 
 const redeemCouponSchema = z.object({
   couponId: z.string().uuid(),
-  appliedTo: z.enum(["subscription", "credits"]),
+  appliedTo: z.enum(["subscription", "bonus"]),
   originalAmount: z.number().positive(),
   discountAmount: z.number().min(0),
   finalAmount: z.number().min(0),
@@ -97,4 +97,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

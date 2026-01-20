@@ -82,7 +82,7 @@ export default function LedgerPage() {
   }, [fetchLedger]);
 
   const exportCsv = () => {
-    const headers = ["Date", "Agent", "Action", "Credits", "Balance After"];
+    const headers = ["Date", "Agent", "Action", "Usage", "Balance After"];
     const rows = entries.map((e) => [
       new Date(e.created_at).toISOString(),
       e.agent_type,
@@ -96,7 +96,7 @@ export default function LedgerPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `credit-ledger-${new Date().toISOString().split("T")[0]}.csv`;
+    a.download = `usage-ledger-${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
   };
 
@@ -106,10 +106,10 @@ export default function LedgerPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-            Credit Ledger
+            Usage Ledger
           </h1>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Complete history of all credit transactions across your agents.
+            Complete history of all usage transactions across your agents.
           </p>
         </div>
         <Button
@@ -152,7 +152,7 @@ export default function LedgerPage() {
                     ?.displayName || agent}
                 </Badge>
                 <p className="text-lg font-semibold text-gray-900 dark:text-white ml-auto">
-                  {amount.toLocaleString()} credits
+                  {amount.toLocaleString()} used
                 </p>
               </div>
             </Card>
@@ -190,7 +190,7 @@ export default function LedgerPage() {
             No transactions yet
           </h3>
           <p className="text-sm text-gray-500">
-            Credit usage will appear here as agents complete tasks.
+            Usage data will appear here as agents complete tasks.
           </p>
         </Card>
       ) : (
@@ -208,7 +208,7 @@ export default function LedgerPage() {
                   Action
                 </th>
                 <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
-                  Credits
+                  Usage
                 </th>
                 <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">
                   Balance
@@ -303,4 +303,3 @@ export default function LedgerPage() {
     </div>
   );
 }
-

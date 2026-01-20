@@ -4,7 +4,7 @@ import type {
   AgentType,
   AgentTask,
   AgentResult,
-  CreditCost,
+  UsageCost,
   AgentEvent,
 } from "./types";
 import { AgentCommunicator } from "./AgentCommunicator";
@@ -25,12 +25,18 @@ import {
   type GuardrailContext,
   type GuardrailResult,
 } from "../safety";
+import {
+  checkAndIncrementUsage,
+  getOrgUsage,
+  getFeatureKeyForAgent,
+  type FeatureKey,
+} from "@/lib/services/usage-limits";
 
 export abstract class BaseAgent {
   abstract readonly name: AgentType;
   abstract readonly displayName: string;
   abstract readonly description: string;
-  abstract readonly creditCost: CreditCost;
+  abstract readonly usageCost: UsageCost;
 
   protected orgId: string;
   protected db: SupabaseClient<Database>;
@@ -180,117 +186,83 @@ export abstract class BaseAgent {
   }
 
   /**
-   * Check if there are enough credits for an action BEFORE starting task.
-   * Does NOT deduct credits - just checks availability.
+   * Check if usage is within limits for this agent BEFORE starting task.
+   * Uses the new limit-based system per pricing-strategy.md.
    */
-  protected async hasEnoughCredits(
+  protected async hasEnoughUsage(
     action: string,
     quantity: number = 1,
   ): Promise<boolean> {
-    const cost = (this.creditCost[action] || 0) * quantity;
+    // Get feature key for this agent type
+    const featureKey = getFeatureKeyForAgent(this.name);
+    if (!featureKey) {
+      // Unknown agent type, allow by default but log warning
+      console.warn(`Unknown agent type for usage check: ${this.name}`);
+      return true;
+    }
 
-    if (cost === 0) return true;
+    // Check current usage without incrementing
+    const usage = await getOrgUsage(this.orgId, featureKey);
+    if (Array.isArray(usage)) return true; // Error case, allow
 
-    // Get current balance from ledger
-    const { data: lastEntry } = await this.db
-      .from("credit_ledger")
-      .select("balance_after")
-      .eq("org_id", this.orgId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
-
-    // Check if org is enterprise (unlimited)
-    const { data: org } = await this.db
-      .from("organizations")
-      .select("subscription_tier")
-      .eq("id", this.orgId)
-      .single();
-
-    if (org?.subscription_tier === "enterprise") return true;
-
-    const balance = lastEntry?.balance_after ?? 0;
-    return balance >= cost;
+    return usage.remaining >= quantity;
   }
 
   /**
-   * Consume credits AFTER a task completes successfully.
-   * This should be called after successful task execution, not before.
+   * Check and increment usage ATOMICALLY for this agent.
+   * Uses the new limit-based system per pricing-strategy.md.
+   * Returns false if limit exceeded.
    */
-  protected async consumeCreditsAfterSuccess(
+  protected async consumeUsageAfterSuccess(
     action: string,
     quantity: number = 1,
     referenceId?: string,
     referenceType?: string,
   ): Promise<boolean> {
-    const cost = (this.creditCost[action] || 0) * quantity;
-
-    if (cost === 0) return true;
-
-    // Get current balance
-    const { data: lastEntry } = await this.db
-      .from("credit_ledger")
-      .select("balance_after")
-      .eq("org_id", this.orgId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
-
-    // Check if org is enterprise (unlimited)
-    const { data: org } = await this.db
-      .from("organizations")
-      .select("subscription_tier")
-      .eq("id", this.orgId)
-      .single();
-
-    const isUnlimited = org?.subscription_tier === "enterprise";
-    const currentBalance = lastEntry?.balance_after ?? 0;
-    const newBalance = isUnlimited ? currentBalance : currentBalance - cost;
-
-    // Insert ledger entry
-    const { error } = await this.db.from("credit_ledger").insert({
-      org_id: this.orgId,
-      agent_type: this.name,
-      action,
-      amount: -cost, // Negative for consumption
-      balance_after: newBalance,
-      reference_id: referenceId,
-      reference_type: referenceType,
-      metadata: isUnlimited ? { unlimited: true } : {},
-    });
-
-    if (error) {
-      console.error("Failed to record credit consumption:", error);
-      return false;
+    // Get feature key for this agent type
+    const featureKey = getFeatureKeyForAgent(this.name);
+    if (!featureKey) {
+      console.warn(`Unknown agent type for usage tracking: ${this.name}`);
+      return true; // Allow unknown agent types
     }
 
-    return true;
+    // Check and increment atomically
+    const result = await checkAndIncrementUsage(
+      this.orgId,
+      featureKey,
+      quantity,
+    );
+
+    if (!result.allowed) {
+      console.warn(`Usage limit exceeded for ${this.name}:`, result.error);
+    }
+
+    return result.allowed;
   }
 
   /**
-   * Charge credits for an action (alias for consumeCreditsAfterSuccess)
-   * Used by agent implementations for credit deduction
+   * Charge usage for an action (alias for consumeUsageAfterSuccess)
+   * Uses the new limit-based usage system.
    */
-  protected async chargeCredits(
+  protected async consumeUsage(
     action: string,
     quantity: number = 1,
   ): Promise<boolean> {
-    return this.consumeCreditsAfterSuccess(action, quantity);
+    return this.consumeUsageAfterSuccess(action, quantity);
   }
 
   /**
-   * Get the current credit balance for the organization
+   * Get the current usage remaining for this agent type
+   * Returns remaining usage count
    */
   protected async getBalance(): Promise<number> {
-    const { data: lastEntry } = await this.db
-      .from("credit_ledger")
-      .select("balance_after")
-      .eq("org_id", this.orgId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single();
+    const featureKey = getFeatureKeyForAgent(this.name);
+    if (!featureKey) return 999999; // Unknown agent, return large number
 
-    return lastEntry?.balance_after ?? 0;
+    const usage = await getOrgUsage(this.orgId, featureKey);
+    if (Array.isArray(usage)) return 0;
+
+    return usage.remaining;
   }
 
   /**
@@ -509,4 +481,3 @@ export abstract class BaseAgent {
     }
   }
 }
-

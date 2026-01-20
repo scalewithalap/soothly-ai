@@ -32,7 +32,7 @@ export async function GET() {
 
   try {
     // Fetch org-wide stats
-    const [usersResult, tasksResult, messagesResult, creditsResult] =
+    const [usersResult, tasksResult, messagesResult, usageResult] =
       await Promise.all([
         // Total users in org
         supabase
@@ -60,14 +60,12 @@ export async function GET() {
             new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
           ),
 
-        // Current credit balance
+        // Current period usage
         supabase
-          .from("credit_ledger")
-          .select("balance_after")
+          .from("org_usage")
+          .select("current_count")
           .eq("org_id", authResult.orgId)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .single(),
+          .eq("period_start", new Date().toISOString().slice(0, 7) + "-01"),
       ]);
 
     return NextResponse.json({
@@ -75,7 +73,12 @@ export async function GET() {
         totalUsers: usersResult.count || 0,
         tasksThisMonth: tasksResult.count || 0,
         messagesThisMonth: messagesResult.count || 0,
-        creditBalance: creditsResult.data?.balance_after || 0,
+        totalUsage:
+          usageResult.data?.reduce(
+            (sum: number, u: { current_count: number }) =>
+              sum + u.current_count,
+            0,
+          ) || 0,
       },
     });
   } catch (error) {
@@ -83,4 +86,3 @@ export async function GET() {
     return NextResponse.json({ error: "admin/stats_failed" }, { status: 500 });
   }
 }
-

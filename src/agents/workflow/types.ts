@@ -181,7 +181,7 @@ export interface NodeExecution {
   completed_at?: string;
   duration_ms?: number;
 
-  credits_used?: number;
+  usage_consumed?: number;
   tokens_in?: number;
   tokens_out?: number;
 }
@@ -221,4 +221,3 @@ export interface StartRunInput {
   triggered_by?: string;
   triggered_by_user_id?: string;
 }
-

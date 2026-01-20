@@ -14,9 +14,9 @@ import { createClient } from "@supabase/supabase-js";
 const createCouponSchema = z.object({
   code: z.string().min(3).max(50),
   description: z.string().optional(),
-  type: z.enum(["percentage", "fixed", "credits"]),
+  type: z.enum(["percentage", "fixed", "bonus"]),
   value: z.number().positive(),
-  appliesTo: z.array(z.enum(["subscription", "credits"])).min(1),
+  appliesTo: z.array(z.enum(["subscription", "bonus"])).min(1),
   planIds: z.array(z.string()).optional(),
   maxUses: z.number().positive().optional(),
   maxUsesPerUser: z.number().positive().default(1),
@@ -150,4 +150,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

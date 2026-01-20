@@ -111,9 +111,9 @@
   "dashboard": {
     "welcomeMessage": "Bienvenido de nuevo, {firstName}",
     "welcomeSubtext": "Esto es lo que ocurre con tus agentes hoy.",
-    "creditBalance": {
-      "title": "Créditos restantes",
-      "lowBalanceWarning": "Créditos bajos",
+    "usageBalance": {
+      "title": "Uso restante",
+      "lowBalanceWarning": "Límite de uso próximo",
       "upgradeCTA": "Mejorar plan"
     },
     "agentStatus": {
@@ -134,7 +134,7 @@
       ]
     },
     "stats": {
-      "totalCredits": "Créditos Totales",
+      "totalCredits": "Total de Tareas",
       "activeAgents": "Agentes Activos",
       "timeSaved": "Tiempo Ahorrado"
     },
@@ -224,7 +224,7 @@
     "statusPaused": "Pausado",
     "statusSetup": "Configuración Requerida",
     "lastRunLabel": "Última ejecución",
-    "creditsUsedLabel": "Créditos usados",
+    "runsLabel": "Ejecuciones",
     "tasksCompletedLabel": "Tareas completadas"
   },
   "errors": {
@@ -254,10 +254,10 @@
       "missing_field": "Falta un campo obligatorio.",
       "invalid_format": "El formato no es válido."
     },
-    "credit": {
-      "insufficient": "No tienes suficientes créditos. Mejora o compra más.",
-      "limitReached": "Se alcanzó el límite mensual de créditos. Se reinician el {date}.",
-      "insufficient_balance": "No tienes suficientes créditos para esta acción."
+    "usage": {
+      "insufficient": "Límite de uso alcanzado. Mejora tu plan.",
+      "limitReached": "Límite mensual alcanzado. Se reinicia el {date}.",
+      "limit_exceeded": "Has alcanzado tu límite de uso para esta acción."
     },
     "agent": {
       "not_found": "Agente no encontrado.",
@@ -288,7 +288,7 @@
     }
   },
   "tooltips": {
-    "creditBalance": "Los créditos se usan cuando los agentes realizan acciones. Cada acción tiene un costo diferente.",
+    "usageBalance": "El uso se registra cuando los agentes realizan acciones. Cada acción consume una cantidad diferente.",
     "passwordVisibility": {
       "show": "Mostrar contraseña",
       "hide": "Ocultar contraseña"
@@ -558,13 +558,13 @@
         "upgradeButton": "Mejorar Plan (Próximamente)",
         "manageButton": "Gestionar Suscripción"
       },
-      "creditUsage": {
-        "title": "Uso de Créditos",
-        "descriptionRecurring": "Rastrea tu consumo mensual de créditos",
-        "descriptionOneTime": "Tus créditos de pago único",
-        "usageText": "{used} de {total} créditos usados",
-        "resetTextRecurring": "Los créditos se reinician el 1 de cada mes",
-        "resetTextOneTime": "Los créditos de pago único no expiran"
+      "usageLimits": {
+        "title": "Límites de Uso",
+        "descriptionRecurring": "Rastrea tu consumo mensual",
+        "descriptionOneTime": "Tus límites de uso",
+        "usageText": "{used} de {total} usados",
+        "resetTextRecurring": "Los límites se reinician el 1 de cada mes",
+        "resetTextOneTime": "Ver detalle de uso"
       },
       "availablePlans": {
         "title": "Planes Disponibles",

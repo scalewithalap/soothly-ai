@@ -28,9 +28,7 @@ export const GET = withErrorHandler(async () => {
 
   const { data: org, error } = await supabase
     .from("organizations")
-    .select(
-      "id, name, subscription_tier, credits_balance, credits_limit, created_at"
-    )
+    .select("id, name, subscription_tier, created_at")
     .eq("id", userData.org_id)
     .single();
 
@@ -38,7 +36,7 @@ export const GET = withErrorHandler(async () => {
     throw new AppError(
       ErrorCodes.DATABASE_ERROR,
       "Failed to fetch organization",
-      500
+      500,
     );
   }
 
@@ -72,7 +70,7 @@ export const PATCH = withErrorHandler(async (request: Request) => {
     throw new AppError(
       ErrorCodes.AUTH_FORBIDDEN,
       "Insufficient permissions",
-      403
+      403,
     );
   }
 
@@ -94,10 +92,9 @@ export const PATCH = withErrorHandler(async (request: Request) => {
     throw new AppError(
       ErrorCodes.DATABASE_ERROR,
       "Failed to update organization",
-      500
+      500,
     );
   }
 
   return apiSuccess({ organization: org });
 });
-

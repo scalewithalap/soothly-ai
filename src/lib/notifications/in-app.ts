@@ -9,8 +9,7 @@ import { createClient } from "@supabase/supabase-js";
 export type InAppNotificationType =
   | "agent_completed"
   | "agent_failed"
-  | "credit_low"
-  | "credit_depleted"
+  | "usage_limit_reached"
   | "team_invite"
   | "subscription_renewed"
   | "subscription_expiring"
@@ -96,4 +95,3 @@ export async function broadcastToOrg(
   await supabase.from("notifications").insert(notifications);
   return users.length;
 }
-

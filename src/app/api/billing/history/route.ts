@@ -1,7 +1,7 @@
 /**
  * Billing History API
  *
- * GET: Fetch user's billing/payment history
+ * GET: Fetch user's billing/payment history from subscriptions
  */
 
 import { NextResponse } from "next/server";
@@ -40,7 +40,7 @@ export async function GET() {
       return NextResponse.json({ history: [] });
     }
 
-    // Fetch payment history from subscriptions and credit purchases
+    // Fetch payment history from subscriptions
     const { data: subscriptions } = await supabase
       .from("subscriptions")
       .select(
@@ -48,14 +48,6 @@ export async function GET() {
       )
       .eq("org_id", user.org_id)
       .order("created_at", { ascending: false });
-
-    const { data: creditPurchases } = await supabase
-      .from("credit_transactions")
-      .select("id, amount, description, created_at")
-      .eq("org_id", user.org_id)
-      .eq("type", "purchase")
-      .order("created_at", { ascending: false })
-      .limit(50);
 
     // Transform to billing records
     const history: BillingRecord[] = [];
@@ -74,20 +66,6 @@ export async function GET() {
       }
     }
 
-    // Add credit purchases
-    if (creditPurchases) {
-      for (const purchase of creditPurchases) {
-        history.push({
-          id: `credit-${purchase.id}`,
-          date: purchase.created_at,
-          amount: Math.abs(purchase.amount) * 0.01, // Assuming 1 credit = $0.01
-          currency: "USD",
-          status: "paid",
-          description: purchase.description || "Credit Purchase",
-        });
-      }
-    }
-
     // Sort by date descending
     history.sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
@@ -102,4 +80,3 @@ export async function GET() {
     );
   }
 }
-

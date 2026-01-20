@@ -15,7 +15,7 @@ import { LanguageContext } from "@/context/language-context";
 import { toast } from "sonner";
 
 interface CouponInputProps {
-  applyTo: "subscription" | "credits";
+  applyTo: "subscription" | "bonus";
   amount: number;
   onApply: (coupon: CouponResult) => void;
   onClear: () => void;
@@ -92,8 +92,8 @@ export function CouponInput({
     if (coupon.type === "percentage") {
       return `${coupon.discount_amount}% off`;
     }
-    if (coupon.type === "credits") {
-      return `+${coupon.discount_amount} credits`;
+    if (coupon.type === "bonus") {
+      return `+${coupon.discount_amount} bonus`;
     }
     return `$${coupon.discount_amount?.toFixed(2)} off`;
   };
@@ -160,4 +160,3 @@ export function CouponInput({
     </div>
   );
 }
-

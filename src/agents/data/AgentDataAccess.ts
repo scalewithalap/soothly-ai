@@ -293,7 +293,7 @@ export class AgentDataAccess {
    * Get aggregated stats across all agents (Superagent only)
    */
   async getAggregatedStats(): Promise<{
-    data: Record<NormalAgentType, { tasks: number; credits: number }> | null;
+    data: Record<NormalAgentType, { tasks: number; usage: number }> | null;
     error: Error | null;
   }> {
     if (!this.isSuperagent) {
@@ -306,7 +306,7 @@ export class AgentDataAccess {
     try {
       const { data, error } = await this.supabase
         .from("agent_tasks")
-        .select("agent_type, credits_consumed")
+        .select("agent_type, usage_consumed")
         .eq("org_id", this.orgId);
 
       if (error) {
@@ -314,21 +314,21 @@ export class AgentDataAccess {
       }
 
       // Aggregate by agent type
-      const stats: Record<string, { tasks: number; credits: number }> = {};
+      const stats: Record<string, { tasks: number; usage: number }> = {};
 
       for (const row of data || []) {
         const type = row.agent_type as string;
         if (!stats[type]) {
-          stats[type] = { tasks: 0, credits: 0 };
+          stats[type] = { tasks: 0, usage: 0 };
         }
         stats[type].tasks++;
-        stats[type].credits += row.credits_consumed || 0;
+        stats[type].usage += row.usage_consumed || 0;
       }
 
       return {
         data: stats as Record<
           NormalAgentType,
-          { tasks: number; credits: number }
+          { tasks: number; usage: number }
         >,
         error: null,
       };
@@ -398,4 +398,3 @@ export async function initAgentDataAccess(
 }
 
 export default AgentDataAccess;
-

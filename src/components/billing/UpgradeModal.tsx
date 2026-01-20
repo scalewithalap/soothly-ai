@@ -21,7 +21,7 @@ interface UpgradeModalProps {
 
 const PRO_BENEFITS = [
   "Unlimited AI agent tasks",
-  "5,000 credits per month",
+  "Higher usage limits",
   "Priority support",
   "Advanced analytics",
   "Custom integrations",

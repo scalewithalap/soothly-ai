@@ -198,7 +198,7 @@ export default function SecuritySettingsPage() {
               <span className="font-medium">{tierError}</span>
             </div>
             <Button size="sm" className="mt-2" asChild>
-              <a href="/billing">{dict.dashboard.creditBalance.upgradeCTA}</a>
+              <a href="/billing">{dict.dashboard.usageBalance.upgradeCTA}</a>
             </Button>
           </div>
         )}
@@ -328,4 +328,3 @@ export default function SecuritySettingsPage() {
     </div>
   );
 }
-

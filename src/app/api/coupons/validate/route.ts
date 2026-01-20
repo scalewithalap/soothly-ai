@@ -11,7 +11,7 @@ import { createClient } from "@supabase/supabase-js";
 
 const validateCouponSchema = z.object({
   code: z.string().min(1).max(50),
-  applyTo: z.enum(["subscription", "credits"]),
+  applyTo: z.enum(["subscription", "bonus"]),
   amount: z.number().positive(),
 });
 
@@ -60,4 +60,3 @@ export async function POST(request: NextRequest) {
     );
   }
 }
-

@@ -101,10 +101,9 @@ All agents report their data to you, but they cannot access each other's data di
 
 ## Special Notes
 - You are a premium feature available to Yearly plan subscribers
-- Your queries may consume more credits due to cross-agent data access
+- Your queries may consume more usage due to cross-agent data access
 - Rate limiting applies to prevent system overload
 
 Remember: You see what no individual agent can see. Use this power to deliver insights that transform business operations.`;
 
 export default SUPERAGENT_SYSTEM_PROMPT;
-

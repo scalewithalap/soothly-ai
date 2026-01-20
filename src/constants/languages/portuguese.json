@@ -109,9 +109,9 @@
   "dashboard": {
     "welcomeMessage": "Bem-vindo de volta, {firstName}",
     "welcomeSubtext": "Aqui está o que está acontecendo com seus agentes hoje.",
-    "creditBalance": {
-      "title": "Créditos restantes",
-      "lowBalanceWarning": "Créditos baixos",
+    "usageBalance": {
+      "title": "Uso restante",
+      "lowBalanceWarning": "Limite de uso próximo",
       "upgradeCTA": "Melhorar plano"
     },
     "agentStatus": {
@@ -132,7 +132,7 @@
       ]
     },
     "stats": {
-      "totalCredits": "Créditos Totais",
+      "totalCredits": "Total de Tarefas",
       "activeAgents": "Agentes Ativos",
       "timeSaved": "Tempo Economizado"
     },
@@ -222,7 +222,7 @@
     "statusPaused": "Pausado",
     "statusSetup": "Configuração Necessária",
     "lastRunLabel": "Última execução",
-    "creditsUsedLabel": "Créditos usados",
+    "runsLabel": "Execuções",
     "tasksCompletedLabel": "Tarefas concluídas"
   },
   "errors": {
@@ -252,10 +252,10 @@
       "missing_field": "Um campo obrigatório está faltando.",
       "invalid_format": "O formato não é válido."
     },
-    "credit": {
-      "insufficient": "Créditos insuficientes. Faça upgrade ou compre mais.",
-      "limitReached": "Limite mensal de créditos atingido. Reinicia em {date}.",
-      "insufficient_balance": "Você não tem créditos suficientes para esta ação."
+    "usage": {
+      "insufficient": "Limite de uso atingido. Melhore seu plano.",
+      "limitReached": "Limite mensal atingido. Reinicia em {date}.",
+      "limit_exceeded": "Você atingiu seu limite de uso para esta ação."
     },
     "agent": {
       "not_found": "Agente não encontrado.",
@@ -286,7 +286,7 @@
     }
   },
   "tooltips": {
-    "creditBalance": "Os créditos são usados quando agentes realizam ações. Ações diferentes têm custos diferentes.",
+    "usageBalance": "O uso é rastreado quando agentes realizam ações. Ações diferentes consomem quantidades diferentes.",
     "passwordVisibility": {
       "show": "Mostrar senha",
       "hide": "Ocultar senha"
@@ -556,13 +556,13 @@
         "upgradeButton": "Melhorar Plano (Em breve)",
         "manageButton": "Gerenciar Assinatura"
       },
-      "creditUsage": {
-        "title": "Uso de Créditos",
+      "usageLimits": {
+        "title": "Limites de Uso",
         "descriptionRecurring": "Acompanhe seu consumo mensal",
-        "descriptionOneTime": "Seus créditos de uso único",
-        "usageText": "{used} de {total} créditos usados",
-        "resetTextRecurring": "Créditos reiniciam no dia 1 de cada mês",
-        "resetTextOneTime": "Créditos únicos não expiram"
+        "descriptionOneTime": "Seus limites de uso",
+        "usageText": "{used} de {total} usados",
+        "resetTextRecurring": "Limites reiniciam no dia 1 de cada mês",
+        "resetTextOneTime": "Ver detalhes do uso"
       },
       "availablePlans": {
         "title": "Planos Disponíveis",

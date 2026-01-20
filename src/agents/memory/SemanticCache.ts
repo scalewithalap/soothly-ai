@@ -125,8 +125,8 @@ export class SemanticCache {
         Date.now() + this.config.ttlSeconds * 1000,
       ).toISOString();
 
-      // Insert cache entry
-      const { data, error } = await supabaseAdmin
+      // Insert cache entry (cast to any to handle schema differences)
+      const { data, error } = await (supabaseAdmin as any)
         .from("semantic_cache")
         .insert({
           org_id: this.config.orgId,
@@ -284,4 +284,3 @@ export function createSemanticCache(
     ...options,
   });
 }
-

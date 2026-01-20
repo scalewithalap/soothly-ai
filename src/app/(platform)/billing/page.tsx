@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
   CreditCard,
-  Zap,
+  BarChart3,
   Check,
   ArrowUpRight,
   Receipt,
@@ -24,8 +24,6 @@ interface SubscriptionPlan {
   description: string | null;
   price_monthly: number;
   price_yearly: number | null;
-  credits_monthly: number;
-  credits_one_time: number;
   max_seats: number;
   is_recurring: boolean;
   support_type: string;
@@ -35,13 +33,18 @@ interface SubscriptionPlan {
   display_order: number;
 }
 
+interface UsageData {
+  feature: string;
+  used: number;
+  limit: number;
+}
+
 export default function BillingSettingsPage() {
   const { content } = useContent();
   const [loading, setLoading] = useState(true);
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [currentTier, setCurrentTier] = useState("free");
-  const [credits, setCredits] = useState({ used: 0, total: 50 });
-  const [actualCredits, setActualCredits] = useState<number | null>(null);
+  const [usageData, setUsageData] = useState<UsageData[]>([]);
 
   useEffect(() => {
     fetchBillingData();
@@ -51,7 +54,7 @@ export default function BillingSettingsPage() {
     try {
       const supabase = createClient();
 
-      // Fetch plans from API endpoint (avoids generated type issues)
+      // Fetch plans from API endpoint
       const plansRes = await fetch("/api/plans");
       if (plansRes.ok) {
         const { plans: plansData } = await plansRes.json();
@@ -82,18 +85,17 @@ export default function BillingSettingsPage() {
           if (orgData) {
             const tier = orgData.subscription_tier || "free";
             setCurrentTier(tier);
-
-            // Get plan for credits info from already-fetched plans
-            // This is done after the state update
           }
         }
       }
 
-      // Fetch actual credit balance from API
-      const creditsRes = await fetch("/api/core/credits");
-      if (creditsRes.ok) {
-        const creditsJson = await creditsRes.json();
-        setActualCredits(creditsJson.data?.balance || 0);
+      // Fetch usage data from ledger API
+      const usageRes = await fetch("/api/billing/ledger");
+      if (usageRes.ok) {
+        const usageJson = await usageRes.json();
+        if (usageJson.usage) {
+          setUsageData(usageJson.usage);
+        }
       }
     } catch (error) {
       console.error("Failed to fetch billing data:", error);
@@ -102,32 +104,17 @@ export default function BillingSettingsPage() {
     }
   };
 
-  // Compute credits based on current plan
-  useEffect(() => {
-    const currentPlan = plans.find((p) => p.tier === currentTier);
-    if (currentPlan) {
-      const creditsTotal =
-        currentPlan.credits_monthly > 0
-          ? currentPlan.credits_monthly
-          : currentPlan.credits_one_time || 50;
-      setCredits({
-        used: 0, // TODO: Calculate from credit_ledger
-        total: creditsTotal,
-      });
-    }
-  }, [plans, currentTier]);
-
-  // Find current plan - only fallback to free tier plan or null
+  // Find current plan
   const currentPlan =
     plans.find((p) => p.tier === currentTier) ||
     plans.find((p) => p.tier === "free") ||
     null;
 
-  // Use actualCredits from API for the "used" display (balance means remaining)
-  const creditsUsed =
-    actualCredits !== null ? Math.max(0, credits.total - actualCredits) : 0;
-  const creditsPercentage =
-    credits.total > 0 ? Math.min((creditsUsed / credits.total) * 100, 100) : 0;
+  // Calculate total usage percentage
+  const totalUsage = usageData.reduce((sum, u) => sum + u.used, 0);
+  const totalLimit = usageData.reduce((sum, u) => sum + u.limit, 0);
+  const usagePercentage =
+    totalLimit > 0 ? Math.min((totalUsage / totalLimit) * 100, 100) : 0;
 
   const formatPrice = (cents: number) => {
     if (cents === 0) return content.settings.billing.availablePlans.free;
@@ -219,41 +206,63 @@ export default function BillingSettingsPage() {
         </div>
       </Card>
 
-      {/* Credits Usage */}
+      {/* Usage Overview */}
       <Card className="p-6">
         <div className="flex items-center gap-3 mb-6">
           <div className="p-2 rounded-lg bg-yellow-100 dark:bg-yellow-900/30">
-            <Zap className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+            <BarChart3 className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
           </div>
           <div>
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-              {content.settings.billing.creditUsage.title}
+              Usage Overview
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {currentPlan?.is_recurring
-                ? content.settings.billing.creditUsage.descriptionRecurring
-                : content.settings.billing.creditUsage.descriptionOneTime}
+              Track your feature usage this billing period
             </p>
           </div>
         </div>
 
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              {content.settings.billing.creditUsage.usageText
-                .replace("{used}", creditsUsed.toLocaleString())
-                .replace("{total}", credits.total.toLocaleString())}
-            </span>
-            <span className="text-sm font-medium text-gray-900 dark:text-white">
-              {Math.round(creditsPercentage)}%
-            </span>
-          </div>
-          <Progress value={creditsPercentage} className="h-2" />
-          <p className="text-xs text-gray-500">
-            {currentPlan?.is_recurring
-              ? content.settings.billing.creditUsage.resetTextRecurring
-              : content.settings.billing.creditUsage.resetTextOneTime}
-          </p>
+          {usageData.length > 0 ? (
+            usageData.map((usage, i) => (
+              <div key={i} className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-600 dark:text-gray-400 capitalize">
+                    {usage.feature.replace(/_/g, " ")}
+                  </span>
+                  <span className="text-sm font-medium text-gray-900 dark:text-white">
+                    {usage.used.toLocaleString()} /{" "}
+                    {usage.limit.toLocaleString()}
+                  </span>
+                </div>
+                <Progress
+                  value={
+                    usage.limit > 0
+                      ? Math.min((usage.used / usage.limit) * 100, 100)
+                      : 0
+                  }
+                  className="h-2"
+                />
+              </div>
+            ))
+          ) : (
+            <div className="text-center py-4 text-gray-500">
+              No usage data available
+            </div>
+          )}
+
+          {usageData.length > 0 && (
+            <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  Total Usage
+                </span>
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  {Math.round(usagePercentage)}%
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </Card>
 

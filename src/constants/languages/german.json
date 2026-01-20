@@ -111,9 +111,9 @@
   "dashboard": {
     "welcomeMessage": "Willkommen zurück, {firstName}",
     "welcomeSubtext": "Das passiert heute mit Ihren Agenten.",
-    "creditBalance": {
-      "title": "Verbleibende Credits",
-      "lowBalanceWarning": "Wenig Credits",
+    "usageBalance": {
+      "title": "Verbleibende Nutzung",
+      "lowBalanceWarning": "Nutzungslimit erreicht",
       "upgradeCTA": "Plan upgraden"
     },
     "agentStatus": {
@@ -134,7 +134,7 @@
       ]
     },
     "stats": {
-      "totalCredits": "Gesamte Credits",
+      "totalCredits": "Gesamte Aufgaben",
       "activeAgents": "Aktive Agenten",
       "timeSaved": "Zeit gespart"
     },
@@ -224,7 +224,7 @@
     "statusPaused": "Pausiert",
     "statusSetup": "Einrichtung erforderlich",
     "lastRunLabel": "Letzte Ausführung",
-    "creditsUsedLabel": "Credits verwendet",
+    "runsLabel": "Ausführungen",
     "tasksCompletedLabel": "Erledigte Aufgaben"
   },
   "errors": {
@@ -254,10 +254,10 @@
       "missing_field": "Ein Pflichtfeld fehlt.",
       "invalid_format": "Das Format ist nicht gültig."
     },
-    "credit": {
-      "insufficient": "Nicht genug Credits. Upgrade oder mehr kaufen.",
-      "limitReached": "Monatliches Kreditlimit erreicht. Reset am {date}.",
-      "insufficient_balance": "Sie haben nicht genug Credits für diese Aktion."
+    "usage": {
+      "insufficient": "Nutzungslimit erreicht. Plan upgraden.",
+      "limitReached": "Monatliches Limit erreicht. Reset am {date}.",
+      "limit_exceeded": "Sie haben Ihr Nutzungslimit für diese Aktion erreicht."
     },
     "agent": {
       "not_found": "Agent nicht gefunden.",
@@ -288,7 +288,7 @@
     }
   },
   "tooltips": {
-    "creditBalance": "Credits werden verwendet, wenn Agenten Aktionen ausführen. Jede Aktion hat unterschiedliche Kosten.",
+    "usageBalance": "Nutzung wird verfolgt, wenn Agenten Aktionen ausführen. Jede Aktion verbraucht unterschiedlich viel.",
     "passwordVisibility": {
       "show": "Passwort anzeigen",
       "hide": "Passwort verbergen"
@@ -558,13 +558,13 @@
         "upgradeButton": "Plan upgraden (Bald verfügbar)",
         "manageButton": "Abo verwalten"
       },
-      "creditUsage": {
-        "title": "Credit-Nutzung",
+      "usageLimits": {
+        "title": "Nutzungslimits",
         "descriptionRecurring": "Verfolgen Sie Ihren monatlichen Verbrauch",
-        "descriptionOneTime": "Ihre einmaligen Credits",
-        "usageText": "{used} von {total} Credits verwendet",
-        "resetTextRecurring": "Credits werden am 1. jedes Monats zurückgesetzt",
-        "resetTextOneTime": "Einmalige Credits verfallen nicht"
+        "descriptionOneTime": "Ihre Nutzungslimits",
+        "usageText": "{used} von {total} verwendet",
+        "resetTextRecurring": "Limits werden am 1. jedes Monats zurückgesetzt",
+        "resetTextOneTime": "Ihre Nutzungsaufschlüsselung anzeigen"
       },
       "availablePlans": {
         "title": "Verfügbare Pläne",

@@ -10,13 +10,13 @@ import { useContent } from "@/hooks/use-content";
 
 export default function DashboardPage() {
   const { content } = useContent();
-  const [credits, setCredits] = useState<number | null>(null);
+  const [tasksCompleted, setTasksCompleted] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch("/api/core/credits")
+    fetch("/api/agents/stats")
       .then((res) => (res.ok ? res.json() : null))
-      .then((data) => setCredits(data?.data?.balance || 0))
-      .catch(() => setCredits(0));
+      .then((data) => setTasksCompleted(data?.totalTasks || 0))
+      .catch(() => setTasksCompleted(0));
   }, []);
 
   return (
@@ -46,10 +46,12 @@ export default function DashboardPage() {
             </div>
             <div>
               <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                {content.dashboard.stats.totalCredits}
+                {content.dashboard.stats.totalTasks || "Tasks Completed"}
               </p>
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white tabular-nums">
-                {credits !== null ? credits.toLocaleString() : "..."}
+                {tasksCompleted !== null
+                  ? tasksCompleted.toLocaleString()
+                  : "..."}
               </h3>
             </div>
           </div>
@@ -193,7 +195,7 @@ export default function DashboardPage() {
                   key={i}
                   className="p-4 flex items-center gap-4 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
                 >
-                  <div className="w-2 h-2 rounded-full bg-[#9382FF]/100 shrink-0" />
+                  <div className="w-2 h-2 rounded-full bg-[#9382FF] shrink-0" />
                   <div className="flex-1">
                     <p className="text-sm text-gray-900 dark:text-white">
                       {text}
@@ -209,4 +211,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-

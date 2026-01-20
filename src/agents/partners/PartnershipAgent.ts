@@ -4,17 +4,17 @@
  */
 
 import { BaseAgent } from "../base/Agent";
-import type { AgentTask, AgentResult, CreditCost } from "../base/types";
+import type { AgentTask, AgentResult, UsageCost } from "../base/types";
 import { getOpenAI } from "@/lib/ai";
 import { inngest, AgentEvents } from "@/inngest/client";
 
 export class PartnershipAgent extends BaseAgent {
-  readonly name = "partners" as const;
+  readonly name = "partnership" as const;
   readonly displayName = "Partnerships";
   readonly description =
     "Discover and recruit affiliates and integration partners.";
 
-  readonly creditCost: CreditCost = {
+  readonly usageCost: UsageCost = {
     discover: 2,
     qualify: 1,
     outreach: 3,
@@ -45,7 +45,7 @@ export class PartnershipAgent extends BaseAgent {
           task.params as {
             industry?: string;
             partnerType?: string;
-          }
+          },
         );
       case "qualify_partner":
         return this.qualifyPartner(task.params as { partnerId: string });
@@ -54,7 +54,7 @@ export class PartnershipAgent extends BaseAgent {
           task.params as {
             partnerId: string;
             templateId?: string;
-          }
+          },
         );
       case "create_partner":
         return this.createPartner(
@@ -62,7 +62,7 @@ export class PartnershipAgent extends BaseAgent {
             name: string;
             type: string;
             contactEmail: string;
-          }
+          },
         );
       default:
         return { success: false, error: "agent/unknown_action" };
@@ -110,9 +110,9 @@ export class PartnershipAgent extends BaseAgent {
     industry?: string;
     partnerType?: string;
   }): Promise<AgentResult> {
-    const charged = await this.chargeCredits("discover", 1);
+    const charged = await this.consumeUsage("discover", 1);
     if (!charged) {
-      return { success: false, error: "credit/insufficient_balance" };
+      return { success: false, error: "usage/limit_exceeded" };
     }
 
     // Trigger async discovery job
@@ -129,7 +129,7 @@ export class PartnershipAgent extends BaseAgent {
     return {
       success: true,
       data: { message: "Partner discovery job queued" },
-      creditsUsed: 2,
+      usageCount: 2,
     };
   }
 
@@ -140,9 +140,9 @@ export class PartnershipAgent extends BaseAgent {
   private async qualifyPartner(params: {
     partnerId: string;
   }): Promise<AgentResult> {
-    const charged = await this.chargeCredits("qualify", 1);
+    const charged = await this.consumeUsage("qualify", 1);
     if (!charged) {
-      return { success: false, error: "credit/insufficient_balance" };
+      return { success: false, error: "usage/limit_exceeded" };
     }
 
     // Get partner details
@@ -191,7 +191,7 @@ Return as JSON:
   "recommendation": "proceed" | "maybe" | "pass",
   "reasoning": "..."
 }`,
-        { model: "gemini-3-flash", temperature: 0.3 }
+        { model: "gemini-3-flash", temperature: 0.3 },
       );
 
       const qualification = JSON.parse(result.content);
@@ -218,7 +218,7 @@ Return as JSON:
       return {
         success: true,
         data: qualification,
-        creditsUsed: 1,
+        usageCount: 1,
       };
     } catch (err) {
       await this.log("error", "Partner qualification failed", { error: err });
@@ -234,9 +234,9 @@ Return as JSON:
     partnerId: string;
     templateId?: string;
   }): Promise<AgentResult> {
-    const charged = await this.chargeCredits("outreach", 1);
+    const charged = await this.consumeUsage("outreach", 1);
     if (!charged) {
-      return { success: false, error: "credit/insufficient_balance" };
+      return { success: false, error: "usage/limit_exceeded" };
     }
 
     // Get partner
@@ -283,7 +283,7 @@ Return as JSON:
   "subject": "...",
   "body": "..."
 }`,
-        { model: "gemini-3-flash", temperature: 0.7 }
+        { model: "gemini-3-flash", temperature: 0.7 },
       );
 
       const email = JSON.parse(result.content);
@@ -323,7 +323,7 @@ Return as JSON:
       return {
         success: true,
         data: { outreachId: outreach.id, email },
-        creditsUsed: 3,
+        usageCount: 3,
       };
     } catch (err) {
       await this.log("error", "Partner outreach failed", { error: err });
@@ -331,4 +331,3 @@ Return as JSON:
     }
   }
 }
-

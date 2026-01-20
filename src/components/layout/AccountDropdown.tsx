@@ -15,7 +15,6 @@ import {
   Settings,
   CreditCard,
   LogOut,
-  Zap,
   Crown,
   ChevronDown,
 } from "lucide-react";
@@ -30,7 +29,6 @@ interface UserProfile {
 
 interface AccountData {
   user: UserProfile | null;
-  credits: number;
   tier: string;
   loading: boolean;
 }
@@ -42,7 +40,6 @@ export function AccountDropdown() {
 
   const [accountData, setAccountData] = useState<AccountData>({
     user: null,
-    credits: 0,
     tier: "free",
     loading: true,
   });
@@ -54,11 +51,6 @@ export function AccountDropdown() {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-
-      // Fetch credits
-      const creditsRes = await fetch("/api/core/credits");
-      const creditsJson = creditsRes.ok ? await creditsRes.json() : null;
-      const creditsData = creditsJson?.data ?? { balance: 0 };
 
       // Fetch tier
       const tierRes = await fetch("/api/user/tier");
@@ -72,7 +64,6 @@ export function AccountDropdown() {
               avatarUrl: user.user_metadata?.avatar_url,
             }
           : null,
-        credits: creditsData.balance || 0,
         tier: tierData.tier || "free",
         loading: false,
       });
@@ -174,21 +165,8 @@ export function AccountDropdown() {
 
         <DropdownMenuSeparator />
 
-        {/* Credits & Plan */}
+        {/* Plan */}
         <div className="px-3 py-2">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-[#9382FF]" />
-              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t.credits || "Credits"}
-              </span>
-            </div>
-            <span className="text-sm font-bold text-gray-900 dark:text-white tabular-nums">
-              {accountData.loading
-                ? "..."
-                : accountData.credits.toLocaleString()}
-            </span>
-          </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Crown className="w-4 h-4 text-amber-500" />
@@ -240,4 +218,3 @@ export function AccountDropdown() {
     </DropdownMenu>
   );
 }
-

@@ -4,7 +4,7 @@
  */
 
 import { BaseAgent } from "../base/Agent";
-import type { AgentTask, AgentResult, CreditCost } from "../base/types";
+import type { AgentTask, AgentResult, UsageCost } from "../base/types";
 import { getOpenAI } from "@/lib/ai";
 import { inngest, AgentEvents } from "@/inngest/client";
 import type { Database } from "@/types/database";
@@ -14,12 +14,12 @@ type LeadContact = Database["public"]["Tables"]["lead_contacts"]["Row"];
 type Contact = Database["public"]["Tables"]["contacts"]["Row"];
 
 export class LeadGenAgent extends BaseAgent {
-  readonly name = "leads" as const;
+  readonly name = "lead_gen" as const;
   readonly displayName = "Lead Generation";
   readonly description =
     "Automatically find, enrich, and reach out to your ideal customers.";
 
-  readonly creditCost: CreditCost = {
+  readonly usageCost: UsageCost = {
     scrape: 1,
     enrich: 2,
     score: 1,
@@ -46,11 +46,11 @@ export class LeadGenAgent extends BaseAgent {
     switch (task.action) {
       case "create_campaign":
         return this.createCampaign(
-          task.params as { name: string; criteria: Record<string, unknown> }
+          task.params as { name: string; criteria: Record<string, unknown> },
         );
       case "scrape_leads":
         return this.scrapeLeads(
-          task.params as { campaignId: string; source: string }
+          task.params as { campaignId: string; source: string },
         );
       case "enrich_lead":
         return this.enrichLead(task.params as { leadId: string });
@@ -58,7 +58,7 @@ export class LeadGenAgent extends BaseAgent {
         return this.scoreLeads(task.params as { campaignId: string });
       case "send_outreach":
         return this.sendOutreach(
-          task.params as { leadId: string; sequenceId: string }
+          task.params as { leadId: string; sequenceId: string },
         );
       default:
         return { success: false, error: "agent/unknown_action" };
@@ -106,9 +106,9 @@ export class LeadGenAgent extends BaseAgent {
     campaignId: string;
     source: string;
   }): Promise<AgentResult> {
-    const charged = await this.chargeCredits("scrape", 1);
+    const charged = await this.consumeUsage("scrape", 1);
     if (!charged) {
-      return { success: false, error: "credit/insufficient_balance" };
+      return { success: false, error: "usage/limit_exceeded" };
     }
 
     // Trigger async scraping job via Inngest
@@ -124,7 +124,7 @@ export class LeadGenAgent extends BaseAgent {
     return {
       success: true,
       data: { message: "Scraping job queued", campaignId: params.campaignId },
-      creditsUsed: 1,
+      usageCount: 1,
     };
   }
 
@@ -133,9 +133,9 @@ export class LeadGenAgent extends BaseAgent {
   // ============================================
 
   private async enrichLead(params: { leadId: string }): Promise<AgentResult> {
-    const charged = await this.chargeCredits("enrich", 1);
+    const charged = await this.consumeUsage("enrich", 1);
     if (!charged) {
-      return { success: false, error: "credit/insufficient_balance" };
+      return { success: false, error: "usage/limit_exceeded" };
     }
 
     // Trigger async enrichment job
@@ -150,7 +150,7 @@ export class LeadGenAgent extends BaseAgent {
     return {
       success: true,
       data: { message: "Enrichment job queued", leadId: params.leadId },
-      creditsUsed: 2,
+      usageCount: 2,
     };
   }
 
@@ -161,9 +161,9 @@ export class LeadGenAgent extends BaseAgent {
   private async scoreLeads(params: {
     campaignId: string;
   }): Promise<AgentResult> {
-    const charged = await this.chargeCredits("score", 1);
+    const charged = await this.consumeUsage("score", 1);
     if (!charged) {
-      return { success: false, error: "credit/insufficient_balance" };
+      return { success: false, error: "usage/limit_exceeded" };
     }
 
     // Get unscored leads from campaign
@@ -208,7 +208,7 @@ export class LeadGenAgent extends BaseAgent {
       return {
         success: true,
         data: { leadsScored: leads.length, scores },
-        creditsUsed: 1,
+        usageCount: 1,
       };
     } catch (err) {
       await this.log("error", "Scoring failed", { error: err });
@@ -217,7 +217,7 @@ export class LeadGenAgent extends BaseAgent {
   }
 
   private buildScoringPrompt(
-    leads: Array<LeadContact & { contacts: Contact }>
+    leads: Array<LeadContact & { contacts: Contact }>,
   ): string {
     const icp = this.config.idealCustomerProfile || {};
     const weights = this.config.scoringWeights || {
@@ -242,7 +242,7 @@ ${JSON.stringify(
     company: l.enrichment_data,
   })),
   null,
-  2
+  2,
 )}
 
 Return a JSON array with format:
@@ -257,9 +257,9 @@ Return a JSON array with format:
     leadId: string;
     sequenceId: string;
   }): Promise<AgentResult> {
-    const charged = await this.chargeCredits("outreach", 1);
+    const charged = await this.consumeUsage("outreach", 1);
     if (!charged) {
-      return { success: false, error: "credit/insufficient_balance" };
+      return { success: false, error: "usage/limit_exceeded" };
     }
 
     await inngest.send({
@@ -274,8 +274,7 @@ Return a JSON array with format:
     return {
       success: true,
       data: { message: "Outreach scheduled", leadId: params.leadId },
-      creditsUsed: 3,
+      usageCount: 3,
     };
   }
 }
-

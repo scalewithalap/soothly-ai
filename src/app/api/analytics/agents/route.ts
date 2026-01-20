@@ -49,24 +49,32 @@ export const GET = withErrorHandler(async (request: Request) => {
     throw new AppError(
       ErrorCodes.DATABASE_ERROR,
       "Failed to fetch analytics",
-      500
+      500,
     );
   }
 
-  // Fetch credit usage in period
-  const { data: credits } = await supabase
-    .from("credit_ledger")
-    .select("agent_type, amount, action, created_at")
+  // Fetch usage in period from org_usage
+  const currentPeriod = new Date().toISOString().slice(0, 7) + "-01";
+  const { data: usage } = await supabase
+    .from("org_usage")
+    .select("feature_key, current_count")
     .eq("org_id", userData.org_id)
-    .lt("amount", 0) // Only consumption
-    .gte("created_at", startDate.toISOString());
+    .eq("period_start", currentPeriod);
 
   // Calculate metrics
   const tasksByAgent = {
-    leads: activities?.filter((a) => a.agent_type === "leads").length || 0,
-    content: activities?.filter((a) => a.agent_type === "content").length || 0,
-    partners:
-      activities?.filter((a) => a.agent_type === "partners").length || 0,
+    lead_gen:
+      activities?.filter(
+        (a) => a.agent_type === "lead_gen" || a.agent_type === "leads",
+      ).length || 0,
+    seo:
+      activities?.filter(
+        (a) => a.agent_type === "seo" || a.agent_type === "content",
+      ).length || 0,
+    partnership:
+      activities?.filter(
+        (a) => a.agent_type === "partnership" || a.agent_type === "partners",
+      ).length || 0,
   };
 
   const completedTasks =
@@ -77,8 +85,7 @@ export const GET = withErrorHandler(async (request: Request) => {
   const successRate =
     totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-  const creditsUsed =
-    credits?.reduce((sum, c) => sum + Math.abs(c.amount), 0) || 0;
+  const totalUsage = usage?.reduce((sum, u) => sum + u.current_count, 0) || 0;
 
   // Group tasks by day for chart
   const tasksByDay: Record<string, number> = {};
@@ -99,10 +106,9 @@ export const GET = withErrorHandler(async (request: Request) => {
       completedTasks,
       failedTasks,
       successRate,
-      creditsUsed,
+      totalUsage,
       tasksByAgent,
     },
     chartData,
   });
 });
-

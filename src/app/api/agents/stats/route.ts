@@ -23,7 +23,7 @@ interface AgentStats {
   is_active: boolean;
   autonomy_level: "wait" | "ai_decides" | "always_proceed";
   total_tasks_completed: number;
-  total_credits_used: number;
+  total_runs: number;
   total_value_generated: number;
   last_run_at: string | null;
   last_thought: string | null;
@@ -75,7 +75,7 @@ export const GET = withErrorHandler(async () => {
       is_active: config.is_active,
       autonomy_level: config.autonomy_level,
       total_tasks_completed: config.total_tasks_completed || 0,
-      total_credits_used: config.total_credits_used || 0,
+      total_runs: config.total_runs || 0,
       total_value_generated: parseFloat(config.total_value_generated) || 0,
       last_run_at: config.last_run_at,
       last_thought: config.last_thought,
@@ -90,7 +90,7 @@ export const GET = withErrorHandler(async () => {
         is_active: false,
         autonomy_level: "wait" as const,
         total_tasks_completed: 0,
-        total_credits_used: 0,
+        total_runs: 0,
         total_value_generated: 0,
         last_run_at: null,
         last_thought: null,
@@ -106,10 +106,11 @@ export const GET = withErrorHandler(async () => {
       (sum, a) => sum + a.total_tasks_completed,
       0,
     ),
-    totalCreditsUsed: allAgentStats.reduce(
-      (sum, a) => sum + a.total_credits_used,
+    totalTasks: allAgentStats.reduce(
+      (sum, a) => sum + a.total_tasks_completed,
       0,
     ),
+    totalRuns: allAgentStats.reduce((sum, a) => sum + a.total_runs, 0),
     totalValueGenerated: allAgentStats.reduce(
       (sum, a) => sum + a.total_value_generated,
       0,
@@ -121,4 +122,3 @@ export const GET = withErrorHandler(async () => {
     summary,
   });
 });
-

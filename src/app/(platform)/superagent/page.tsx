@@ -265,8 +265,8 @@ export default function SuperagentPage() {
                 className="w-full justify-start gap-2"
                 onClick={() => router.push("/billing/ledger")}
               >
-                <DollarSign className="w-4 h-4" />
-                {t.viewCredits || "Credit Usage"}
+                <BarChart3 className="w-4 h-4" />
+                {t.viewCredits || "Usage Stats"}
               </Button>
             </div>
           </div>

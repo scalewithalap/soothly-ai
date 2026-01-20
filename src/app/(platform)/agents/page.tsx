@@ -52,7 +52,7 @@ interface AgentData {
   id: string;
   status: "active" | "paused" | "setup";
   lastRun: string | null;
-  creditsUsed: number;
+  runsCompleted: number;
   tasksCompleted: number;
 }
 
@@ -62,63 +62,63 @@ const MOCK_AGENT_DATA: Record<string, AgentData> = {
     id: "leadGeneration",
     status: "active",
     lastRun: "2h ago",
-    creditsUsed: 450,
+    runsCompleted: 45,
     tasksCompleted: 127,
   },
   seoContent: {
     id: "seoContent",
     status: "active",
     lastRun: "15m ago",
-    creditsUsed: 230,
+    runsCompleted: 23,
     tasksCompleted: 54,
   },
   partnerships: {
     id: "partnerships",
     status: "paused",
     lastRun: "1d ago",
-    creditsUsed: 120,
+    runsCompleted: 12,
     tasksCompleted: 23,
   },
   contractReview: {
     id: "contractReview",
     status: "setup",
     lastRun: null,
-    creditsUsed: 0,
+    runsCompleted: 0,
     tasksCompleted: 0,
   },
   regulatoryMonitoring: {
     id: "regulatoryMonitoring",
     status: "setup",
     lastRun: null,
-    creditsUsed: 0,
+    runsCompleted: 0,
     tasksCompleted: 0,
   },
   accountsReceivable: {
     id: "accountsReceivable",
     status: "paused",
     lastRun: "3d ago",
-    creditsUsed: 85,
+    runsCompleted: 8,
     tasksCompleted: 31,
   },
   spendAnalysis: {
     id: "spendAnalysis",
     status: "setup",
     lastRun: null,
-    creditsUsed: 0,
+    runsCompleted: 0,
     tasksCompleted: 0,
   },
   dynamicPricing: {
     id: "dynamicPricing",
     status: "setup",
     lastRun: null,
-    creditsUsed: 0,
+    runsCompleted: 0,
     tasksCompleted: 0,
   },
   dataScraper: {
     id: "dataScraper",
     status: "active",
     lastRun: "1h ago",
-    creditsUsed: 380,
+    runsCompleted: 38,
     tasksCompleted: 89,
   },
 };
@@ -239,7 +239,7 @@ export default function AgentsPage() {
             const data = agentData[key] || {
               status: "setup",
               lastRun: null,
-              creditsUsed: 0,
+              runsCompleted: 0,
               tasksCompleted: 0,
             };
             const gradientClass =
@@ -291,10 +291,10 @@ export default function AgentsPage() {
                       </div>
                       <div className="text-center border-x border-gray-200 dark:border-gray-700">
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {t.creditsUsedLabel || "Credits"}
+                          {t.creditsUsedLabel || "Runs"}
                         </p>
                         <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          {data.creditsUsed.toLocaleString()}
+                          {data.runsCompleted.toLocaleString()}
                         </p>
                       </div>
                       <div className="text-center">

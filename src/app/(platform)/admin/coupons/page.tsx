@@ -44,7 +44,7 @@ export default function AdminCouponsPage() {
 
   // Form state
   const [code, setCode] = useState("");
-  const [type, setType] = useState<"percentage" | "fixed" | "credits">(
+  const [type, setType] = useState<"percentage" | "fixed" | "bonus">(
     "percentage",
   );
   const [value, setValue] = useState("");
@@ -112,7 +112,7 @@ export default function AdminCouponsPage() {
           code,
           type,
           value: parseFloat(value),
-          appliesTo: ["subscription", "credits"],
+          appliesTo: ["subscription", "bonus"],
           maxUses: maxUses ? parseInt(maxUses) : undefined,
           validUntil,
         }),
@@ -147,7 +147,7 @@ export default function AdminCouponsPage() {
         return <Percent className="w-4 h-4" />;
       case "fixed":
         return <DollarSign className="w-4 h-4" />;
-      case "credits":
+      case "bonus":
         return <Zap className="w-4 h-4" />;
       default:
         return <Tag className="w-4 h-4" />;
@@ -156,7 +156,7 @@ export default function AdminCouponsPage() {
 
   const formatValue = (coupon: Coupon) => {
     if (coupon.type === "percentage") return `${coupon.value}%`;
-    if (coupon.type === "credits") return `${coupon.value} credits`;
+    if (coupon.type === "bonus") return `${coupon.value} bonus`;
     return `$${coupon.value}`;
   };
 
@@ -171,7 +171,7 @@ export default function AdminCouponsPage() {
   const headers = t.tableHeaders || {};
   const labels = t.labels || {};
   const placeholders = t.placeholders || {};
-  const types = t.types || {};
+  const types = (t.types || {}) as Record<string, string>;
   const analyticsLabels = t.analytics || {};
   const status = t.status || {};
 
@@ -286,7 +286,7 @@ export default function AdminCouponsPage() {
                   {types.percentage || "Percentage"}
                 </option>
                 <option value="fixed">{types.fixed || "Fixed Amount"}</option>
-                <option value="credits">{types.credits || "Credits"}</option>
+                <option value="bonus">{types.bonus || "Bonus"}</option>
               </select>
             </div>
             <div>
@@ -405,4 +405,3 @@ export default function AdminCouponsPage() {
     </div>
   );
 }
-

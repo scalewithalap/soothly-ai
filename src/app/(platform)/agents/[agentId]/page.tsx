@@ -35,7 +35,7 @@ interface AgentConfig {
   is_active: boolean;
   autonomy_level: "wait" | "ai_decides" | "always_proceed";
   total_tasks_completed: number;
-  total_credits_used: number;
+  total_usage: number;
   total_value_generated: number;
   last_run_at: string | null;
 }
@@ -43,7 +43,7 @@ interface AgentConfig {
 interface AgentStats {
   successRate: number;
   totalRuns: number;
-  avgCreditsPerRun: number;
+  avgUsagePerRun: number;
   estimatedHoursSaved: number;
 }
 
@@ -280,12 +280,10 @@ export default function AgentDetailPage() {
             <Card className="p-4">
               <div className="flex items-center gap-2 text-gray-500 mb-2">
                 <DollarSign className="w-4 h-4" />
-                <span className="text-sm">
-                  {t.creditsUsed || "Credits Used"}
-                </span>
+                <span className="text-sm">{t.usageConsumed || "Usage"}</span>
               </div>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {config?.total_credits_used || 0}
+                {config?.total_usage || 0}
               </p>
             </Card>
             <Card className="p-4">
@@ -428,10 +426,10 @@ export default function AgentDetailPage() {
               </div>
               <div>
                 <span className="text-gray-500">
-                  {t.avgCredits || "Avg Credits/Run"}:
+                  {t.avgUsage || "Avg Usage/Run"}:
                 </span>
                 <span className="ml-2 text-gray-900 dark:text-white">
-                  {stats?.avgCreditsPerRun || 0}
+                  {stats?.avgUsagePerRun || 0}
                 </span>
               </div>
             </div>

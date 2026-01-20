@@ -2,7 +2,7 @@
  * Admin Analytics API
  *
  * GET: Returns analytics data for admin dashboard
- * - Credit usage trend
+ * - Usage trend
  * - Agent task counts
  * - Message volume
  * - Daily active users
@@ -51,19 +51,17 @@ export async function GET(request: NextRequest) {
   startDate.setDate(startDate.getDate() - days);
   const startDateStr = startDate.toISOString();
 
-  // Credit usage trend
-  const { data: creditData } = await supabase
-    .from("credit_ledger")
-    .select("amount, created_at")
-    .eq("org_id", authResult.orgId)
-    .gte("created_at", startDateStr)
-    .order("created_at", { ascending: true });
+  // Usage trend from org_usage
+  const { data: usageData } = await supabase
+    .from("org_usage")
+    .select("feature_key, current_count, period_start")
+    .eq("org_id", authResult.orgId);
 
-  // Aggregate by day
-  const creditTrend: Record<string, number> = {};
-  (creditData || []).forEach((entry) => {
-    const dayKey = new Date(entry.created_at).toISOString().split("T")[0];
-    creditTrend[dayKey] = (creditTrend[dayKey] || 0) + Math.abs(entry.amount);
+  // Aggregate by period
+  const usageTrend: Record<string, number> = {};
+  (usageData || []).forEach((entry) => {
+    usageTrend[entry.period_start] =
+      (usageTrend[entry.period_start] || 0) + entry.current_count;
   });
 
   // Agent task counts
@@ -119,7 +117,7 @@ export async function GET(request: NextRequest) {
       .map(([date, value]) => ({ date, value }));
 
   return NextResponse.json({
-    creditUsage: formatTrend(creditTrend),
+    usageByPeriod: formatTrend(usageTrend),
     messages: formatTrend(messageTrend),
     dau: dauTrend.sort((a, b) => a.date.localeCompare(b.date)),
     tasks: {
@@ -128,7 +126,7 @@ export async function GET(request: NextRequest) {
       total: taskData?.length || 0,
     },
     summary: {
-      totalCreditsUsed: Object.values(creditTrend).reduce((a, b) => a + b, 0),
+      totalUsage: Object.values(usageTrend).reduce((a, b) => a + b, 0),
       totalMessages: Object.values(messageTrend).reduce((a, b) => a + b, 0),
       totalTasks: taskData?.length || 0,
       avgDailyActiveUsers: Math.round(
@@ -137,4 +135,3 @@ export async function GET(request: NextRequest) {
     },
   });
 }
-

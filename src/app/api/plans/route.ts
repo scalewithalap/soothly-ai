@@ -10,7 +10,7 @@ export const GET = withErrorHandler(async () => {
   const { data: plans, error } = await supabase
     .from("subscription_plans")
     .select(
-      "id, tier, name, description, price_monthly, price_yearly, credits_monthly, credits_one_time, max_seats, is_recurring, support_type, features, agents_access, api_access, display_order"
+      "id, tier, name, description, price_monthly, price_yearly, max_seats, is_recurring, support_type, features, agents_access, api_access, display_order",
     )
     .eq("is_active", true)
     .order("display_order", { ascending: true });
@@ -22,4 +22,3 @@ export const GET = withErrorHandler(async () => {
 
   return apiSuccess({ plans });
 });
-

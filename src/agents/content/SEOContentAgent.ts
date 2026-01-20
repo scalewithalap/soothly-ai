@@ -4,17 +4,17 @@
  */
 
 import { BaseAgent } from "../base/Agent";
-import type { AgentTask, AgentResult, CreditCost } from "../base/types";
+import type { AgentTask, AgentResult, UsageCost } from "../base/types";
 import { getOpenAI } from "@/lib/ai";
 import { inngest, AgentEvents } from "@/inngest/client";
 
 export class SEOContentAgent extends BaseAgent {
-  readonly name = "content" as const;
+  readonly name = "seo" as const;
   readonly displayName = "SEO Content";
   readonly description =
     "Research keywords and publish SEO-optimized articles automatically.";
 
-  readonly creditCost: CreditCost = {
+  readonly usageCost: UsageCost = {
     research: 2,
     generate: 10,
     optimize: 3,
@@ -48,7 +48,7 @@ export class SEOContentAgent extends BaseAgent {
             title: string;
             primaryKeyword: string;
             contentType?: string;
-          }
+          },
         );
       case "research_keywords":
         return this.researchKeywords(task.params as { briefId: string });
@@ -58,7 +58,7 @@ export class SEOContentAgent extends BaseAgent {
         return this.optimizeSEO(task.params as { articleId: string });
       case "publish":
         return this.publishArticle(
-          task.params as { articleId: string; url?: string }
+          task.params as { articleId: string; url?: string },
         );
       default:
         return { success: false, error: "agent/unknown_action" };
@@ -107,9 +107,9 @@ export class SEOContentAgent extends BaseAgent {
   private async researchKeywords(params: {
     briefId: string;
   }): Promise<AgentResult> {
-    const charged = await this.chargeCredits("research", 1);
+    const charged = await this.consumeUsage("research", 1);
     if (!charged) {
-      return { success: false, error: "credit/insufficient_balance" };
+      return { success: false, error: "usage/limit_exceeded" };
     }
 
     // Get brief
@@ -136,7 +136,7 @@ For each keyword, estimate:
 
 Return as JSON array:
 [{ "keyword": "...", "search_volume": 1000, "keyword_difficulty": 45, "relevance_score": 90 }]`,
-        { model: "gemini-3-flash" as const, temperature: 0.5 }
+        { model: "gemini-3-flash" as const, temperature: 0.5 },
       );
 
       const keywords = JSON.parse(result.content);
@@ -166,7 +166,7 @@ Return as JSON array:
       return {
         success: true,
         data: { keywords, briefId: params.briefId },
-        creditsUsed: 2,
+        usageCount: 2,
       };
     } catch (err) {
       await this.log("error", "Keyword research failed", { error: err });
@@ -181,9 +181,9 @@ Return as JSON array:
   private async generateArticle(params: {
     briefId: string;
   }): Promise<AgentResult> {
-    const charged = await this.chargeCredits("generate", 1);
+    const charged = await this.consumeUsage("generate", 1);
     if (!charged) {
-      return { success: false, error: "credit/insufficient_balance" };
+      return { success: false, error: "usage/limit_exceeded" };
     }
 
     // Get brief
@@ -211,7 +211,7 @@ Return as JSON array:
     return {
       success: true,
       data: { message: "Article generation queued", briefId: params.briefId },
-      creditsUsed: 10,
+      usageCount: 10,
     };
   }
 
@@ -222,9 +222,9 @@ Return as JSON array:
   private async optimizeSEO(params: {
     articleId: string;
   }): Promise<AgentResult> {
-    const charged = await this.chargeCredits("optimize", 1);
+    const charged = await this.consumeUsage("optimize", 1);
     if (!charged) {
-      return { success: false, error: "credit/insufficient_balance" };
+      return { success: false, error: "usage/limit_exceeded" };
     }
 
     // Get article
@@ -263,7 +263,7 @@ Return as JSON:
   "meta_title": "...",
   "meta_description": "..."
 }`,
-        { model: "gemini-3-flash" as const, temperature: 0.3 }
+        { model: "gemini-3-flash" as const, temperature: 0.3 },
       );
 
       const analysis = JSON.parse(result.content);
@@ -289,7 +289,7 @@ Return as JSON:
       return {
         success: true,
         data: analysis,
-        creditsUsed: 3,
+        usageCount: 3,
       };
     } catch (err) {
       await this.log("error", "SEO optimization failed", { error: err });
@@ -305,9 +305,9 @@ Return as JSON:
     articleId: string;
     url?: string;
   }): Promise<AgentResult> {
-    const charged = await this.chargeCredits("publish", 1);
+    const charged = await this.consumeUsage("publish", 1);
     if (!charged) {
-      return { success: false, error: "credit/insufficient_balance" };
+      return { success: false, error: "usage/limit_exceeded" };
     }
 
     const { error } = await (this.db as any)
@@ -336,8 +336,7 @@ Return as JSON:
     return {
       success: true,
       data: { published: true, articleId: params.articleId },
-      creditsUsed: 1,
+      usageCount: 1,
     };
   }
 }
-

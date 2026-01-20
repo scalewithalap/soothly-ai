@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useContext } from "react";
-import { Search, Zap, Crown } from "lucide-react";
+import { Search, Crown } from "lucide-react";
 import { useContent } from "@/hooks/use-content";
 import { AccountDropdown } from "./AccountDropdown";
 import { NotificationBell } from "./NotificationBell";
@@ -10,9 +10,7 @@ import { LanguageContext } from "@/context/language-context";
 export function Header() {
   const { content } = useContent();
   const ctx = useContext(LanguageContext);
-  const t = (ctx?.content?.header || {}) as Record<string, string>;
 
-  const [credits, setCredits] = useState<number | null>(null);
   const [tier, setTier] = useState("free");
   const [loading, setLoading] = useState(true);
 
@@ -22,14 +20,6 @@ export function Header() {
 
   const fetchHeaderData = async () => {
     try {
-      // Fetch credits
-      const creditsRes = await fetch("/api/core/credits");
-      if (creditsRes.ok) {
-        const data = await creditsRes.json();
-        setCredits(data.data?.balance || 0);
-      }
-
-      // Fetch tier
       const tierRes = await fetch("/api/user/tier");
       if (tierRes.ok) {
         const data = await tierRes.json();
@@ -43,7 +33,6 @@ export function Header() {
   };
 
   const getTierLabel = () => {
-    // Capitalize the tier name for display
     if (!tier || tier === "free") return "Free";
     return tier.charAt(0).toUpperCase() + tier.slice(1);
   };
@@ -81,17 +70,6 @@ export function Header() {
       </div>
 
       <div className="flex items-center gap-3">
-        {/* Credits Badge */}
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-[#9382FF]/10 dark:bg-[#9382FF]/20 rounded-full border border-[#9382FF]/20 dark:border-[#9382FF]/30">
-          <Zap className="w-4 h-4 text-[#9382FF]" />
-          <span className="text-sm font-semibold text-[#9382FF] dark:text-[#9382FF] tabular-nums">
-            {loading ? "" : credits?.toLocaleString() || 0}
-          </span>
-          <span className="text-sm text-[#9382FF] dark:text-[#9382FF]">
-            {t.credits || "Credits"}
-          </span>
-        </div>
-
         {/* Plan Badge */}
         <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1">
           <Crown className="w-4 h-4 text-amber-500" />

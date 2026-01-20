@@ -9,7 +9,6 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
-  Zap,
   TrendingUp,
   Users,
   FileText,
@@ -33,7 +32,6 @@ interface Analytics {
   completedTasks: number;
   failedTasks: number;
   successRate: number;
-  creditsUsed: number;
   tasksByAgent: {
     leads: number;
     content: number;
@@ -236,15 +234,15 @@ export default function DashboardPage() {
 
         <Card className="p-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-[#9382FF]/20 dark:bg-[#9382FF]/30">
-              <Zap className="w-5 h-5 text-[#9382FF] dark:text-[#9382FF]" />
+            <div className="p-2 rounded-lg bg-red-100 dark:bg-red-900/30">
+              <XCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
             </div>
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {t.stats?.creditsUsed || "Credits Used"}
+                {t.stats?.failed || "Failed"}
               </p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {analytics?.creditsUsed || 0}
+                {summary.failed}
               </p>
             </div>
           </div>

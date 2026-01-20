@@ -20,9 +20,8 @@ export const ErrorCodes = {
   VALIDATION_ERROR: "validation/error",
   VALIDATION_INVALID_FORMAT: "validation/invalid_format",
 
-  // Credits
-  CREDIT_INSUFFICIENT: "credit/insufficient_balance",
-  CREDIT_LIMIT_REACHED: "credit/limit_reached",
+  // Usage Limits
+  USAGE_LIMIT_EXCEEDED: "usage/limit_exceeded",
 
   // Database
   DATABASE_ERROR: "database/error",
@@ -136,11 +135,12 @@ export class AppError extends Error {
     return new AppError(ErrorCodes.DATABASE_ERROR, message, 500);
   }
 
-  static insufficientCredits(): AppError {
+  static usageLimitExceeded(feature?: string): AppError {
     return new AppError(
-      ErrorCodes.CREDIT_INSUFFICIENT,
-      "Insufficient credits",
+      ErrorCodes.USAGE_LIMIT_EXCEEDED,
+      feature ? `Usage limit exceeded for ${feature}` : "Usage limit exceeded",
       402,
+      feature ? { feature } : undefined,
     );
   }
 
@@ -204,4 +204,3 @@ export function handleApiError(error: unknown): NextResponse {
   console.error("Unhandled API error:", error);
   return AppError.serverError().toResponse();
 }
-

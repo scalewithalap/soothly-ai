@@ -1,3 +1,11 @@
+/**
+ * Usage Ledger API Route
+ *
+ * @route GET /api/billing/ledger
+ * @description Get organization's usage history by feature
+ *
+ */
+
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
@@ -6,14 +14,10 @@ import { AppError, handleApiError } from "@/lib/errors";
 
 // Query params schema
 const QuerySchema = z.object({
-  agent_type: z.string().optional(),
-  action: z.string().optional(),
-  date_from: z.string().optional(),
-  date_to: z.string().optional(),
+  feature_key: z.string().optional(),
+  period_start: z.string().optional(),
   limit: z.coerce.number().min(1).max(100).default(50),
   offset: z.coerce.number().min(0).default(0),
-  sort_by: z.enum(["created_at", "amount"]).default("created_at"),
-  sort_order: z.enum(["asc", "desc"]).default("desc"),
 });
 
 export async function GET(request: NextRequest) {
@@ -35,75 +39,44 @@ export async function GET(request: NextRequest) {
       }).toResponse();
     }
 
-    const {
-      agent_type,
-      action,
-      date_from,
-      date_to,
-      limit,
-      offset,
-      sort_by,
-      sort_order,
-    } = parseResult.data;
+    const { feature_key, period_start, limit, offset } = parseResult.data;
 
-    // Build query
+    // Build query for org_usage table
     let query = supabase
-      .from("credit_ledger")
-      .select(
-        "id, agent_type, action, amount, balance_after, reference_id, reference_type, agent_task_id, metadata, created_at",
-        { count: "exact" },
-      )
+      .from("org_usage")
+      .select("*", { count: "exact" })
       .eq("org_id", orgId)
-      .order(sort_by, { ascending: sort_order === "asc" })
+      .order("period_start", { ascending: false })
       .range(offset, offset + limit - 1);
 
-    if (agent_type) {
-      query = query.eq("agent_type", agent_type);
+    if (feature_key) {
+      query = query.eq("feature_key", feature_key);
     }
 
-    if (action) {
-      query = query.eq("action", action);
-    }
-
-    if (date_from) {
-      query = query.gte("created_at", date_from);
-    }
-
-    if (date_to) {
-      query = query.lte("created_at", date_to);
+    if (period_start) {
+      query = query.eq("period_start", period_start);
     }
 
     const { data: entries, count, error } = await query;
 
     if (error) {
-      throw AppError.databaseError("Failed to query ledger");
+      throw AppError.databaseError("Failed to query usage ledger");
     }
 
-    // Get summary stats for the period
-    let summaryQuery = supabase
-      .from("credit_ledger")
-      .select("agent_type, amount")
+    // Get summary by feature for current period
+    const currentPeriod = new Date().toISOString().slice(0, 7) + "-01"; // YYYY-MM-01
+    const { data: summaryData } = await supabase
+      .from("org_usage")
+      .select("feature_key, current_count")
       .eq("org_id", orgId)
-      .lt("amount", 0); // Only deductions
+      .eq("period_start", currentPeriod);
 
-    if (date_from) {
-      summaryQuery = summaryQuery.gte("created_at", date_from);
-    }
-
-    if (date_to) {
-      summaryQuery = summaryQuery.lte("created_at", date_to);
-    }
-
-    const { data: summaryData } = await summaryQuery;
-
-    // Calculate summary by agent
-    const byAgent: Record<string, number> = {};
-    let totalSpent = 0;
+    const byFeature: Record<string, number> = {};
+    let totalUsed = 0;
 
     summaryData?.forEach((entry) => {
-      const absAmount = Math.abs(entry.amount);
-      totalSpent += absAmount;
-      byAgent[entry.agent_type] = (byAgent[entry.agent_type] || 0) + absAmount;
+      totalUsed += entry.current_count ?? 0;
+      byFeature[entry.feature_key] = entry.current_count ?? 0;
     });
 
     return NextResponse.json({
@@ -115,12 +88,12 @@ export async function GET(request: NextRequest) {
         hasMore: (count || 0) > offset + limit,
       },
       summary: {
-        totalSpent,
-        byAgent,
+        totalUsed,
+        byFeature,
+        currentPeriod,
       },
     });
   } catch (error) {
     return handleApiError(error);
   }
 }
-

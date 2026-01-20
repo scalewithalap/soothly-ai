@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 // Use service role for admin operations
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 // Map Polar product IDs to our subscription tiers
@@ -14,14 +14,6 @@ const POLAR_PRODUCT_TO_TIER: Record<string, string> = {
   prod_growth: "growth",
   prod_scale: "scale",
   prod_enterprise: "enterprise",
-};
-
-// Credits per tier for initial allocation
-const TIER_CREDITS: Record<string, number> = {
-  starter: 500,
-  growth: 2000,
-  scale: 6000,
-  enterprise: 100000, // Effectively unlimited
 };
 
 export const POST = Webhooks({
@@ -52,29 +44,25 @@ export const POST = Webhooks({
     const productId = payload.data.productId;
     const tier = POLAR_PRODUCT_TO_TIER[productId] || "starter";
 
-    // Update organization subscription
+    // Extract billing interval from subscription (month or year)
+    // Polar uses recurringInterval: 'month' | 'year'
+    const recurringInterval = (payload.data as { recurringInterval?: string })
+      .recurringInterval;
+    const billingInterval = recurringInterval === "year" ? "year" : "month";
+
+    // Update organization subscription with tier and billing interval
     await supabase
       .from("organizations")
       .update({
         subscription_tier: tier,
+        billing_interval: billingInterval,
+        billing_cycle_anchor: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
       .eq("id", user.org_id);
 
-    // Add initial credits to ledger
-    const credits = TIER_CREDITS[tier] || 500;
-    await supabase.from("credit_ledger").insert({
-      org_id: user.org_id,
-      agent_type: "system",
-      action: "subscription_credit",
-      amount: credits,
-      balance_after: credits,
-      metadata: {
-        tier,
-        subscription_id: payload.data.id,
-        period: "initial",
-      },
-    });
+    // Usage is now tracked via org_usage table atomically per-action
+    // No initial usage needed - limits are enforced per tier
 
     console.log(`Subscription created for org ${user.org_id}: ${tier}`);
   },
@@ -99,6 +87,7 @@ export const POST = Webhooks({
         .from("organizations")
         .update({
           subscription_tier: "free",
+          billing_interval: "month",
           updated_at: new Date().toISOString(),
         })
         .eq("id", user.org_id);
@@ -111,10 +100,16 @@ export const POST = Webhooks({
     const productId = payload.data.productId;
     const tier = POLAR_PRODUCT_TO_TIER[productId] || "starter";
 
+    // Extract billing interval from subscription
+    const recurringInterval = (payload.data as { recurringInterval?: string })
+      .recurringInterval;
+    const billingInterval = recurringInterval === "year" ? "year" : "month";
+
     await supabase
       .from("organizations")
       .update({
         subscription_tier: tier,
+        billing_interval: billingInterval,
         updated_at: new Date().toISOString(),
       })
       .eq("id", user.org_id);
@@ -136,11 +131,12 @@ export const POST = Webhooks({
 
     if (!user?.org_id) return;
 
-    // Downgrade to free tier
+    // Downgrade to free tier and reset billing interval
     await supabase
       .from("organizations")
       .update({
         subscription_tier: "free",
+        billing_interval: "month",
         updated_at: new Date().toISOString(),
       })
       .eq("id", user.org_id);
@@ -148,7 +144,7 @@ export const POST = Webhooks({
     console.log(`Subscription canceled for org ${user.org_id}`);
   },
 
-  // Handle order completed (for credit purchases)
+  // Handle order completed (legacy - no longer used for usage)
   onOrderCreated: async (payload) => {
     const customer = payload.data.customer;
     const email = customer?.email;
@@ -163,40 +159,17 @@ export const POST = Webhooks({
 
     if (!user?.org_id) return;
 
-    // Check if this is a credit purchase (custom metadata)
+    // Check if this is a legacy purchase (custom metadata)
     const metadata = payload.data.metadata as {
       type?: string;
-      credits?: number;
+      usage?: number;
     } | null;
-    if (metadata?.type === "credit_purchase" && metadata?.credits) {
-      // Get current balance
-      const { data: lastEntry } = await supabase
-        .from("credit_ledger")
-        .select("balance_after")
-        .eq("org_id", user.org_id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .single();
-
-      const currentBalance = lastEntry?.balance_after || 0;
-      const newBalance = currentBalance + metadata.credits;
-
-      // Add credits to ledger
-      await supabase.from("credit_ledger").insert({
-        org_id: user.org_id,
-        agent_type: "system",
-        action: "credit_purchase",
-        amount: metadata.credits,
-        balance_after: newBalance,
-        metadata: {
-          order_id: payload.data.id,
-        },
-      });
-
+    // Legacy usage purchases no longer supported
+    // Usage is tracked via org_usage per tier limits
+    if (metadata?.type === "usage_purchase") {
       console.log(
-        `Credits purchased for org ${user.org_id}: ${metadata.credits}`
+        `Legacy usage purchase ignored for org ${user.org_id} - using limit-based system`,
       );
     }
   },
 });
-

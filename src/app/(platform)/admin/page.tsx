@@ -31,11 +31,11 @@ interface AdminStats {
   totalUsers: number;
   tasksThisMonth: number;
   messagesThisMonth: number;
-  creditBalance: number;
+  usageRemaining: number;
 }
 
 interface Analytics {
-  creditUsage: { date: string; value: number }[];
+  usageTrend: { date: string; value: number }[];
   messages: { date: string; value: number }[];
   dau: { date: string; count: number }[];
   tasks: {
@@ -44,7 +44,7 @@ interface Analytics {
     total: number;
   };
   summary: {
-    totalCreditsUsed: number;
+    totalUsage: number;
     totalMessages: number;
     totalTasks: number;
     avgDailyActiveUsers: number;
@@ -194,10 +194,10 @@ export default function AdminDashboardPage() {
             </div>
             <div>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {statsConfig.creditBalance || "Credit Balance"}
+                {statsConfig.usageRemaining || "Usage Remaining"}
               </p>
               <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                {stats?.creditBalance?.toLocaleString() || 0}
+                {stats?.usageRemaining?.toLocaleString() || 0}
               </p>
             </div>
           </div>
@@ -264,14 +264,14 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
-            {/* Credit Usage Chart */}
+            {/* Usage Trend Chart */}
             <Card className="p-4">
               <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-                Credit Usage
+                Usage Trend
               </h3>
               <div className="h-48">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={analytics.creditUsage}>
+                  <LineChart data={analytics.usageTrend}>
                     <XAxis
                       dataKey="date"
                       tick={{ fontSize: 10 }}
@@ -371,4 +371,3 @@ export default function AdminDashboardPage() {
     </div>
   );
 }
-

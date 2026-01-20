@@ -1,3 +1,36 @@
+/**
+ * Agent Chat API Route
+ *
+ * @route POST /api/agents/[agentId]/chat
+ * @description Streams AI responses for agent conversations.
+ *              Supports all 8 agent types plus Superagent.
+ *
+ * @security Requires authentication. Superagent requires yearly plan.
+ *
+ * @param {string} agentId - Agent type (lead_gen, seo, partnership, etc.)
+ *
+ * @requestBody
+ * ```typescript
+ * {
+ *   message: string;      // User message (1-10000 chars)
+ *   attachments?: Array<{
+ *     id: string;
+ *     url: string;        // Valid URL
+ *     type: string;
+ *     name: string;
+ *   }>;
+ * }
+ * ```
+ *
+ * @response Streaming text/event-stream with AI response chunks
+ *
+ * @errors
+ * - 400: Invalid agent type or request body
+ * - 401: Unauthorized
+ * - 403: Superagent requires yearly plan
+ * - 500: Internal server error
+ */
+
 import { NextRequest } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
@@ -7,9 +40,13 @@ import { AppError, handleApiError } from "@/lib/errors";
 import { getSystemPromptWithFallback, isSuperagent } from "@/agents/prompts";
 import { getOpenAI } from "@/lib/ai";
 import { createKnowledgeBase } from "@/lib/ai/knowledge-base";
-import type { AgentType } from "@/agents/base/types";
+import type { AgentType, AnyAgentType } from "@/agents/base/types";
+import { normalizeAgentType } from "@/agents/base/types";
 
-// Validate request body
+/**
+ * Request body validation schema
+ * @see https://zod.dev for schema documentation
+ */
 const ChatRequestSchema = z.object({
   message: z.string().min(1).max(10000),
   attachments: z
@@ -24,8 +61,21 @@ const ChatRequestSchema = z.object({
     .optional(),
 });
 
-// Valid agent types (including superagent)
+// Valid agent types per agents-ecosystem.md (including superagent)
 const VALID_AGENT_TYPES: AgentType[] = [
+  "lead_gen",
+  "seo",
+  "partnership",
+  "proposal",
+  "competitor_intel",
+  "revenue_recovery",
+  "onboarding",
+  "customer_success",
+  "superagent",
+];
+
+// Legacy agent types for backwards compatibility
+const LEGACY_AGENT_TYPES = [
   "leads",
   "content",
   "partners",
@@ -34,7 +84,6 @@ const VALID_AGENT_TYPES: AgentType[] = [
   "receivables",
   "spend",
   "pricing",
-  "superagent",
 ];
 
 export async function POST(
@@ -44,12 +93,15 @@ export async function POST(
   try {
     const { agentId } = await params;
 
-    // Validate agent type
-    if (!VALID_AGENT_TYPES.includes(agentId as AgentType)) {
+    // Validate agent type (accept both new and legacy types)
+    const isValidNew = VALID_AGENT_TYPES.includes(agentId as AgentType);
+    const isValidLegacy = LEGACY_AGENT_TYPES.includes(agentId);
+    if (!isValidNew && !isValidLegacy) {
       return AppError.invalidAgentType(agentId).toResponse();
     }
 
-    const agentType = agentId as AgentType;
+    // Normalize to new type if legacy was provided
+    const agentType = normalizeAgentType(agentId as AnyAgentType);
 
     // Use RBAC middleware
     const authResult = await requireAuth();
@@ -58,21 +110,19 @@ export async function POST(
     const { orgId } = authResult;
     const supabase = await createClient();
 
-    // Check yearly subscription for Superagent
+    // Check yearly subscription for Superagent (per pricing-strategy.md)
+    // The Superagent capability is **strictly** gated by billing_interval === 'year'
     if (isSuperagent(agentType)) {
       const { data: orgData } = await supabase
         .from("organizations")
-        .select("subscription_tier")
+        .select("billing_interval")
         .eq("id", orgId)
         .single();
 
-      // Check if user has yearly plan (starter, growth, scale have price_yearly)
-      const yearlyEligibleTiers = ["starter", "growth", "scale", "enterprise"];
-      const tier = orgData?.subscription_tier || "free";
-
-      if (!yearlyEligibleTiers.includes(tier)) {
+      // Superagent requires yearly billing interval per pricing-strategy.md
+      if (orgData?.billing_interval !== "year") {
         return AppError.subscriptionRequired(
-          "Superagent requires a paid yearly plan",
+          "The Superagent feature requires a Yearly plan.",
         ).toResponse();
       }
     }
@@ -209,7 +259,7 @@ export async function POST(
           await new Promise((resolve) => setTimeout(resolve, 5000));
 
           // Update task status
-          const creditsConsumed = isSuperagent(agentType)
+          const usageConsumed = isSuperagent(agentType)
             ? Math.ceil(totalTokens / 50) // 2x cost for Superagent
             : Math.ceil(totalTokens / 100);
 
@@ -218,7 +268,7 @@ export async function POST(
             .update({
               status: "completed",
               completed_at: new Date().toISOString(),
-              credits_consumed: creditsConsumed,
+              usage_consumed: usageConsumed,
             })
             .eq("id", task.id);
         })(),

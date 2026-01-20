@@ -111,9 +111,9 @@
   "dashboard": {
     "welcomeMessage": "Welcome back, {firstName}",
     "welcomeSubtext": "Here's what's happening with your agents today.",
-    "creditBalance": {
-      "title": "Credits remaining",
-      "lowBalanceWarning": "Running low on credits",
+    "usageBalance": {
+      "title": "Usage remaining",
+      "lowBalanceWarning": "Approaching usage limit",
       "upgradeCTA": "Upgrade plan"
     },
     "agentStatus": {
@@ -130,13 +130,13 @@
       "actions": ["Create lead campaign", "Generate content", "Find partners"]
     },
     "stats": {
-      "totalCredits": "Total Credits",
+      "totalCredits": "Total Tasks",
       "activeAgents": "Active Agents",
       "timeSaved": "Time Saved",
       "totalTasks": "Total Tasks",
       "completed": "Completed",
       "running": "Running",
-      "creditsUsed": "Credits Used"
+      "creditsUsed": "Failed"
     },
     "recentActivity": {
       "title": "Recent activity",
@@ -185,9 +185,9 @@
   },
   "header": {
     "searchPlaceholder": "Search...",
-    "credits": "Credits",
+    "credits": "Usage",
     "account": {
-      "credits": "Credits",
+      "credits": "Usage",
       "plan": "Plan",
       "profile": "Profile",
       "billing": "Billing",
@@ -259,7 +259,7 @@
     "statusPaused": "Paused",
     "statusSetup": "Setup Required",
     "lastRunLabel": "Last run",
-    "creditsUsedLabel": "Credits",
+    "creditsUsedLabel": "Runs",
     "tasksCompletedLabel": "Tasks",
     "valueGeneratedLabel": "Value Generated",
     "autonomy": {
@@ -277,14 +277,14 @@
       "overview": "Overview",
       "successRate": "Success Rate",
       "totalRuns": "Total Runs",
-      "avgCreditsPerRun": "Avg Credits/Run",
+      "avgCreditsPerRun": "Avg Runs",
       "hoursSaved": "Hours Saved",
       "recentActivity": "Recent Activity",
       "thoughtStream": "Thought Stream",
       "noThoughts": "No activity yet. Launch the agent to see its thinking process.",
       "performanceChart": "Performance (Last 30 Days)",
       "tasksLabel": "Tasks",
-      "creditsLabel": "Credits",
+      "creditsLabel": "Runs",
       "valueLabel": "Value ($)"
     },
     "toasts": {
@@ -321,10 +321,10 @@
       "missing_field": "A required field is missing.",
       "invalid_format": "The format is not valid."
     },
-    "credit": {
-      "insufficient": "Not enough credits. Upgrade or purchase more.",
-      "limitReached": "Monthly credit limit reached. Credits reset on {date}.",
-      "insufficient_balance": "You don't have enough credits for this action."
+    "usage": {
+      "insufficient": "Usage limit reached. Upgrade your plan.",
+      "limitReached": "Monthly limit reached. Limits reset on {date}.",
+      "limit_exceeded": "You've reached your usage limit for this action."
     },
     "agent": {
       "not_found": "Agent not found.",
@@ -355,7 +355,7 @@
     }
   },
   "tooltips": {
-    "creditBalance": "Credits are used when agents perform actions. Different actions cost different amounts.",
+    "usageBalance": "Usage is tracked when agents perform actions. Different actions consume different amounts.",
     "passwordVisibility": {
       "show": "Show password",
       "hide": "Hide password"
@@ -706,13 +706,13 @@
         "upgradeButton": "Upgrade Plan (Coming Soon)",
         "manageButton": "Manage Subscription"
       },
-      "creditUsage": {
-        "title": "Credit Usage",
-        "descriptionRecurring": "Track your monthly credit consumption",
-        "descriptionOneTime": "Your one-time credits",
-        "usageText": "{used} of {total} credits used",
-        "resetTextRecurring": "Credits reset on the 1st of each month",
-        "resetTextOneTime": "One-time credits do not expire"
+      "usageLimits": {
+        "title": "Usage Limits",
+        "descriptionRecurring": "Track your monthly usage consumption",
+        "descriptionOneTime": "Your usage limits",
+        "usageText": "{used} of {total} used",
+        "resetTextRecurring": "Limits reset on the 1st of each month",
+        "resetTextOneTime": "View your usage breakdown"
       },
       "availablePlans": {
         "title": "Available Plans",

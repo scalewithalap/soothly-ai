@@ -109,9 +109,9 @@
   "dashboard": {
     "welcomeMessage": "Bienvenue, {firstName}",
     "welcomeSubtext": "Voici ce qui se passe avec vos agents aujourd'hui.",
-    "creditBalance": {
-      "title": "Crédits restants",
-      "lowBalanceWarning": "Crédits faibles",
+    "usageBalance": {
+      "title": "Utilisation restante",
+      "lowBalanceWarning": "Limite d'utilisation proche",
       "upgradeCTA": "Améliorer le plan"
     },
     "agentStatus": {
@@ -132,7 +132,7 @@
       ]
     },
     "stats": {
-      "totalCredits": "Crédits Totaux",
+      "totalCredits": "Tâches Totales",
       "activeAgents": "Agents Actifs",
       "timeSaved": "Temps Gagné"
     },
@@ -222,7 +222,7 @@
     "statusPaused": "En pause",
     "statusSetup": "Configuration requise",
     "lastRunLabel": "Dernière exécution",
-    "creditsUsedLabel": "Crédits utilisés",
+    "runsLabel": "Exécutions",
     "tasksCompletedLabel": "Tâches accomplies"
   },
   "errors": {
@@ -252,10 +252,10 @@
       "missing_field": "Un champ obligatoire est manquant.",
       "invalid_format": "Le format n'est pas valide."
     },
-    "credit": {
-      "insufficient": "Crédits insuffisants. Améliorez ou achetez plus.",
-      "limitReached": "Limite mensuelle de crédits atteinte. Réinitialisation le {date}.",
-      "insufficient_balance": "Vous n'avez pas assez de crédits pour cette action."
+    "usage": {
+      "insufficient": "Limite d'utilisation atteinte. Améliorez votre plan.",
+      "limitReached": "Limite mensuelle atteinte. Réinitialisation le {date}.",
+      "limit_exceeded": "Vous avez atteint votre limite d'utilisation pour cette action."
     },
     "agent": {
       "not_found": "Agent non trouvé.",
@@ -286,7 +286,7 @@
     }
   },
   "tooltips": {
-    "creditBalance": "Les crédits sont utilisés lorsque les agents exécutent des actions. Chaque action a un coût différent.",
+    "usageBalance": "L'utilisation est tracée lorsque les agents effectuent des actions. Chaque action consomme une quantité différente.",
     "passwordVisibility": {
       "show": "Afficher le mot de passe",
       "hide": "Masquer le mot de passe"
@@ -556,13 +556,13 @@
         "upgradeButton": "Améliorer le plan (Bientôt)",
         "manageButton": "Gérer l'abonnement"
       },
-      "creditUsage": {
-        "title": "Utilisation des crédits",
+      "usageLimits": {
+        "title": "Limites d'utilisation",
         "descriptionRecurring": "Suivez votre consommation mensuelle",
-        "descriptionOneTime": "Vos crédits à usage unique",
-        "usageText": "{used} sur {total} crédits utilisés",
+        "descriptionOneTime": "Vos limites d'utilisation",
+        "usageText": "{used} sur {total} utilisés",
         "resetTextRecurring": "Réinitialisation le 1er de chaque mois",
-        "resetTextOneTime": "Les crédits uniques n'expirent pas"
+        "resetTextOneTime": "Voir le détail de votre utilisation"
       },
       "availablePlans": {
         "title": "Plans disponibles",

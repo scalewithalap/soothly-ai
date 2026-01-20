@@ -86,17 +86,19 @@ export async function POST() {
       exportData.notifications = notifications;
     }
 
-    // Get credit transactions (if org exists)
+    // Get usage data
     if (orgId) {
-      const { data: creditTransactions } = await supabase
-        .from("credit_transactions")
-        .select("id, amount, type, description, created_at")
+      const { data: usageData } = await supabase
+        .from("org_usage")
+        .select(
+          "id, feature_key, current_count, billing_period_start, billing_period_end",
+        )
         .eq("org_id", orgId)
-        .order("created_at", { ascending: false })
+        .order("billing_period_start", { ascending: false })
         .limit(200);
 
-      if (creditTransactions) {
-        exportData.credit_transactions = creditTransactions;
+      if (usageData) {
+        exportData.usage_data = usageData;
       }
     }
 
@@ -139,4 +141,3 @@ export async function POST() {
     return NextResponse.json({ error: "export/failed" }, { status: 500 });
   }
 }
-

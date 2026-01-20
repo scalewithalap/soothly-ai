@@ -10,14 +10,6 @@ export const uuidSchema = z.string().uuid();
 export const emailSchema = z.string().email();
 export const positiveIntSchema = z.number().int().positive();
 
-// --- Credits API ---
-export const addCreditsSchema = z.object({
-  amount: positiveIntSchema,
-  reason: z.string().min(1, "Reason is required"),
-});
-
-export type AddCreditsInput = z.infer<typeof addCreditsSchema>;
-
 // --- Leads API ---
 export const createLeadSchema = z.object({
   email: emailSchema,
@@ -130,4 +122,3 @@ export const updateCalendarItemSchema = z.object({
 });
 
 export type UpdateCalendarItemInput = z.infer<typeof updateCalendarItemSchema>;
-
