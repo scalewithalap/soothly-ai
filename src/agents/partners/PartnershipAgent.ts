@@ -161,23 +161,65 @@ export class PartnershipAgent extends BaseAgent {
 
     try {
       const result = await ai.complete(
-        `Evaluate this potential partner for fit with our program:
+        `You are an expert affiliate manager and influencer partnership strategist. Evaluate this potential partner for fit with our program.
 
-Partner: ${partner.name}
-Type: ${partner.type}
-Company Info: ${JSON.stringify(partner.companies || {}, null, 2)}
+## PARTNER PROFILE
+**Name:** ${partner.name}
+**Type:** ${partner.type}
+**Company/Profile Data:** ${JSON.stringify(partner.companies || {}, null, 2)}
 
-Our Partner Criteria:
+## OUR PARTNER CRITERIA
 ${JSON.stringify(criteria, null, 2)}
 
-Evaluate on:
-1. Audience overlap (0-100)
-2. Product/service fit (0-100)
-3. Brand alignment (0-100)
-4. Market reach (0-100)
-5. Overall fit score (0-100)
+## EVALUATION FRAMEWORK
 
-Return as JSON:
+### 1. AUDIENCE ANALYSIS (0-100 points)
+**Audience Overlap Score:**
+- Target demographic match (age, interests, profession)
+- Geographic alignment with our markets
+- Purchasing power indicators
+- Engagement quality (real humans vs bots)
+
+**Engagement Rate Calculation:**
+- Formula: (avg_likes + avg_comments) / followers * 100
+- Minimum threshold: > 1% for micro-influencers, > 0.5% for macro
+- Red flag: < 0.5% suggests fake/disengaged followers
+
+### 2. PRODUCT/SERVICE FIT (0-100 points)
+- How naturally does our product fit their content?
+- Have they promoted similar products before?
+- Would promotion feel authentic or forced?
+- Cross-sell/upsell potential
+
+### 3. BRAND ALIGNMENT (0-100 points)
+- Values alignment with our brand
+- Content tone and quality
+- Visual aesthetic compatibility
+- Reputation and trust signals
+
+### 4. MARKET REACH (0-100 points)
+- Follower count relative to niche
+- Multi-platform presence
+- Content virality potential
+- Email list or owned audience indicators
+
+### 5. SAFETY & RISK ASSESSMENT
+**Red Flags to Check:**
+- NSFW content in recent posts or bio
+- Controversial statements or affiliations
+- Fake follower indicators (sudden spikes, low engagement)
+- Previous partnership issues or complaints
+- Inactive account (last post > 7 days ago)
+
+## PARTNERSHIP TIER RECOMMENDATION
+Based on evaluation, recommend tier:
+- **Tier 1 (Premium)**: 30% commission, co-marketing, featured placement
+- **Tier 2 (Standard)**: 25% commission, standard affiliate benefits
+- **Tier 3 (Starter)**: 20% commission, basic affiliate access
+- **Pass**: Do not pursue partnership
+
+## OUTPUT FORMAT
+Return ONLY valid JSON (no markdown):
 {
   "fit_score": 85,
   "breakdown": {
@@ -186,10 +228,23 @@ Return as JSON:
     "brand_alignment": 85,
     "market_reach": 75
   },
-  "strengths": ["...", "..."],
-  "concerns": ["...", "..."],
-  "recommendation": "proceed" | "maybe" | "pass",
-  "reasoning": "..."
+  "engagement_rate": {
+    "calculated_rate": 2.5,
+    "assessment": "healthy",
+    "fraud_risk": "low"
+  },
+  "safety_check": {
+    "passed": true,
+    "flags": [],
+    "risk_level": "low"
+  },
+  "strengths": ["Highly engaged niche audience", "Authentic content style"],
+  "concerns": ["Limited multi-platform presence"],
+  "partnership_tier": "tier_2",
+  "recommended_commission": 25,
+  "recommendation": "proceed",
+  "reasoning": "Strong audience match with healthy engagement metrics",
+  "onboarding_notes": "Suggest starting with product review before affiliate"
 }`,
         { model: "gemini-3-flash", temperature: 0.3 },
       );
@@ -259,29 +314,75 @@ Return as JSON:
     try {
       // Generate personalized outreach
       const result = await ai.complete(
-        `Write a personalized partnership outreach email for:
+        `You are an expert partnership outreach copywriter. Write a highly personalized partnership invitation email that will get a response.
 
-Partner: ${partner.name}
-Type: ${partner.type}
-Fit Score: ${partner.fit_score || "Unknown"}
-Contact: ${partner.primary_contact_name || "Partner"}
+## PARTNER DETAILS
+**Name:** ${partner.name}
+**Type:** ${partner.type}
+**Fit Score:** ${partner.fit_score || "Not yet evaluated"}
+**Contact Name:** ${partner.primary_contact_name || "Partner"}
 
-Our Value Proposition:
-- Multi-agent AI platform for business automation
-- Competitive commission rates
-- High conversion rates
-- Dedicated partner support
+## OUR VALUE PROPOSITION
+**Product:** Zero Headache - Multi-agent AI platform for business automation
+**Commission Structure:**
+- Tier 1 Partners: 30% recurring commission
+- Tier 2 Partners: 25% recurring commission
+- Tier 3 Partners: 20% recurring commission
+**Benefits for Partners:**
+- High conversion rates (AI tools are in-demand)
+- Recurring revenue (subscription model)
+- Dedicated partner success manager
+- Co-marketing opportunities
+- Early access to new features
+- Custom landing pages and tracking
 
-Write a concise, professional email that:
-1. Opens with something specific about their business
-2. Explains the partnership opportunity
-3. Highlights mutual benefits
-4. Has a clear call-to-action
+## EMAIL WRITING GUIDELINES
 
-Return as JSON:
+### SUBJECT LINE REQUIREMENTS
+- Personalized (include partner name or niche reference)
+- Creates curiosity without being clickbait
+- Under 50 characters for mobile optimization
+- Avoid spam trigger words (free, limited time, etc.)
+
+### BODY STRUCTURE
+1. **Opening Hook (1-2 sentences)**
+   - Reference something SPECIFIC about their content/business
+   - Show you've done your homework
+   - NO generic compliments ("love your work")
+
+2. **Bridge (1 sentence)**
+   - Why you're reaching out NOW
+   - Connection between their audience and our product
+
+3. **Value Proposition (2-3 sentences)**
+   - What's in it for THEM (revenue, value for audience)
+   - Social proof if relevant (other partners, stats)
+   - Commission rate mention (30% for premium partners)
+
+4. **Call-to-Action (1 sentence)**
+   - Specific next step (15-min call, reply, click link)
+   - Low friction ask
+   - Time-specific if possible
+
+5. **Sign-off**
+   - Professional but warm
+   - Include full name and title
+
+### TONE GUIDELINES
+- Professional yet conversational
+- Confident but not pushy
+- Personalized, not templated
+- Value-focused, not pitch-heavy
+
+## OUTPUT FORMAT
+Return ONLY valid JSON (no markdown):
 {
-  "subject": "...",
-  "body": "..."
+  "subject": "Personalized 50-char subject line",
+  "preview_text": "First 90 chars that appear in email preview",
+  "body": "Full email body with proper line breaks",
+  "personalization_hooks": ["list", "of", "specific", "references", "used"],
+  "alternative_subject": "Backup subject line option",
+  "follow_up_timing": "Recommended days until follow-up"
 }`,
         { model: "gemini-3-flash", temperature: 0.7 },
       );

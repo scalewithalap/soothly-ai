@@ -127,15 +127,47 @@ export class SEOContentAgent extends BaseAgent {
 
     try {
       const result = await ai.complete(
-        `Generate a list of 10-15 related keywords for the primary keyword "${brief.primary_keyword}".
-        
-For each keyword, estimate:
-- search_volume (monthly, 0-100000)
-- keyword_difficulty (0-100)
-- relevance_score (0-100)
+        `You are an expert SEO strategist. Analyze and generate related keywords for the primary keyword "${brief.primary_keyword}".
 
-Return as JSON array:
-[{ "keyword": "...", "search_volume": 1000, "keyword_difficulty": 45, "relevance_score": 90 }]`,
+## TASK
+Generate 10-15 high-value related keywords that could drive organic traffic.
+
+## ANALYSIS REQUIREMENTS
+For each keyword, provide:
+1. **search_volume**: Estimated monthly searches (0-100000)
+2. **keyword_difficulty**: Competition score 0-100 where:
+   - 0-30: Low competition (easy to rank)
+   - 31-60: Medium competition (moderate effort)
+   - 61-100: High competition (difficult to rank)
+3. **relevance_score**: How closely it relates to the primary keyword (0-100)
+4. **intent**: User search intent classification:
+   - "informational": User wants to learn (e.g., "how to", "what is")
+   - "transactional": User wants to buy/act (e.g., "best", "buy", "price")
+   - "navigational": User seeks specific site/brand
+   - "commercial": User researching before purchase
+5. **opportunity_score**: Combined value score considering:
+   - Higher search volume = better
+   - Lower difficulty = better  
+   - Higher relevance = better
+   - Transactional/commercial intent = better for conversions
+
+## PRIORITIZATION RULES
+- Prioritize LOW competition + HIGH intent keywords
+- Include mix of head terms (1-2 words) and long-tail (3+ words)
+- Focus on keywords with transactional or commercial intent when possible
+- Ensure at least 3 keywords have difficulty < 30 for quick wins
+
+## OUTPUT FORMAT
+Return ONLY valid JSON array (no markdown, no explanation):
+[{
+  "keyword": "example keyword phrase",
+  "search_volume": 1000,
+  "keyword_difficulty": 45,
+  "relevance_score": 90,
+  "intent": "transactional",
+  "opportunity_score": 85,
+  "reasoning": "Brief explanation of why this keyword is valuable"
+}]`,
         { model: "gemini-3-flash" as const, temperature: 0.5 },
       );
 
@@ -242,26 +274,82 @@ Return as JSON array:
 
     try {
       const result = await ai.complete(
-        `Analyze this article for SEO optimization:
+        `You are an expert SEO analyst and content optimizer. Perform a comprehensive SEO audit of this article.
 
-Title: ${article.title}
-Primary Keyword: ${article.primary_keyword}
-Content: ${article.content.substring(0, 5000)}...
+## ARTICLE TO ANALYZE
+**Title:** ${article.title}
+**Primary Keyword:** ${article.primary_keyword}
+**Content Preview:** ${article.content.substring(0, 5000)}...
 
-Provide:
-1. SEO score (0-100)
-2. List of issues found
-3. Suggestions for improvement
-4. Optimized meta title (max 60 chars)
-5. Optimized meta description (max 155 chars)
+## ANALYSIS REQUIREMENTS
 
-Return as JSON:
+### 1. READABILITY ANALYSIS
+- Calculate Flesch-Kincaid Reading Ease score (target: > 60 for easy reading)
+- Assess sentence length (avg should be < 20 words)
+- Check paragraph length (should be 2-4 sentences max)
+- Evaluate use of transition words
+
+### 2. KEYWORD OPTIMIZATION
+- Calculate keyword density (target: 1-2% for primary keyword)
+- Check keyword placement in:
+  - Title (required)
+  - First 100 words (required)
+  - H2/H3 headings (recommended)
+  - Meta description (required)
+- Identify LSI (related) keyword usage
+
+### 3. TECHNICAL SEO ELEMENTS
+- Title tag optimization (max 60 chars, keyword at start)
+- Meta description quality (max 155 chars, compelling CTA)
+- Header structure (H1 -> H2 -> H3 hierarchy)
+- Internal/external linking opportunities
+- Image alt text recommendations
+
+### 4. CONTENT QUALITY SIGNALS
+- Content depth and comprehensiveness
+- E-E-A-T signals (Experience, Expertise, Authoritativeness, Trust)
+- User intent satisfaction
+- Unique value proposition
+
+### 5. OPENGRAPH RECOMMENDATIONS
+- Suggested OG title (max 60 chars)
+- Suggested OG description (max 200 chars)
+- Image concept for OG/social sharing
+
+## SCORING RUBRIC
+- 90-100: Excellent - Ready to publish
+- 70-89: Good - Minor improvements needed
+- 50-69: Fair - Significant improvements needed
+- 0-49: Poor - Major rewrite required
+
+## OUTPUT FORMAT
+Return ONLY valid JSON (no markdown):
 {
   "seo_score": 75,
-  "issues": ["...", "..."],
-  "suggestions": ["...", "..."],
-  "meta_title": "...",
-  "meta_description": "..."
+  "readability": {
+    "flesch_score": 65,
+    "avg_sentence_length": 18,
+    "grade_level": "8th grade",
+    "assessment": "Good readability for general audience"
+  },
+  "keyword_analysis": {
+    "density_percent": 1.5,
+    "in_title": true,
+    "in_first_100_words": true,
+    "in_headings": false,
+    "missing_placements": ["H2 headings"]
+  },
+  "issues": [
+    {"severity": "high", "issue": "...", "location": "..."},
+    {"severity": "medium", "issue": "...", "location": "..."}
+  ],
+  "suggestions": [
+    {"priority": 1, "suggestion": "...", "impact": "high"},
+    {"priority": 2, "suggestion": "...", "impact": "medium"}
+  ],
+  "meta_title": "Optimized 60-char title with keyword",
+  "meta_description": "Compelling 155-char description with CTA",
+  "og_image_concept": "Description of ideal social sharing image"
 }`,
         { model: "gemini-3-flash" as const, temperature: 0.3 },
       );

@@ -227,12 +227,15 @@ export class LeadGenAgent extends BaseAgent {
       engagement: 20,
     };
 
-    return `Score the following leads based on this Ideal Customer Profile:
+    return `You are an expert B2B lead qualification specialist and SDR strategist. Score and qualify the following leads with precision.
+
+## IDEAL CUSTOMER PROFILE (ICP)
 ${JSON.stringify(icp, null, 2)}
 
-Scoring weights: ${JSON.stringify(weights)}
+## SCORING WEIGHTS
+${JSON.stringify(weights, null, 2)}
 
-Leads to score:
+## LEADS TO EVALUATE
 ${JSON.stringify(
   leads.map((l) => ({
     leadId: l.id,
@@ -245,8 +248,66 @@ ${JSON.stringify(
   2,
 )}
 
-Return a JSON array with format:
-[{ "leadId": "...", "score": 0-100, "breakdown": { "title_match": 0-30, ... }, "reasoning": "..." }]`;
+## SCORING METHODOLOGY
+
+### 1. TITLE MATCH (0-${weights.title_match} points)
+Evaluate job title alignment with decision-making authority:
+- C-Level/VP/Director titles = Full points
+- Manager/Lead titles = 70% points
+- Individual contributors = 30% points
+- Unrelated titles = 0 points
+
+### 2. COMPANY SIZE (0-${weights.company_size} points)
+Match against ICP company size:
+- Perfect match = Full points
+- Adjacent segment = 70% points
+- Too small/large = 30% points
+
+### 3. INDUSTRY FIT (0-${weights.industry} points)
+Evaluate industry alignment:
+- Exact industry match = Full points
+- Related industry = 70% points
+- Neutral industry = 40% points
+- Excluded industry = 0 points
+
+### 4. ENGAGEMENT SIGNALS (0-${weights.engagement} points)
+Consider available engagement data:
+- Recent activity signals = Bonus points
+- Email domain quality (corporate vs free) = Factor
+- LinkedIn profile completeness = Factor
+
+## EMAIL DELIVERABILITY CONTEXT
+Consider email quality indicators:
+- Corporate domain emails (company.com) = Higher priority
+- Free email domains (gmail, yahoo) = Lower priority for B2B
+- Role-based emails (info@, sales@) = Medium priority
+- Note: Leads marked as "catch-all" or "bounce" should be flagged
+
+## QUALIFICATION TIERS
+Based on total score, assign qualification:
+- 80-100: **MQL** (Marketing Qualified) - High priority, immediate outreach
+- 60-79: **Nurture** - Good fit, needs warming
+- 40-59: **Low Priority** - Possible fit, backlog
+- 0-39: **Unqualified** - Poor fit, do not pursue
+
+## OUTPUT FORMAT
+Return ONLY valid JSON array (no markdown):
+[{
+  "leadId": "uuid-here",
+  "score": 85,
+  "breakdown": {
+    "title_match": 28,
+    "company_size": 22,
+    "industry": 20,
+    "engagement": 15
+  },
+  "qualification_tier": "mql",
+  "email_quality": "corporate",
+  "priority_rank": 1,
+  "reasoning": "VP-level decision maker at mid-market SaaS company in target industry",
+  "recommended_approach": "Direct outreach highlighting ROI case studies",
+  "potential_objections": ["Budget timing", "Existing vendor relationship"]
+}]`;
   }
 
   // ============================================

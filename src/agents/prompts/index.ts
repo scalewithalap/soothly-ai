@@ -1,40 +1,30 @@
 /**
  * Agent System Prompts Index
  * Centralized export of all agent prompts with helper functions
- *
- * Prompt files use legacy names but are mapped to new agent types:
- * - leads.ts → lead_gen
- * - content.ts → seo
- * - partners.ts → partnership
- * - contracts.ts → proposal
- * - compliance.ts → competitor_intel
- * - receivables.ts → revenue_recovery
- * - spend.ts → onboarding
- * - pricing.ts → customer_success
  */
 
-import { LEADS_SYSTEM_PROMPT } from "./leads";
-import { CONTENT_SYSTEM_PROMPT } from "./content";
-import { PARTNERS_SYSTEM_PROMPT } from "./partners";
-import { CONTRACTS_SYSTEM_PROMPT } from "./contracts";
-import { COMPLIANCE_SYSTEM_PROMPT } from "./compliance";
-import { RECEIVABLES_SYSTEM_PROMPT } from "./receivables";
-import { SPEND_SYSTEM_PROMPT } from "./spend";
-import { PRICING_SYSTEM_PROMPT } from "./pricing";
+import { LEAD_GEN_SYSTEM_PROMPT } from "./lead_gen";
+import { SEO_SYSTEM_PROMPT } from "./seo";
+import { PARTNERSHIP_SYSTEM_PROMPT } from "./partnership";
+import { PROPOSAL_SYSTEM_PROMPT } from "./proposal";
+import { COMPETITOR_INTEL_SYSTEM_PROMPT } from "./competitor_intel";
+import { REVENUE_RECOVERY_SYSTEM_PROMPT } from "./revenue_recovery";
+import { ONBOARDING_SYSTEM_PROMPT } from "./onboarding";
+import { CUSTOMER_SUCCESS_SYSTEM_PROMPT } from "./customer_success";
 import { SUPERAGENT_SYSTEM_PROMPT } from "./superagent";
 import type { AgentType, AnyAgentType } from "../base/types";
 import { normalizeAgentType, NORMAL_AGENT_TYPES } from "../base/types";
 
-// Map agent types to their system prompts (new names per agents-ecosystem.md)
+// Map agent types to their system prompts
 export const AGENT_PROMPTS: Record<AgentType, string> = {
-  lead_gen: LEADS_SYSTEM_PROMPT,
-  seo: CONTENT_SYSTEM_PROMPT,
-  partnership: PARTNERS_SYSTEM_PROMPT,
-  proposal: CONTRACTS_SYSTEM_PROMPT,
-  competitor_intel: COMPLIANCE_SYSTEM_PROMPT,
-  revenue_recovery: RECEIVABLES_SYSTEM_PROMPT,
-  onboarding: SPEND_SYSTEM_PROMPT,
-  customer_success: PRICING_SYSTEM_PROMPT,
+  lead_gen: LEAD_GEN_SYSTEM_PROMPT,
+  seo: SEO_SYSTEM_PROMPT,
+  partnership: PARTNERSHIP_SYSTEM_PROMPT,
+  proposal: PROPOSAL_SYSTEM_PROMPT,
+  competitor_intel: COMPETITOR_INTEL_SYSTEM_PROMPT,
+  revenue_recovery: REVENUE_RECOVERY_SYSTEM_PROMPT,
+  onboarding: ONBOARDING_SYSTEM_PROMPT,
+  customer_success: CUSTOMER_SUCCESS_SYSTEM_PROMPT,
   superagent: SUPERAGENT_SYSTEM_PROMPT,
 };
 
@@ -88,13 +78,13 @@ export function getNormalAgentTypes(): AgentType[] {
 
 // Re-export individual prompts for direct use
 export {
-  LEADS_SYSTEM_PROMPT,
-  CONTENT_SYSTEM_PROMPT,
-  PARTNERS_SYSTEM_PROMPT,
-  CONTRACTS_SYSTEM_PROMPT,
-  COMPLIANCE_SYSTEM_PROMPT,
-  RECEIVABLES_SYSTEM_PROMPT,
-  SPEND_SYSTEM_PROMPT,
-  PRICING_SYSTEM_PROMPT,
+  LEAD_GEN_SYSTEM_PROMPT,
+  SEO_SYSTEM_PROMPT,
+  PARTNERSHIP_SYSTEM_PROMPT,
+  PROPOSAL_SYSTEM_PROMPT,
+  COMPETITOR_INTEL_SYSTEM_PROMPT,
+  REVENUE_RECOVERY_SYSTEM_PROMPT,
+  ONBOARDING_SYSTEM_PROMPT,
+  CUSTOMER_SUCCESS_SYSTEM_PROMPT,
   SUPERAGENT_SYSTEM_PROMPT,
 };
