@@ -43,6 +43,7 @@ Every Agent in `src/agents/{AgentName}` **MUST** have a `README.md` that strictl
 | **Role**         | [e.g. "The Lead Hunter"]                                    |
 | **User Value**   | [e.g. "Automates 20 hours of manual prospecting per week."] |
 | **Value Metric** | [e.g.`leads_generated` (Count)]                             |
+| **Autonomy**     | [e.g. Manual, Smart, Auto]                                  |
 
 **Status Quo vs. Agent Solution:**
 _(Copy from `agents-ecosystem.md`)_
@@ -60,6 +61,11 @@ _(Copy from `agents-ecosystem.md`)_
 1. **[Step Name]**: [Description of action].
 2. **[Step Name]**: [Description of action].
 3. **[Step Name]**: [Description of action].
+
+**User Intervention Points (HITL):**
+
+- **Approval**: [e.g. "User must approve Tweet before posting"]
+- **Input**: [e.g. "User must select tone if confidence < 70%"]
 
 **Diagram:**
 
@@ -79,6 +85,7 @@ graph TD
 {
   campaignId: string; // UUID
   keywords: string[];
+  model?: string; // Default: 'gemini-3-flash'
 }
 ```
 

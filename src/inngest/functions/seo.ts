@@ -5,11 +5,17 @@
 
 import { inngest } from "@/inngest/client";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
-import { generateWithModel, getOpenAI } from "@/lib/ai";
+import { generateWithModel, getGemini } from "@/lib/ai";
 import {
   notifyAgentCompletion,
   getOrgOwnerNotificationPreferences,
 } from "@/lib/notifications";
+import { createSemanticCache } from "@/agents/memory";
+import {
+  parseAgentEventData,
+  requiresApproval,
+  requestApprovalAndWait,
+} from "@/inngest/utils";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AIModel } from "@/lib/ai/providers/types";
 
@@ -81,7 +87,7 @@ export const handleBriefCreated = inngest.createFunction(
 
     // Step 3: Research keywords using AI
     const keywords = await step.run("research-keywords", async () => {
-      const ai = getOpenAI();
+      const ai = getGemini();
 
       const result = await ai.complete(
         `Generate a list of 10-15 related keywords for the primary keyword "${brief.primary_keyword}".
@@ -405,7 +411,7 @@ export const optimizeArticleSEO = inngest.createFunction(
 
     // Step 2: Analyze SEO
     const analysis = await step.run("analyze-seo", async () => {
-      const ai = getOpenAI();
+      const ai = getGemini();
 
       const result = await ai.complete(
         `Analyze this article for SEO optimization:
@@ -474,4 +480,3 @@ Return as JSON:
     return { success: true, seoScore: analysis.seo_score };
   },
 );
-

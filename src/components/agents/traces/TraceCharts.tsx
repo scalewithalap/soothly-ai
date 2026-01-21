@@ -28,13 +28,28 @@ interface TraceChartsProps {
   data: DailyStat[];
 }
 
+// Tooltip payload type
+interface TooltipPayloadEntry {
+  name: string;
+  value: number | string;
+  color: string;
+}
+
 // Extracted outside component to prevent recreation on each render
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: TooltipPayloadEntry[];
+  label?: string;
+}) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-background border rounded-lg shadow-lg p-3 text-xs">
         <p className="font-semibold mb-1">{label}</p>
-        {payload.map((entry: any, index: number) => (
+        {payload.map((entry: TooltipPayloadEntry, index: number) => (
           <div key={index} className="flex items-center gap-2">
             <div
               className="w-2 h-2 rounded-full"
@@ -155,4 +170,3 @@ export function TraceCharts({ data }: TraceChartsProps) {
     </Card>
   );
 }
-

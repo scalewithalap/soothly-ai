@@ -5,7 +5,7 @@
 
 import { BaseAgent } from "../base/Agent";
 import type { AgentTask, AgentResult, UsageCost } from "../base/types";
-import { getOpenAI } from "@/lib/ai";
+import { getGemini } from "@/lib/ai";
 import { inngest, AgentEvents } from "@/inngest/client";
 
 export class SEOContentAgent extends BaseAgent {
@@ -123,7 +123,7 @@ export class SEOContentAgent extends BaseAgent {
       return { success: false, error: "content/brief_not_found" };
     }
 
-    const ai = getOpenAI();
+    const ai = getGemini();
 
     try {
       const result = await ai.complete(
@@ -270,7 +270,7 @@ Return ONLY valid JSON array (no markdown, no explanation):
       return { success: false, error: "content/article_not_found" };
     }
 
-    const ai = getOpenAI();
+    const ai = getGemini();
 
     try {
       const result = await ai.complete(

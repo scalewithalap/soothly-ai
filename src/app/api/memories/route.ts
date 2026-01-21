@@ -6,6 +6,16 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
+
+// Type for memory records
+interface MemoryRecord {
+  id: string;
+  memory_type: "episodic" | "semantic" | "procedural";
+  agent_type: string;
+  content: unknown;
+  created_at: string;
+}
 
 /**
  * GET /api/memories
@@ -24,8 +34,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get user's org_id
-    // Cast to any for untyped profiles table
-    const { data: profile } = await (supabase as any)
+    const { data: profile } = await (supabase as unknown as SupabaseClient)
       .from("profiles")
       .select("org_id")
       .eq("id", user.id)
@@ -43,8 +52,8 @@ export async function GET(request: NextRequest) {
     const memoryType = url.searchParams.get("memory_type");
     const limit = parseInt(url.searchParams.get("limit") || "100");
 
-    // Build query using any casting for the untyped table
-    let query = (supabase as any)
+    // Build query for the agent_memories table
+    let query = (supabase as unknown as SupabaseClient)
       .from("agent_memories")
       .select("*")
       .eq("org_id", profile.org_id)
@@ -58,10 +67,12 @@ export async function GET(request: NextRequest) {
       query = query.eq("memory_type", memoryType);
     }
 
-    const { data, error } = await query;
+    const { data, error } = (await query) as {
+      data: MemoryRecord[] | null;
+      error: unknown;
+    };
 
     if (error) {
-      console.error("Error fetching memories:", error);
       return NextResponse.json(
         { error: "Failed to fetch memories" },
         { status: 500 },
@@ -73,28 +84,32 @@ export async function GET(request: NextRequest) {
       total: data?.length || 0,
       byType: {
         episodic:
-          data?.filter((m: any) => m.memory_type === "episodic").length || 0,
+          data?.filter((m: MemoryRecord) => m.memory_type === "episodic")
+            .length || 0,
         semantic:
-          data?.filter((m: any) => m.memory_type === "semantic").length || 0,
+          data?.filter((m: MemoryRecord) => m.memory_type === "semantic")
+            .length || 0,
         procedural:
-          data?.filter((m: any) => m.memory_type === "procedural").length || 0,
+          data?.filter((m: MemoryRecord) => m.memory_type === "procedural")
+            .length || 0,
       },
-      byAgent: (data || []).reduce((acc: Record<string, number>, m: any) => {
-        acc[m.agent_type] = (acc[m.agent_type] || 0) + 1;
-        return acc;
-      }, {}),
+      byAgent: (data || []).reduce(
+        (acc: Record<string, number>, m: MemoryRecord) => {
+          acc[m.agent_type] = (acc[m.agent_type] || 0) + 1;
+          return acc;
+        },
+        {},
+      ),
     };
 
     return NextResponse.json({
       memories: data || [],
       stats,
     });
-  } catch (error) {
-    console.error("Error in memories API:", error);
+  } catch {
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 },
     );
   }
 }
-

@@ -24,6 +24,7 @@ _From `backend-design/resources/`_
 _From `backend-design/SKILL.md`_
 
 - [ ] **Durable AI**: All AI orchestration MUST use **Inngest**. Direct calls to LLM providers in Route Handlers are **FORBIDDEN**.
+- [ ] **Model Selection**: Agent triggers MUST accept a `model` parameter (Default: `gemini-3-flash`).
 - [ ] **Step Wrapping**: individual AI calls must be wrapped in `step.run()` for retries.
 - [ ] **RLS Mandatory**: Every Supabase query must respect Row Level Security. `service_role` is **FORBIDDEN** in user-facing routes.
 - [ ] **Transactional RPC**: Complex logic (e.g., Credit Deduct + Job Start) MUST use `supabase.rpc(...)`, never client-side chaining.
@@ -46,6 +47,10 @@ _From `frontend-design/SKILL.md` & `brand-identity/SKILL.md`_
   - **Command Center**: Navigation via holistic search/command palette.
   - **Bento Grids**: Glass card layouts for stats/dashboards.
 - [ ] **Brand Voice**: Copy is **Benefit-Centric** and **Professional**. No "We think...".
+- [ ] **User Feedback (Toasts)**:
+  - **No Alerts**: `alert()`, `confirm()`, and `console.error()` are **BANNED** for user facing messages.
+  - **Use Sonner**: All success/error states must use `toast` from `sonner`.
+  - **Sleekness**: No white backgrounds. Must use the Glass/Dark theme.
 
 ### 4. Internationalization & Documentation
 
@@ -76,7 +81,9 @@ _From `documentation-guide/SKILL.md`_
   - **IDOR**: Can I access another user's resource by changing the UUID in the URL/payload?
 - [ ] **Data Leakage**:
   - **No Secrets in Client**: Search for `NEXT_PUBLIC_` usage. ensure strictly no API keys or private vars.
-  - **Error Messages**: Ensure backend errors (stack traces) are NOT leaked to the frontend. Use generic messages.
+- [ ] **Error Messages**: Ensure backend errors (stack traces) are NOT leaked to the frontend.
+  - **Check**: Are we displaying `error.message` directly? (Bad).
+  - **Fix**: Display `error.userMessage` (Sanitized) or a generic "Something went wrong".
 
 ### B. Business Logic Safeguards
 
@@ -102,6 +109,15 @@ _From `documentation-guide/SKILL.md`_
   - **Output Guardrails**: Is there a check to prevent the Agent from generating offensive/harmful content?
 - [ ] **Privacy First**:
   - **PII minimization**: Are we storing only what we need? (No raw email storage if hash suffices).
+
+### E. Human-in-the-Loop Safeguards
+
+- [ ] **Timeout Strategy**:
+  - **No Infinite Waits**: Does `step.waitForEvent` have a strict `timeout` (e.g., "7d")?
+  - **Cancellation**: Is there logic to handle the timeout error (auto-cancel or auto-approve)?
+- [ ] **Approval Security**:
+  - **Ownership**: Does the resumption event verify that the `approver_id` matches the `workflow_owner_id`?
+  - **Idempotency**: Can the user accidentally approve twice?
 
 ---
 

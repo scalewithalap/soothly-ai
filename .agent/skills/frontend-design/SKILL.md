@@ -64,6 +64,22 @@ We are not building a generic dashboard. We are building an **Intelligence Conso
 - **Use for**: Agent logic, campaign flows.
 - **Visuals**: Connecting lines (`edges`) should be animated (traveling packets) to show **data flow**.
 
+### AI Intervention (Human-in-the-Loop)
+
+- **Use for**: Approving drafts, confirming high-cost actions, or disambiguating inputs.
+- **Component**: `ApprovalCard` (Glass panel with Amber glow).
+- **Style**:
+  - **Pending**: `border-amber-500/50` + Pulse.
+  - **Success**: `border-green-500/50`.
+  - **Action**: Clarity > Aesthetics. Buttons must be explicitly "Approve" (Green) or "Reject" (Red).
+
+### Agent Trigger UI
+
+- **Model Selection**: Every Agent Start Interface **MUST** include a "Model Selector" dropdown.
+  - **Options**: List all available models (e.g., Gemini Flash, Gemini Pro).
+  - **Default**: Pre-select `gemini-3-flash`.
+  - **Placement**: Near the "Start" or "Run" button, subtle but accessible.
+
 ---
 
 ## 3. Component & Implementation Guidelines
@@ -80,6 +96,19 @@ We are not building a generic dashboard. We are building an **Intelligence Conso
 - **Cards (The "Glass Slab")**: `bg-white/5`, `border-white/10`. Hover: `bg-white/10`.
 - **Inputs (The "Ghost Input")**: Transparent bg, no border (or bottom-only). Text `primary-foreground`. Focus: Subtle glow, no ring.
 - **Typography**: `Host Grotesk` (Headings, tight tracking), `Manrope` (Body), `JetBrains Mono` (Code/Data).
+
+### Toast Notification System (Sleek Information)
+
+- **Library**: `sonner` is **MANDATORY**. Do not use `react-hot-toast` or `react-toastify`.
+- **Usage**:
+  - `toast.success("Profile Updated")` -> Clean, simple.
+  - `toast.warning("Verification Required")` -> Alerting but sleek.
+  - `toast.error(error.userMessage)` -> **NEVER** dump the raw error object.
+- **Styling**: Must match "Glass Slab" aesthetic:
+  - Background: Black/90 (`#000`) or Glass (`bg-white/5 backdrop-blur-md`).
+  - Border: `border-white/10`.
+  - Icon: `primary` (Violet) or `destructive` (Red).
+  - **No White Backgrounds**.
 
 ---
 

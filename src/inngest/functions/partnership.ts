@@ -6,13 +6,18 @@
 import { inngest } from "@/inngest/client";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import { discoverPartnersOnLinkedIn, getCompanyDetails } from "@/lib/apify";
-import { getOpenAI } from "@/lib/ai";
+import { getGemini } from "@/lib/ai";
 import {
   notifyAgentCompletion,
   notifyAgentError,
   sendNotification,
   getOrgOwnerNotificationPreferences,
 } from "@/lib/notifications";
+import {
+  parseAgentEventData,
+  requiresApproval,
+  requestApprovalAndWait,
+} from "@/inngest/utils";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 // Type helper to work around typed client limitations
@@ -226,7 +231,7 @@ export const qualifyPartner = inngest.createFunction(
 
     // Step 3: Calculate fit score using AI
     const fitScore = await step.run("calculate-fit-score", async () => {
-      const ai = getOpenAI();
+      const ai = getGemini();
       const criteria = partnerCriteria || {};
 
       const partnerInfo = {
@@ -351,15 +356,46 @@ export const sendPartnerOutreach = inngest.createFunction(
   },
   { event: "partners/outreach.scheduled" },
   async ({ event, step }) => {
-    const { partnerId, orgId, outreachId, email, subject, body } =
-      event.data as {
-        partnerId: string;
-        orgId: string;
-        outreachId: string;
-        email: string;
-        subject: string;
-        body: string;
-      };
+    // Parse event data with SKILL.md compliance (model + autonomy_mode)
+    const eventData = parseAgentEventData<{
+      partnerId: string;
+      orgId: string;
+      outreachId: string;
+      email: string;
+      subject: string;
+      body: string;
+    }>(event.data);
+    const {
+      partnerId,
+      orgId,
+      outreachId,
+      email,
+      subject,
+      body,
+      autonomy_mode,
+    } = eventData;
+
+    // Check if approval required for send_partner_outreach (SKILL.md: 3-tier Autonomy)
+    if (requiresApproval("send_partner_outreach", autonomy_mode)) {
+      const approval = await requestApprovalAndWait(step as any, {
+        orgId,
+        agentType: "partnership",
+        action: "send_partner_outreach",
+        title: `Send partnership outreach to ${email}`,
+        description: `Subject: ${subject}`,
+        params: { partnerId, outreachId },
+        previewData: { email, subject, bodyPreview: body.substring(0, 200) },
+        riskLevel: "medium",
+      });
+
+      if (!approval.approved) {
+        return {
+          success: false,
+          error: "Outreach rejected",
+          comment: approval.comment,
+        };
+      }
+    }
 
     // Step 1: Send the email
     const sendResult = await step.run("send-email", async () => {
@@ -460,4 +496,3 @@ export const sendPartnerOutreach = inngest.createFunction(
     return { success: sendResult.success, error: sendResult.error };
   },
 );
-

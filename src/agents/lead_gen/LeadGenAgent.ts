@@ -5,7 +5,7 @@
 
 import { BaseAgent } from "../base/Agent";
 import type { AgentTask, AgentResult, UsageCost } from "../base/types";
-import { getOpenAI } from "@/lib/ai";
+import { getGemini } from "@/lib/ai";
 import { inngest, AgentEvents } from "@/inngest/client";
 import type { Database } from "@/types/database";
 
@@ -177,7 +177,7 @@ export class LeadGenAgent extends BaseAgent {
       return { success: false, error: "leads/fetch_failed" };
     }
 
-    const ai = getOpenAI();
+    const ai = getGemini();
     const scoringPrompt = this.buildScoringPrompt(leads);
 
     try {

@@ -108,7 +108,7 @@ export async function logWebhookEvent(
     .single();
 
   if (error) {
-    console.error("Failed to log webhook event:", error);
+    // Log error to monitoring system if configured
     return { success: false };
   }
 
@@ -158,18 +158,19 @@ export async function processStripeEvent(
   switch (eventType) {
     case "checkout.session.completed":
       // Handle checkout completion
-      console.log("Checkout completed:", data);
+      // TODO: Implement checkout handler
       break;
     case "invoice.payment_failed":
       // Handle failed payment - send notification
-      console.log("Payment failed:", data);
+      // TODO: Implement payment failure handler
       break;
     case "customer.subscription.deleted":
       // Handle subscription cancellation
-      console.log("Subscription cancelled:", data);
+      // TODO: Implement cancellation handler
       break;
     default:
-      console.log(`Unhandled Stripe event: ${eventType}`);
+      // Unhandled event type - no action needed
+      break;
   }
 }
 
@@ -198,19 +199,24 @@ export async function processShopifyEvent(
   // Route to specific handlers
   switch (topic) {
     case "orders/create":
-      console.log("New Shopify order:", data);
+      // Handle new order
+      // TODO: Implement order handler
       break;
     case "orders/fulfilled":
-      console.log("Order fulfilled:", data);
+      // Handle fulfilled order
+      // TODO: Implement fulfillment handler
       break;
     case "customers/create":
-      console.log("New Shopify customer:", data);
+      // Handle new customer
+      // TODO: Implement customer handler
       break;
     case "app/uninstalled":
-      console.log("Shopify app uninstalled:", data);
+      // Handle app uninstall
+      // TODO: Implement uninstall handler
       break;
     default:
-      console.log(`Unhandled Shopify topic: ${topic}`);
+      // Unhandled topic - no action needed
+      break;
   }
 }
 
@@ -264,7 +270,7 @@ export async function createWebhookConnection(
     .single();
 
   if (error) {
-    console.error("Failed to create webhook connection:", error);
+    // Log error to monitoring system if configured
     return { success: false };
   }
 

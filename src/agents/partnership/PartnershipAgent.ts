@@ -5,7 +5,7 @@
 
 import { BaseAgent } from "../base/Agent";
 import type { AgentTask, AgentResult, UsageCost } from "../base/types";
-import { getOpenAI } from "@/lib/ai";
+import { getGemini } from "@/lib/ai";
 import { inngest, AgentEvents } from "@/inngest/client";
 
 export class PartnershipAgent extends BaseAgent {
@@ -156,7 +156,7 @@ export class PartnershipAgent extends BaseAgent {
       return { success: false, error: "partners/not_found" };
     }
 
-    const ai = getOpenAI();
+    const ai = getGemini();
     const criteria = this.config.partnerCriteria || {};
 
     try {
@@ -309,7 +309,7 @@ Return ONLY valid JSON (no markdown):
       return { success: false, error: "partners/no_contact_email" };
     }
 
-    const ai = getOpenAI();
+    const ai = getGemini();
 
     try {
       // Generate personalized outreach

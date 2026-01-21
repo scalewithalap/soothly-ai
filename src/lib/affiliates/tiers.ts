@@ -5,8 +5,17 @@
 
 import { createClient } from "@/lib/supabase/server";
 import type { Affiliate } from "./types";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
-type AnyClient = any;
+// Type for affiliate data with user join
+interface AffiliateWithUser {
+  id: string;
+  referral_code: string;
+  total_conversions: number;
+  total_earned: number;
+  commission_rate: number;
+  users: { full_name: string | null; email: string | null } | null;
+}
 
 /**
  * Commission tier definitions
@@ -147,7 +156,7 @@ export async function updateAffiliateTier(affiliateId: string): Promise<{
   newRate: number;
   tier: TierName;
 }> {
-  const supabase = (await createClient()) as AnyClient;
+  const supabase = (await createClient()) as unknown as SupabaseClient;
 
   // Get current affiliate data
   const { data: affiliate } = (await supabase
@@ -207,9 +216,9 @@ export async function getAffiliateLeaderboard(
     earnings: number;
   }>
 > {
-  const supabase = (await createClient()) as AnyClient;
+  const supabase = (await createClient()) as unknown as SupabaseClient;
 
-  const { data: affiliates } = await supabase
+  const { data: affiliates } = (await supabase
     .from("affiliates")
     .select(
       `
@@ -224,11 +233,11 @@ export async function getAffiliateLeaderboard(
     .eq("org_id", orgId)
     .eq("status", "approved")
     .order("total_earned", { ascending: false })
-    .limit(limit);
+    .limit(limit)) as { data: AffiliateWithUser[] | null };
 
   if (!affiliates) return [];
 
-  return affiliates.map((affiliate: any, index: number) => {
+  return affiliates.map((affiliate: AffiliateWithUser, index: number) => {
     const tier = calculateAffiliateTier(
       affiliate.total_conversions,
       affiliate.total_earned,
@@ -247,4 +256,3 @@ export async function getAffiliateLeaderboard(
     };
   });
 }
-

@@ -5,5 +5,5 @@
 
 export { AgentMemory } from "./AgentMemory";
 export { VectorStore } from "./VectorStore";
+export { SemanticCache, createSemanticCache } from "./SemanticCache";
 export * from "./types";
-

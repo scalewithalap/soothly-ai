@@ -24,7 +24,7 @@ export const POST = Webhooks({
     const email = customer?.email;
 
     if (!email) {
-      console.error("No customer email in subscription webhook");
+      // Skip - no email in subscription webhook
       return;
     }
 
@@ -36,7 +36,7 @@ export const POST = Webhooks({
       .single();
 
     if (!user?.org_id) {
-      console.error("User or org not found for email:", email);
+      // Skip - user or org not found
       return;
     }
 
@@ -64,7 +64,7 @@ export const POST = Webhooks({
     // Usage is now tracked via org_usage table atomically per-action
     // No initial usage needed - limits are enforced per tier
 
-    console.log(`Subscription created for org ${user.org_id}: ${tier}`);
+    // Subscription created - tier applied
   },
 
   onSubscriptionUpdated: async (payload) => {
@@ -92,7 +92,7 @@ export const POST = Webhooks({
         })
         .eq("id", user.org_id);
 
-      console.log(`Subscription canceled for org ${user.org_id}`);
+      // Subscription canceled - downgraded to free
       return;
     }
 
@@ -114,7 +114,7 @@ export const POST = Webhooks({
       })
       .eq("id", user.org_id);
 
-    console.log(`Subscription updated for org ${user.org_id}: ${tier}`);
+    // Subscription updated - new tier applied
   },
 
   onSubscriptionCanceled: async (payload) => {
@@ -141,7 +141,7 @@ export const POST = Webhooks({
       })
       .eq("id", user.org_id);
 
-    console.log(`Subscription canceled for org ${user.org_id}`);
+    // Subscription canceled - downgraded to free
   },
 
   // Handle order completed (legacy - no longer used for usage)
@@ -167,9 +167,7 @@ export const POST = Webhooks({
     // Legacy usage purchases no longer supported
     // Usage is tracked via org_usage per tier limits
     if (metadata?.type === "usage_purchase") {
-      console.log(
-        `Legacy usage purchase ignored for org ${user.org_id} - using limit-based system`,
-      );
+      // Legacy usage purchase ignored - using limit-based system
     }
   },
 });

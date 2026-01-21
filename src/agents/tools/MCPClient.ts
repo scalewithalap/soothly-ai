@@ -13,6 +13,7 @@ import {
   type MCPResource,
   type MCPPrompt,
   type ToolExecutionContext,
+  type ToolAnnotations,
   MCPErrorCodes,
 } from "./types";
 
@@ -39,6 +40,14 @@ interface MCPNotification {
   jsonrpc: "2.0";
   method: string;
   params?: Record<string, unknown>;
+}
+
+// Raw tool format from MCP server
+interface RawMCPTool {
+  name: string;
+  description?: string;
+  inputSchema?: Record<string, unknown>;
+  annotations?: Record<string, unknown>;
 }
 
 export class MCPClient {
@@ -119,20 +128,23 @@ export class MCPClient {
     }
 
     const response = await this.sendRequest("tools/list", {});
-    const rawTools = (response as { tools: unknown[] }).tools || [];
+    const rawTools = ((response as { tools: RawMCPTool[] }).tools ||
+      []) as RawMCPTool[];
 
     // Convert server tools to our MCPTool format
-    // Using any to handle external server response format flexibility
-    this.cachedTools = rawTools.map((t: any) => ({
+    this.cachedTools = rawTools.map((t) => ({
       name: String(t.name),
       description: String(t.description || ""),
-      inputSchema: (t.inputSchema || { type: "object" }) as any,
-      annotations: t.annotations,
+      inputSchema: {
+        type: "object" as const,
+        ...t.inputSchema,
+      },
+      annotations: t.annotations as ToolAnnotations | undefined,
       // Create a handler that proxies to the remote server
       handler: async (input: unknown, context: ToolExecutionContext) => {
         return this.callTool(String(t.name), input, context);
       },
-    })) as MCPTool[];
+    }));
 
     return this.cachedTools;
   }
@@ -143,7 +155,7 @@ export class MCPClient {
   async callTool(
     name: string,
     input: unknown,
-    _context: ToolExecutionContext,
+    context: ToolExecutionContext,
   ): Promise<MCPToolResult> {
     if (!this.isConnected) {
       return {
@@ -291,7 +303,7 @@ export class MCPClient {
             const message = JSON.parse(event.data) as MCPResponse;
             this.handleMessage(message);
           } catch {
-            console.error("Failed to parse MCP message:", event.data);
+            // Failed to parse MCP message - ignore invalid messages
           }
         };
 
@@ -553,4 +565,3 @@ export class MCPClientManager {
 }
 
 export const getMCPClientManager = MCPClientManager.getInstance;
-

@@ -7,7 +7,7 @@ import { forgotPasswordSchema } from "@/lib/validation/schemas";
 // Use service role for admin operations
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 // POST: Request password reset
@@ -43,18 +43,19 @@ export const POST = withErrorHandler(async (request: Request) => {
     .eq("used", false);
 
   // Create new token
-  const { error: insertError } = await supabase.from("password_reset_tokens").insert({
-    user_id: user.id,
-    token,
-    expires_at: expiresAt.toISOString(),
-  });
+  const { error: insertError } = await supabase
+    .from("password_reset_tokens")
+    .insert({
+      user_id: user.id,
+      token,
+      expires_at: expiresAt.toISOString(),
+    });
 
   if (insertError) {
-    console.error("Failed to create password reset token:", insertError);
     throw new AppError(
       ErrorCodes.DATABASE_ERROR,
       "Failed to create reset token",
-      500
+      500,
     );
   }
 
@@ -62,9 +63,6 @@ export const POST = withErrorHandler(async (request: Request) => {
   const resetUrl = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${token}`;
 
   // TODO: Send email using your email service
-  console.log(`Password reset URL for ${email}: ${resetUrl}`);
-
-  // In production, send email:
   // await sendPasswordResetEmail(email, resetUrl);
 
   return apiSuccess({
@@ -72,4 +70,3 @@ export const POST = withErrorHandler(async (request: Request) => {
     message: "If this email exists, a password reset link has been sent",
   });
 });
-

@@ -168,7 +168,7 @@ export class ApprovalGate {
       .eq("status", "pending"); // Only update pending requests
 
     if (error) {
-      console.error("Failed to resolve approval:", error);
+      // Resolution failed
       return false;
     }
 
@@ -258,7 +258,7 @@ export class ApprovalGate {
     const { data, error } = await query;
 
     if (error) {
-      console.error("Failed to list approvals:", error);
+      // List query failed
       return [];
     }
 
@@ -309,17 +309,10 @@ export class ApprovalGate {
   /**
    * Send notifications to approvers
    */
-  private async notifyApprovers(request: ApprovalRequest): Promise<void> {
+  private async notifyApprovers(_request: ApprovalRequest): Promise<void> {
     // TODO: Integrate with notification system
     // This would send push notifications, emails, or in-app notifications
-    console.log(`[HITL] Approval required: ${request.title}`);
-    console.log(`[HITL] Risk level: ${request.risk_level}`);
-    console.log(`[HITL] Request ID: ${request.id}`);
-
-    // If assigned to a specific user, notify them
-    if (request.assigned_to) {
-      // await notifyUser(request.assigned_to, { ... });
-    }
+    // Example: await notifyUser(request.assigned_to, { ... });
   }
 
   /**
@@ -338,7 +331,7 @@ export class ApprovalGate {
       .select("id");
 
     if (error) {
-      console.error("Failed to process expired approvals:", error);
+      // Process expired query failed
       return 0;
     }
 
@@ -441,4 +434,3 @@ export class ApprovalGate {
     };
   }
 }
-

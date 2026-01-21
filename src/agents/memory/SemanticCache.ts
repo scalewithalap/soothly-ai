@@ -56,7 +56,7 @@ export class SemanticCache {
       orgId: config.orgId,
       similarityThreshold: config.similarityThreshold ?? 0.95,
       ttlSeconds: config.ttlSeconds ?? 86400, // 24 hours
-      model: config.model ?? "gemini-2.0-flash",
+      model: config.model ?? "gemini-3-flash",
     };
   }
 

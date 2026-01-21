@@ -25,6 +25,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 - **Auth:** Supabase Auth - Native integration with RLS.
 - **Orchestration:** Inngest - **MANDATORY** for all AI logic and long-running tasks.
 - **Validation:** Zod - "No Zod, No Ship".
+- **Default AI Model:** Use "gemini-3-flash" as the default. **MUST** support dynamic model selection per-run.
 - **State Management (Context)**: React Query (Server State) & Zustand (Client) - _APIs must return data shapes compatible with React Query caching._
 
 > **Reference:** See [`../brand-identity/resources/tech-stack.md`](../brand-identity/resources/tech-stack.md) for full stack details.
@@ -35,7 +36,7 @@ allowed-tools: Read, Write, Edit, Glob, Grep
 
 ### The "Durable AI" Pattern (Inngest)
 
-Never call OpenAI/Anthropic directly in a Route Handler. **Timeout risks are too high.**
+Never call Gemini/OpenAI/Anthropic directly in a Route Handler. **Timeout risks are too high.**
 
 **Correct Flow:**
 
@@ -70,6 +71,57 @@ export default inngest.createFunction(
   }
 );
 ```
+
+### Human-in-the-Loop (HITL)
+
+AI should not always be autonomous. Use `step.waitForEvent` to pause for user approval.
+
+- **Pattern**:
+  1. AI generates draft -> System notifies user -> Workflows **PAUSES**.
+  2. User reviews in UI (Approve/Reject).
+  3. API sends event -> Workflow **RESUMES**.
+
+````typescript
+```typescript
+// ✅ GOOD: Pausable Workflow
+const result = await step.waitForEvent("wait-for-approval", {
+  event: "app/approval.received",
+  timeout: "7d", // Mandatory Timeout
+  match: "data.runId", // Security: Match runId
+});
+
+if (result.enc.denied) throw new Error("User rejected");
+````
+
+### The 3-Tier Autonomy System
+
+Agents must respect the user's "Autonomy Preference" (`autonomy_mode`):
+
+1. **Manual Control (`manual`)**: "Ask me after every step." (Development / High Risk).
+2. **Smart Pilot (`smart`)**: "Ask me only if unsure or high cost." (Default).
+3. **Full Auto (`auto`)**: "Just do it." (Low Risk / High Volume).
+
+**Implementation Pattern:**
+
+```typescript
+// Inside Inngest Function
+const { autonomy_mode } = event.data;
+
+if (autonomy_mode === "manual") {
+  await step.waitForEvent("manual-approval", ...);
+} else if (autonomy_mode === "smart" && confidence < 0.8) {
+  await step.waitForEvent("smart-approval", ...);
+}
+// 'auto' mode skips wait (unless blocking error)
+```
+
+### Dynamic Model Selection
+
+All Agents **MUST** accept a `model` parameter in their trigger payload to allow users to switch models (e.g., to "gemini-pro" for complex tasks) at runtime.
+
+- **Default:** `gemini-3-flash` (if no model provided).
+- **Validation:** Check against list of allowed models.
+- **Cost Tracking:** Record the specific model used in `usage_logs`.
 
 ### Semantic Caching
 
@@ -124,10 +176,27 @@ Complex actions (e.g., "Deduct Credits + Start Job") must happen atomically.
 
 ## 5. Error Handling & Observability
 
-### Stable Error Codes
+### Unified Error Response (The "Sleek Toast" Protocol)
 
-- Backend returns machine-readable codes: `credit/insufficient_balance`, `ai/provider_timeout`.
-- Frontend translates these to user messages. **Backend does not translate.**
+- **Structure**: API responses MUST separate user feedback from debugging info:
+  ```json
+  {
+    "success": false,
+    "error": {
+      "code": "credit/insufficient_balance",
+      "userMessage": "Referral limit reached. Please upgrade.", // Safe for Toast
+      "developerMessage": "User 123 exceeded strict limit of 50. Row ID: x-y-z", // Internal Only
+      "traceId": "evt_12345"
+    }
+  }
+  ```
+- **Rule**: `userMessage` (or the i18n key derived from `code`) is the **ONLY** thing shown in the UI Toast.
+- **Sanitization**: **NEVER** include stack traces, raw DB errors, or variable names in `userMessage`.
+- **Status Codes**:
+  - `400`: Bad Request (Validation).
+  - `401/403`: Auth/Permission.
+  - `422`: Business Logic (Valid input, but action incorrectly allowed, e.g., low credits).
+  - `500`: Server Explosion (Frontend shows "Something went wrong").
 
 ### Traceability
 

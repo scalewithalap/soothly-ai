@@ -18,6 +18,7 @@ When generating code or UI components for Zero Headache, you **MUST** strictly a
 - **Auth:** Supabase Auth
 - **Background Jobs:** Inngest
 - **Validation:** Zod (all API inputs/outputs)
+- **Default AI Model:** `gemini-3-flash` (must allow user selection at runtime)
 
 ## Implementation Guidelines
 

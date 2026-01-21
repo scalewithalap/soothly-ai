@@ -17,6 +17,11 @@ import {
   notifyAgentError,
   getOrgOwnerNotificationPreferences,
 } from "@/lib/notifications";
+import {
+  parseAgentEventData,
+  requiresApproval,
+  requestApprovalAndWait,
+} from "@/inngest/utils";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 // Type helper to work around typed client limitations
@@ -59,10 +64,17 @@ export const handleCampaignCreated = inngest.createFunction(
   },
   { event: "leads/campaign.created" },
   async ({ event, step }) => {
-    const { campaignId, orgId } = event.data as {
+    // Parse event data with SKILL.md compliance (model + autonomy_mode)
+    const eventData = parseAgentEventData<{
       campaignId: string;
       orgId: string;
-    };
+    }>(event.data);
+    const {
+      campaignId,
+      orgId,
+      model: model,
+      autonomy_mode: autonomy_mode,
+    } = eventData;
 
     // Step 1: Get campaign details
     const campaign = await step.run("get-campaign", async () => {
@@ -389,11 +401,13 @@ export const sendLeadOutreach = inngest.createFunction(
   },
   { event: "leads/outreach.scheduled" },
   async ({ event, step }) => {
-    const { leadId, sequenceId, orgId } = event.data as {
+    // Parse event data with SKILL.md compliance (model + autonomy_mode)
+    const eventData = parseAgentEventData<{
       leadId: string;
       sequenceId: string;
       orgId: string;
-    };
+    }>(event.data);
+    const { leadId, sequenceId, orgId, autonomy_mode } = eventData;
 
     // Step 1: Get lead and sequence details
     const leadData = await step.run("get-lead-data", async () => {
@@ -416,6 +430,32 @@ export const sendLeadOutreach = inngest.createFunction(
 
     if (!leadData.lead || !leadData.sequence) {
       return { success: false, error: "Lead or sequence not found" };
+    }
+
+    // Step 2: Check if approval required for send_outreach (SKILL.md: 3-tier Autonomy)
+    if (requiresApproval("send_outreach", autonomy_mode)) {
+      const contact = leadData.lead.contacts as {
+        full_name?: string;
+        email?: string;
+      };
+      const approval = await requestApprovalAndWait(step as any, {
+        orgId,
+        agentType: "lead_gen",
+        action: "send_outreach",
+        title: `Send outreach email to ${contact?.full_name || "lead"}`,
+        description: `Sending first step of sequence "${leadData.sequence.name}" to ${contact?.email}`,
+        params: { leadId, sequenceId },
+        previewData: { contact, sequence: leadData.sequence },
+        riskLevel: "medium",
+      });
+
+      if (!approval.approved) {
+        return {
+          success: false,
+          error: "Outreach rejected",
+          comment: approval.comment,
+        };
+      }
     }
 
     // Step 2: Send the outreach (email, SMS, etc based on sequence config)
@@ -469,4 +509,3 @@ export const sendLeadOutreach = inngest.createFunction(
     return { success: true };
   },
 );
-
