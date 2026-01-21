@@ -15,7 +15,16 @@ import {
   parseAgentEventData,
   requiresApproval,
   requestApprovalAndWait,
+  createTraceContext,
+  broadcastConfidence,
+  traceLog,
+  type TraceContext,
 } from "@/inngest/utils";
+import {
+  ArticleOutlineSchema,
+  ReflectionSchema,
+  safeParseLLMOutput,
+} from "@/agents/schemas/llm-output-schemas";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AIModel } from "@/lib/ai/providers/types";
 
@@ -59,7 +68,11 @@ export const handleBriefCreated = inngest.createFunction(
   },
   { event: "content/brief.created" },
   async ({ event, step }) => {
-    const { briefId, orgId } = event.data as { briefId: string; orgId: string };
+    const eventData = parseAgentEventData<{
+      briefId: string;
+      orgId: string;
+    }>(event.data);
+    const { briefId, orgId } = eventData;
 
     // Step 1: Update brief status
     await step.run("update-brief-status", async () => {
@@ -164,7 +177,7 @@ export const generateArticle = inngest.createFunction(
   },
   { event: "content/article.generate" },
   async ({ event, step }) => {
-    const { briefId, orgId, model, config } = event.data as {
+    const eventData = parseAgentEventData<{
       briefId: string;
       orgId: string;
       model?: AIModel;
@@ -173,10 +186,14 @@ export const generateArticle = inngest.createFunction(
         targetAudience?: string;
         contentGuidelines?: string[];
       };
-    };
+    }>(event.data);
+    const { briefId, orgId, model, config, autonomy_mode } = eventData;
 
-    // Default to gemini-3-flash if no model specified
-    const selectedModel: AIModel = model || "gemini-3-flash";
+    // Model selection (validated by parseAgentEventData)
+    const selectedModel: AIModel = (model as AIModel) || "gemini-3-flash";
+
+    // Initialize semantic cache for research step
+    const cache = createSemanticCache(orgId, { model: selectedModel });
 
     // Step 1: Get brief details
     const brief = await step.run("get-brief", async () => {
@@ -199,8 +216,25 @@ export const generateArticle = inngest.createFunction(
       throw new Error(`Brief ${briefId} not found`);
     }
 
-    // Step 2: Generate article outline
+    // Step 2: Generate article outline (with semantic caching)
     const outline = await step.run("generate-outline", async () => {
+      const cacheQuery = `outline:${brief.title}:${brief.primary_keyword}`;
+
+      // Check cache first
+      const cached = await cache.get(cacheQuery);
+      if (cached) {
+        return cached.response as {
+          title: string;
+          meta_description?: string;
+          sections?: Array<{
+            heading: string;
+            level: number;
+            points?: string[];
+          }>;
+        };
+      }
+
+      // Generate new outline
       const result = await generateWithModel(
         selectedModel,
         `Create a detailed article outline for:
@@ -232,12 +266,49 @@ Return as JSON:
         { temperature: 0.7, maxTokens: 2000 },
       );
 
-      try {
-        return JSON.parse(result.content);
-      } catch {
-        return { title: brief.title, sections: [] };
+      // Validate with Zod schema per backend-design/SKILL.md
+      const {
+        success,
+        data: parsed,
+        errors,
+      } = safeParseLLMOutput(ArticleOutlineSchema, result.content, {
+        title: brief.title,
+        sections: [],
+      });
+
+      if (!success) {
+        console.warn("SEO outline validation failed:", errors?.issues);
       }
+
+      // Store in cache (estimate ~500 tokens for outline generation)
+      await cache.set(cacheQuery, parsed, 500);
+      return parsed;
     });
+
+    // Step 2.5: HITL Approval Gate (per Agentic OS: Mandatory Reflection)
+    if (requiresApproval("publish_content", autonomy_mode)) {
+      const approval = await requestApprovalAndWait(
+        step as Parameters<typeof requestApprovalAndWait>[0],
+        {
+          orgId,
+          agentType: "seo",
+          action: "approve_outline",
+          title: `Approve Article Outline: ${outline.title || brief.title}`,
+          description: `The AI has generated an outline with ${outline.sections?.length || 0} sections. Review before proceeding with full article generation.`,
+          params: { briefId },
+          previewData: { outline },
+          riskLevel: "medium",
+        },
+      );
+
+      if (!approval.approved) {
+        return {
+          success: false,
+          error: "Outline rejected by user",
+          comment: approval.comment,
+        };
+      }
+    }
 
     // Step 3: Generate full article content
     const article = await step.run("generate-content", async () => {
@@ -294,6 +365,52 @@ Write the complete article:`,
         wordCount,
       };
     });
+
+    // Step 3.5: Reflect on generated content per backend-design/SKILL.md
+    const reflection = await step.run("reflect-on-article", async () => {
+      const result = await generateWithModel(
+        selectedModel,
+        `Reflect on this SEO article and evaluate its quality:
+
+TITLE: ${article.title}
+PRIMARY KEYWORD: ${brief.primary_keyword}
+WORD COUNT: ${article.wordCount}
+
+ARTICLE CONTENT (first 2000 chars):
+${article.content.slice(0, 2000)}
+
+Evaluate:
+1. Does it naturally include the primary keyword 3-5 times?
+2. Is the content well-structured and readable?
+3. Does it meet the target word count of ${brief.target_word_count || 1500}?
+4. Are there any factual or grammatical issues?
+
+Return JSON:
+{
+  "is_valid": true/false,
+  "quality_score": 0-100,
+  "issues": [{ "type": "...", "description": "...", "severity": "low|medium|high" }],
+  "improvements": ["..."],
+  "should_regenerate": false
+}`,
+        { temperature: 0.3, maxTokens: 1000 },
+      );
+
+      const { data } = safeParseLLMOutput(ReflectionSchema, result.content, {
+        is_valid: true,
+        quality_score: 70,
+        issues: [],
+        should_regenerate: false,
+      });
+
+      return data;
+    });
+
+    // Log reflection results
+    if (!reflection.is_valid || reflection.quality_score < 60) {
+      console.warn("SEO article reflection flagged issues:", reflection.issues);
+      // Future: Could trigger regeneration here if should_regenerate is true
+    }
 
     // Step 4: Save article to database
     const savedArticle = await step.run("save-article", async () => {
@@ -389,10 +506,11 @@ export const optimizeArticleSEO = inngest.createFunction(
   },
   { event: "content/article.optimize" },
   async ({ event, step }) => {
-    const { articleId, orgId } = event.data as {
+    const eventData = parseAgentEventData<{
       articleId: string;
       orgId: string;
-    };
+    }>(event.data);
+    const { articleId, orgId } = eventData;
 
     // Step 1: Get article
     const article = await step.run("get-article", async () => {

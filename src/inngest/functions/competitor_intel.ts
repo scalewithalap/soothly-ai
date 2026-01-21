@@ -18,6 +18,7 @@
  */
 
 import { inngest } from "@/inngest/client";
+import { INTEL_EVENTS } from "@/inngest/events";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import { getGemini } from "@/lib/ai";
 import {
@@ -27,9 +28,12 @@ import {
 } from "@/inngest/utils";
 import {
   sendNotification,
-  notifyAgentCompletion,
   getOrgOwnerNotificationPreferences,
 } from "@/lib/notifications";
+import {
+  ChangeAnalysisSchema,
+  safeParseLLMOutput,
+} from "@/agents/schemas/llm-output-schemas";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import * as crypto from "crypto";
 
@@ -44,7 +48,8 @@ type ChangeType =
   | "new_feature"
   | "feature_removed"
   | "headline_change"
-  | "content_update";
+  | "content_update"
+  | "unknown";
 
 // Alert priority
 type AlertPriority = "low" | "medium" | "high" | "critical";
@@ -109,7 +114,7 @@ export const dailyCompetitorScan = inngest.createFunction(
     // Step 2: Trigger scan for each organization
     for (const orgId of orgsWithCompetitors) {
       await inngest.send({
-        name: "intel/scan.daily",
+        name: INTEL_EVENTS.SCAN_DAILY,
         data: { orgId, triggeredAt: new Date().toISOString() },
       });
     }
@@ -259,15 +264,31 @@ Return JSON:
                 temperature: 0.3,
               });
 
-              try {
-                return JSON.parse(result.content);
-              } catch {
-                return {
-                  changeType: "content_update",
-                  summary: "Content updated",
-                  strategicImplication: "Minor changes detected",
-                };
+              // Validate with Zod schema per backend-design/SKILL.md
+              const { success, data, errors } = safeParseLLMOutput(
+                ChangeAnalysisSchema,
+                result.content,
+                {
+                  type: "content_update" as const,
+                  description: "Content updated",
+                  impact: "low" as const,
+                  recommended_action: "Minor changes detected",
+                },
+              );
+
+              if (!success) {
+                console.warn(
+                  "Competitor change analysis validation failed:",
+                  errors?.issues,
+                );
               }
+
+              return {
+                changeType: data.type,
+                summary: data.description,
+                strategicImplication:
+                  data.recommended_action || "Analyze impact",
+              };
             },
           );
 
@@ -327,7 +348,6 @@ Return JSON:
     if (highPriorityChanges.length > 0) {
       // Check approval if needed
       if (requiresApproval("send_alert", autonomy_mode)) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const approval = await requestApprovalAndWait(step as any, {
           orgId,
           agentType: "competitor_intel",
@@ -439,7 +459,7 @@ export const addCompetitor = inngest.createFunction(
 
     // Initial scan
     await inngest.send({
-      name: "intel/competitor.check",
+      name: INTEL_EVENTS.COMPETITOR_CHECK,
       data: { competitorId: id, orgId },
     });
 

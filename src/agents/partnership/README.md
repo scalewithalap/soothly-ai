@@ -1,5 +1,15 @@
 # Partnership Agent
 
+## 0. Capability Map
+
+| Event Input                | Action Taken                                   | Event Output                   |
+| :------------------------- | :--------------------------------------------- | :----------------------------- |
+| `partners/discovery.start` | Scouts profiles, qualifies, generates outreach | `partners/discovery.completed` |
+| `partners/qualify.single`  | Analyzes single partner engagement             | `partners/qualified`           |
+| `partners/outreach.send`   | Sends partnership invitation email             | `partners/outreach.sent`       |
+
+---
+
 ## 1. Product Context (The "Why")
 
 | Feature          | Description                                                              |

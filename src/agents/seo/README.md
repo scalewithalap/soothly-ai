@@ -1,5 +1,15 @@
 # SEO Content Agent
 
+## 0. Capability Map
+
+| Event Input                | Action Taken                                   | Event Output                |
+| :------------------------- | :--------------------------------------------- | :-------------------------- |
+| `content/brief.created`    | Researches keywords, updates brief             | `content/brief.researched`  |
+| `content/article.generate` | Generates outline, writes article, saves draft | `content/article.completed` |
+| `content/article.optimize` | Analyzes SEO, updates meta tags                | `content/article.optimized` |
+
+---
+
 ## 1. Product Context (The "Why")
 
 | Feature          | Description                                                    |

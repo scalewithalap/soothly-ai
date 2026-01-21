@@ -3,6 +3,13 @@
 > **Role**: "The Brain" - Your Level 1 Support Rep  
 > **Trigger**: Chat Widget Message (`support/ticket.created`)
 
+## 0. Capability Map
+
+| Event Input                 | Action Taken                                     | Event Output              |
+| :-------------------------- | :----------------------------------------------- | :------------------------ |
+| `support/ticket.created`    | RAG search, generates response, executes actions | `support/ticket.resolved` |
+| `support/process.requested` | Reprocesses existing ticket with latest context  | `support/ticket.updated`  |
+
 ---
 
 ## 1. Product Context

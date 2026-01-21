@@ -21,6 +21,16 @@ import type {
   AgentType,
 } from "../base/types";
 import { inngest } from "@/inngest/client";
+import {
+  SUPERAGENT_EVENTS,
+  LEAD_EVENTS,
+  SEO_EVENTS,
+  PARTNERSHIP_EVENTS,
+  INTEL_EVENTS,
+  SUPPORT_EVENTS,
+  RECOVERY_EVENTS,
+  ONBOARDING_EVENTS,
+} from "@/inngest/events";
 
 // Campaign types the Superagent can orchestrate
 export type CampaignType =
@@ -261,7 +271,7 @@ export class Superagent extends BaseAgent {
     inputs: Record<string, unknown>;
   }): Promise<AgentResult> {
     await inngest.send({
-      name: "superagent/campaign.plan",
+      name: SUPERAGENT_EVENTS.CAMPAIGN_PLAN,
       data: {
         type: params.type,
         objective: params.objective,
@@ -281,7 +291,7 @@ export class Superagent extends BaseAgent {
    */
   async executeCampaign(params: { campaignId: string }): Promise<AgentResult> {
     await inngest.send({
-      name: "superagent/campaign.execute",
+      name: SUPERAGENT_EVENTS.CAMPAIGN_EXECUTE,
       data: {
         campaignId: params.campaignId,
         orgId: this.orgId,
@@ -301,7 +311,7 @@ export class Superagent extends BaseAgent {
     campaignId: string;
   }): Promise<AgentResult> {
     await inngest.send({
-      name: "superagent/campaign.status",
+      name: SUPERAGENT_EVENTS.CAMPAIGN_STATUS,
       data: {
         campaignId: params.campaignId,
         orgId: this.orgId,
@@ -319,7 +329,7 @@ export class Superagent extends BaseAgent {
    */
   async cancelCampaign(params: { campaignId: string }): Promise<AgentResult> {
     await inngest.send({
-      name: "superagent/campaign.cancel",
+      name: SUPERAGENT_EVENTS.CAMPAIGN_CANCEL,
       data: {
         campaignId: params.campaignId,
         orgId: this.orgId,
@@ -412,34 +422,34 @@ export class Superagent extends BaseAgent {
   getAgentEventName(agentType: AgentType, action: string): string {
     const eventMap: Record<string, Record<string, string>> = {
       lead_gen: {
-        find_leads: "leads/campaign.created",
-        scrape_leads: "leads/campaign.created",
-        enrich_leads: "leads/enrich.requested",
+        find_leads: LEAD_EVENTS.CAMPAIGN_CREATED,
+        scrape_leads: LEAD_EVENTS.CAMPAIGN_CREATED,
+        enrich_leads: LEAD_EVENTS.ENRICH_REQUESTED,
       },
       seo: {
-        generate_article: "seo/brief.created",
-        generate_content_series: "seo/brief.created",
-        counter_content: "seo/brief.created",
+        generate_article: SEO_EVENTS.BRIEF_CREATED,
+        generate_content_series: SEO_EVENTS.BRIEF_CREATED,
+        counter_content: SEO_EVENTS.BRIEF_CREATED,
       },
       partnership: {
-        discover_partners: "partners/discover.requested",
+        discover_partners: PARTNERSHIP_EVENTS.DISCOVERY_REQUESTED,
       },
       proposal: {
         generate_templates: "proposal/generate.requested",
       },
       competitor_intel: {
-        analyze_competitor: "intel/competitor.check",
-        analyze_content_gaps: "intel/scan.daily",
-        deep_analyze: "intel/competitor.check",
+        analyze_competitor: INTEL_EVENTS.COMPETITOR_CHECK,
+        analyze_content_gaps: INTEL_EVENTS.SCAN_DAILY,
+        deep_analyze: INTEL_EVENTS.COMPETITOR_CHECK,
       },
       customer_success: {
-        process_ticket: "support/process.requested",
+        process_ticket: SUPPORT_EVENTS.PROCESS_REQUESTED,
       },
       revenue_recovery: {
-        retry_payment: "recovery/payment.retry",
+        retry_payment: RECOVERY_EVENTS.PAYMENT_RETRY,
       },
       onboarding: {
-        check_progress: "onboarding/progress.check",
+        check_progress: ONBOARDING_EVENTS.PROGRESS_CHECK,
       },
     };
 

@@ -27,7 +27,6 @@ import {
   parseAgentEventData,
   requiresApproval,
   requestApprovalAndWait,
-  type AutonomyMode,
 } from "@/inngest/utils";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -341,7 +340,7 @@ export const analyzeProspect = inngest.createFunction(
   },
   { event: "proposal/analyze.requested" },
   async ({ event, step }) => {
-    const { orgId, prospectUrl } = event.data as {
+    const { prospectUrl } = event.data as {
       orgId: string;
       prospectUrl: string;
     };

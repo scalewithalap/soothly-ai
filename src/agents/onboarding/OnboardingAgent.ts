@@ -14,6 +14,7 @@
 import { BaseAgent } from "../base/Agent";
 import type { AgentTask, AgentResult, UsageCost } from "../base/types";
 import { inngest } from "@/inngest/client";
+import { ONBOARDING_EVENTS } from "@/inngest/events";
 
 // User role for personalization
 export type UserRole =
@@ -209,7 +210,7 @@ export class OnboardingAgent extends BaseAgent {
     metadata?: Record<string, unknown>;
   }): Promise<AgentResult> {
     await inngest.send({
-      name: "onboarding/user.created",
+      name: ONBOARDING_EVENTS.USER_CREATED,
       data: {
         userId: params.userId,
         email: params.email,
@@ -230,7 +231,7 @@ export class OnboardingAgent extends BaseAgent {
    */
   async checkProgress(params: { userId: string }): Promise<AgentResult> {
     await inngest.send({
-      name: "onboarding/progress.check",
+      name: ONBOARDING_EVENTS.PROGRESS_CHECK,
       data: {
         userId: params.userId,
         orgId: this.orgId,
@@ -251,7 +252,7 @@ export class OnboardingAgent extends BaseAgent {
     nudgeType: string;
   }): Promise<AgentResult> {
     await inngest.send({
-      name: "onboarding/nudge.scheduled",
+      name: ONBOARDING_EVENTS.NUDGE_SCHEDULED,
       data: {
         userId: params.userId,
         nudgeType: params.nudgeType,

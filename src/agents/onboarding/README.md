@@ -3,6 +3,14 @@
 > **Role**: "The Guide" - Your Implementation Specialist  
 > **Trigger**: Supabase Auth Hook (`auth.user.created`)
 
+## 0. Capability Map
+
+| Event Input                 | Action Taken                                  | Event Output                  |
+| :-------------------------- | :-------------------------------------------- | :---------------------------- |
+| `onboarding/user.created`   | Analyzes role, creates personalized checklist | `onboarding/started`          |
+| `onboarding/progress.check` | Checks completion, sends nudges if needed     | `onboarding/nudge.sent`       |
+| `onboarding/task.completed` | Marks task done, updates progress             | `onboarding/progress.updated` |
+
 ---
 
 ## 1. Product Context

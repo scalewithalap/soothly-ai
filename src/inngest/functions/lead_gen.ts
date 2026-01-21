@@ -138,12 +138,82 @@ export const handleCampaignCreated = inngest.createFunction(
       }
     });
 
-    // Step 4: Save leads to database
+    // Step 4: AI-Powered Lead Scoring (uses `model` parameter)
+    const scoredLeads = await step.run("score-leads", async () => {
+      if (scrapedLeads.length === 0) return [];
+
+      // Import AI generation utility
+      const { generateWithModel } = await import("@/lib/ai");
+
+      const scoringPrompt = `You are a B2B lead scoring expert. Score each lead from 0-100 based on:
+- Job title relevance to our ICP
+- Company size/industry fit
+- Available contact info quality
+
+Return JSON array: [{ "index": 0, "score": 85, "reason": "VP title, tech industry" }, ...]
+
+Leads to score:
+${JSON.stringify(scrapedLeads.slice(0, 20).map((l, i) => ({ index: i, name: l.name, title: l.title, company: l.company })))}`;
+
+      try {
+        const result = await generateWithModel(
+          model || "gemini-3-flash",
+          scoringPrompt,
+        );
+        const scores = JSON.parse(result.content) as Array<{
+          index: number;
+          score: number;
+          reason: string;
+        }>;
+        return scrapedLeads.map((lead, idx) => {
+          const scoreEntry = scores.find((s) => s.index === idx);
+          return {
+            ...lead,
+            aiScore: scoreEntry?.score || 50,
+            aiReason: scoreEntry?.reason || "Default score",
+          };
+        });
+      } catch {
+        // Fallback: return leads with default scores if AI fails
+        return scrapedLeads.map((lead) => ({
+          ...lead,
+          aiScore: 50,
+          aiReason: "Scoring unavailable",
+        }));
+      }
+    });
+
+    // Step 4.5: HITL Approval Gate (uses `autonomy_mode` parameter)
+    if (requiresApproval("save_leads", autonomy_mode)) {
+      const approval = await requestApprovalAndWait(
+        step as Parameters<typeof requestApprovalAndWait>[0],
+        {
+          orgId,
+          agentType: "lead_gen",
+          action: "approve_lead_list",
+          title: `Approve ${scoredLeads.length} Scraped Leads`,
+          description: `The agent found ${scoredLeads.length} leads for campaign "${campaign.name}". Review before saving to your CRM.`,
+          params: { campaignId },
+          previewData: { topLeads: scoredLeads.slice(0, 5) },
+          riskLevel: "low",
+        },
+      );
+
+      if (!approval.approved) {
+        return {
+          success: false,
+          error: "Lead list rejected by user",
+          comment: approval.comment,
+        };
+      }
+    }
+
+    // Step 5: Save leads to database (now using scored leads)
     const savedCount = await step.run("save-leads", async () => {
       const supabase = getUntypedClient();
       let saved = 0;
 
-      for (const lead of scrapedLeads) {
+      for (const lead of scoredLeads) {
         // Create or find contact
         const { data: contact } = await supabase
           .from("contacts")
@@ -162,17 +232,18 @@ export const handleCampaignCreated = inngest.createFunction(
           .single();
 
         if (contact) {
-          // Link contact to campaign
+          // Link contact to campaign with AI score
           await supabase.from("lead_contacts").insert({
             campaign_id: campaignId,
             contact_id: contact.id,
-            lead_score: 0,
+            lead_score: lead.aiScore, // Now using AI-generated score
             qualification_status: "new",
             enrichment_data: {
               company: lead.company,
               companyUrl: lead.companyUrl,
               location: lead.location,
               summary: lead.summary,
+              aiScoreReason: lead.aiReason,
             },
           });
           saved++;

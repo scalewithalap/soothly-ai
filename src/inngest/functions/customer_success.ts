@@ -18,6 +18,7 @@
  */
 
 import { inngest } from "@/inngest/client";
+import { SUPPORT_EVENTS } from "@/inngest/events";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import { getGemini } from "@/lib/ai";
 import { createSemanticCache } from "@/agents/memory";
@@ -412,7 +413,7 @@ export const processTicket = inngest.createFunction(
       ticketId: string;
       orgId: string;
     }>(event.data);
-    const { ticketId, orgId, model: _model } = eventData;
+    const { ticketId, orgId, model } = eventData;
 
     // Get ticket details
     const ticket = await step.run("get-ticket", async () => {
@@ -431,12 +432,13 @@ export const processTicket = inngest.createFunction(
 
     // Re-trigger the main workflow
     await inngest.send({
-      name: "support/ticket.created",
+      name: SUPPORT_EVENTS.TICKET_CREATED,
       data: {
         ticketId,
         orgId,
         question: ticket.question,
         userId: ticket.user_id,
+        model,
       },
     });
 

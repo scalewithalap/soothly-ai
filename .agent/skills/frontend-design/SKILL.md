@@ -43,6 +43,24 @@ We are not building a generic dashboard. We are building an **Intelligence Conso
 
 ## 2. Layout Patterns (2025 Trends)
 
+### The "Unified Workspace" Pattern (Standard)
+
+We do not build disparate pages. All Agents MUST use the standardized **3-Pane Workspace** layout.
+Code abstraction: `<AgentWorkspace active={...} queue={...} insight={...} />`
+
+| Pane             | Role              | Mental Model            | Examples                                          |
+| :--------------- | :---------------- | :---------------------- | :------------------------------------------------ |
+| **Left (20%)**   | **The Queue**     | "What needs attention?" | Ticket List, Lead List, Draft Queue               |
+| **Center (50%)** | **The Execution** | "Doing the work"        | Chat Thread, Rich Text Editor, Kanban Board       |
+| **Right (30%)**  | **The Insight**   | "The AI Value Add"      | Sentiment Score, SEO Score, Threat Level, Summary |
+
+### Mobile First? No.
+
+Our users are "Power Users" on desktop monitoring high-volume automated workflows.
+
+- **Desktop First:** Optimize for 1920x1080 density.
+- **Mobile Companion:** Mobile is for "Read Only" monitoring and panic buttons.
+
 ### The Command Center (Cmd+K)
 
 - **Replace Navbars**: Do not clutter the top with links. Use a unified "Omnibar" or Command Palette for navigation + actions.
@@ -79,6 +97,20 @@ We are not building a generic dashboard. We are building an **Intelligence Conso
   - **Options**: List all available models (e.g., Gemini Flash, Gemini Pro).
   - **Default**: Pre-select `gemini-3-flash`.
   - **Placement**: Near the "Start" or "Run" button, subtle but accessible.
+
+### Glass Box Transparency (UX Requirement)
+
+Users have **Zero Tolerance** for black-box magic. You MUST visualize the agent's work.
+
+- **Thought Stream:** Display the agent's "Thought Process" (Plan → Act → Reflect) in real-time.
+- **State Visualization:** Show the current "State" of the agent (e.g., "Scanning 4 websites", "Drafting Email").
+- **Artifacts Preview:** If an agent creates a file/report, show a live preview or a structured summary card.
+
+### Intervention & Control (HITL)
+
+- **Pause/Resume:** Users must be able to "Pause" an active agent.
+- **Feedback Loop:** If an agent has low confidence (< 70%), it MUST ask the user for clarification via a Toast or Modal.
+- **Confidence Indicators:** Display a visible "Confidence Score" for critical actions.
 
 ---
 

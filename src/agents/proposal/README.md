@@ -1,5 +1,15 @@
 # Proposal Generator Agent
 
+## 0. Capability Map
+
+| Event Input                   | Action Taken                                        | Event Output         |
+| :---------------------------- | :-------------------------------------------------- | :------------------- |
+| `proposal/create.full`        | Scrapes site, analyzes prospect, generates proposal | `proposal/created`   |
+| `proposal/analyze.requested`  | Analyzes prospect website only                      | `proposal/analyzed`  |
+| `proposal/generate.requested` | Generates proposal from existing analysis           | `proposal/generated` |
+
+---
+
 ## 1. Product Context (The "Why")
 
 | Feature          | Description                                              |

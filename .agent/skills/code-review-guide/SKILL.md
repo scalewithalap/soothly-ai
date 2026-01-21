@@ -15,7 +15,7 @@ allowed-tools: Read, Glob, Grep
 _From `backend-design/resources/`_
 
 - [ ] **Pricing Logic**: All limits/tiers MUST match [`pricing-strategy.md`](../backend-design/resources/pricing-strategy.md).
-- [ ] **Agent Logic**: All workflows MUST match [`agents-ecosystem.md`](../backend-design/resources/agents-ecosystem.md).
+- [ ] **Agent Logic**: All workflows MUST match [`agents-ecosystem/SKILL.md`](../agents-ecosystem/SKILL.md).
 - [ ] **Data Connections**: All integrations MUST follow [`connection-architecture.md`](../backend-design/resources/connection-architecture.md) (Native vs. Widget).
 - [ ] **Closed Loop**: Does this feature feed data back into the ecosystem? (No dead ends).
 
@@ -25,6 +25,10 @@ _From `backend-design/SKILL.md`_
 
 - [ ] **Durable AI**: All AI orchestration MUST use **Inngest**. Direct calls to LLM providers in Route Handlers are **FORBIDDEN**.
 - [ ] **Model Selection**: Agent triggers MUST accept a `model` parameter (Default: `gemini-3-flash`).
+- [ ] **Reflection**: Does the agent critique its own work? (Look for `Reflect` step).
+- [ ] **Observability**: Are "Thoughts" and custom attributes (token usage, model version) logged/traced?
+- [ ] **Failure Recovery**: Is there a defined path for when the agent gets stuck (e.g., escalating to human/HITL)?
+- [ ] **Schema Compliance**: Are all LLM outputs validated by Zod schemas?
 - [ ] **Step Wrapping**: individual AI calls must be wrapped in `step.run()` for retries.
 - [ ] **RLS Mandatory**: Every Supabase query must respect Row Level Security. `service_role` is **FORBIDDEN** in user-facing routes.
 - [ ] **Transactional RPC**: Complex logic (e.g., Credit Deduct + Job Start) MUST use `supabase.rpc(...)`, never client-side chaining.

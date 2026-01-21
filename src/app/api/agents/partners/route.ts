@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { inngest } from "@/inngest/client";
+import { PARTNERSHIP_EVENTS } from "@/inngest/events";
 import { apiSuccess, withErrorHandler, validateBody } from "@/lib/validation";
 import { AppError, ErrorCodes } from "@/lib/errors";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -52,7 +53,7 @@ export const GET = withErrorHandler(async () => {
     throw new AppError(
       ErrorCodes.DATABASE_ERROR,
       "Failed to fetch partners",
-      500
+      500,
     );
   }
 
@@ -86,7 +87,7 @@ export const POST = withErrorHandler(async (request: Request) => {
 
   // Trigger Inngest event for background partner discovery
   await inngest.send({
-    name: "partners/discover.requested",
+    name: PARTNERSHIP_EVENTS.DISCOVERY_REQUESTED,
     data: {
       industry: parsed.industry,
       partnerType: parsed.partner_type,
@@ -96,7 +97,6 @@ export const POST = withErrorHandler(async (request: Request) => {
 
   return apiSuccess(
     { message: "Discovery started", industry: parsed.industry },
-    202
+    202,
   );
 });
-

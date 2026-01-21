@@ -14,6 +14,7 @@
 import { BaseAgent } from "../base/Agent";
 import type { AgentTask, AgentResult, UsageCost } from "../base/types";
 import { inngest } from "@/inngest/client";
+import { RECOVERY_EVENTS } from "@/inngest/events";
 
 // Payment failure codes from Stripe
 export type FailureCode =
@@ -146,7 +147,7 @@ export class RevenueRecoveryAgent extends BaseAgent {
     amount: number;
   }): Promise<AgentResult> {
     await inngest.send({
-      name: "recovery/payment.failed",
+      name: RECOVERY_EVENTS.PAYMENT_FAILED,
       data: {
         invoiceId: params.invoiceId,
         customerId: params.customerId,
@@ -173,7 +174,7 @@ export class RevenueRecoveryAgent extends BaseAgent {
     recoveryId: string;
   }): Promise<AgentResult> {
     await inngest.send({
-      name: "recovery/email.scheduled",
+      name: RECOVERY_EVENTS.EMAIL_SCHEDULED,
       data: {
         recoveryId: params.recoveryId,
         orgId: this.orgId,
@@ -191,7 +192,7 @@ export class RevenueRecoveryAgent extends BaseAgent {
    */
   async retryPayment(params: { invoiceId: string }): Promise<AgentResult> {
     await inngest.send({
-      name: "recovery/payment.retry",
+      name: RECOVERY_EVENTS.PAYMENT_RETRY,
       data: {
         invoiceId: params.invoiceId,
         orgId: this.orgId,

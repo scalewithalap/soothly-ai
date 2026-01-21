@@ -4,6 +4,15 @@
 > **Access**: Yearly Plan Exclusive  
 > **Capability**: Coordinates multiple agents via `step.invoke`
 
+## 0. Capability Map
+
+| Event Input                   | Action Taken                                 | Event Output                    |
+| :---------------------------- | :------------------------------------------- | :------------------------------ |
+| `superagent/campaign.plan`    | Decomposes goal into agent steps, saves plan | `superagent/campaign.planned`   |
+| `superagent/campaign.execute` | Dispatches agents sequentially/parallel      | `superagent/campaign.completed` |
+| `superagent/campaign.status`  | Returns current progress                     | `superagent/status.returned`    |
+| `superagent/campaign.cancel`  | Cancels running campaign                     | `superagent/campaign.cancelled` |
+
 ---
 
 ## 1. Product Context
@@ -34,20 +43,20 @@
 
 ```mermaid
 graph TD
-    A[User: "Launch campaign targeting Real Estate"] --> B(Plan Campaign)
-    B --> C{Approval Needed?}
-    C -->|Yes| D[HITL: Review Plan]
-    C -->|No| E[Execute Campaign]
+    A["User: 'Launch campaign targeting Real Estate'"] --> B("Plan Campaign")
+    B --> C{"Approval Needed?"}
+    C -->|Yes| D["HITL: Review Plan"]
+    C -->|No| E["Execute Campaign"]
     D --> E
-    E --> F{For Each Step}
-    F --> G{Dependencies Met?}
-    G -->|No| H[Wait]
-    G -->|Yes| I[Trigger Agent Event]
-    I --> J[Mark Step Complete]
+    E --> F{"For Each Step"}
+    F --> G{"Dependencies Met?"}
+    G -->|No| H["Wait"]
+    G -->|Yes| I["Trigger Agent Event"]
+    I --> J["Mark Step Complete"]
     J --> F
     H --> G
-    F -->|Done| K[Campaign Completed]
-    K --> L[Notify Owner]
+    F -->|Done| K["Campaign Completed"]
+    K --> L["Notify Owner"]
 ```
 
 ### Pre-Built Campaign Templates

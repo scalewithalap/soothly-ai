@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { inngest } from "@/inngest/client";
+import { SEO_EVENTS } from "@/inngest/events";
 import { apiSuccess, withErrorHandler, validateBody } from "@/lib/validation";
 import { AppError, ErrorCodes } from "@/lib/errors";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -119,7 +120,7 @@ export const POST = withErrorHandler(async (request: Request) => {
 
   // Trigger Inngest event for background processing with model selection
   await inngest.send({
-    name: "content/brief.created",
+    name: SEO_EVENTS.BRIEF_CREATED,
     data: {
       briefId: (brief as { id: string }).id,
       orgId: userData.org_id,
@@ -128,7 +129,7 @@ export const POST = withErrorHandler(async (request: Request) => {
 
   // Also trigger article generation with selected model
   await inngest.send({
-    name: "content/article.generate",
+    name: SEO_EVENTS.ARTICLE_GENERATE,
     data: {
       briefId: (brief as { id: string }).id,
       orgId: userData.org_id,
@@ -138,4 +139,3 @@ export const POST = withErrorHandler(async (request: Request) => {
 
   return apiSuccess({ brief }, 201);
 });
-

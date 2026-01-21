@@ -14,6 +14,7 @@
 import { BaseAgent } from "../base/Agent";
 import type { AgentTask, AgentResult, UsageCost } from "../base/types";
 import { inngest } from "@/inngest/client";
+import { INTEL_EVENTS } from "@/inngest/events";
 import * as crypto from "crypto";
 
 // Types of changes to detect
@@ -154,7 +155,7 @@ export class CompetitorIntelAgent extends BaseAgent {
    */
   async runDailyScan(): Promise<AgentResult> {
     await inngest.send({
-      name: "intel/scan.daily",
+      name: INTEL_EVENTS.SCAN_DAILY,
       data: {
         orgId: this.orgId,
         triggeredAt: new Date().toISOString(),
@@ -174,7 +175,7 @@ export class CompetitorIntelAgent extends BaseAgent {
     competitorId: string;
   }): Promise<AgentResult> {
     await inngest.send({
-      name: "intel/competitor.check",
+      name: INTEL_EVENTS.COMPETITOR_CHECK,
       data: {
         competitorId: params.competitorId,
         orgId: this.orgId,
@@ -192,7 +193,7 @@ export class CompetitorIntelAgent extends BaseAgent {
    */
   async addCompetitor(config: CompetitorConfig): Promise<AgentResult> {
     await inngest.send({
-      name: "intel/competitor.add",
+      name: INTEL_EVENTS.COMPETITOR_ADD,
       data: {
         ...config,
         orgId: this.orgId,

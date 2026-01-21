@@ -19,6 +19,7 @@
  */
 
 import { inngest } from "@/inngest/client";
+import { RECOVERY_EVENTS } from "@/inngest/events";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import {
   parseAgentEventData,
@@ -314,7 +315,7 @@ The Zero Headache Team`;
 
       if (shouldRetry) {
         await inngest.send({
-          name: "recovery/payment.retry",
+          name: RECOVERY_EVENTS.PAYMENT_RETRY,
           data: { invoiceId, orgId, recoveryId: recovery?.id },
         });
       }
@@ -511,7 +512,7 @@ export const handleCardUpdated = inngest.createFunction(
 
     // Step 2: Trigger immediate retry
     await inngest.send({
-      name: "recovery/payment.retry",
+      name: RECOVERY_EVENTS.PAYMENT_RETRY,
       data: { invoiceId, orgId },
     });
 

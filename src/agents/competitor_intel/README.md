@@ -3,6 +3,14 @@
 > **Role**: "The Spy" - Your Market Strategist  
 > **Trigger**: Daily Cron (`0 8 * * *` - 8 AM)
 
+## 0. Capability Map
+
+| Event Input              | Action Taken                                                | Event Output               |
+| :----------------------- | :---------------------------------------------------------- | :------------------------- |
+| `intel/scan.daily`       | Scrapes competitor pages, diffs content, classifies changes | `intel/changes.detected`   |
+| `intel/competitor.check` | Checks single competitor for updates                        | `intel/competitor.scanned` |
+| `intel/competitor.add`   | Adds new competitor to monitoring                           | `intel/competitor.added`   |
+
 ---
 
 ## 1. Product Context

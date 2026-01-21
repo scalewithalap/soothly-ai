@@ -3,6 +3,14 @@
 > **Role**: "The Defender" - Your Automated Collections Team  
 > **Trigger**: Stripe Webhook (`invoice.payment_failed`)
 
+## 0. Capability Map
+
+| Event Input               | Action Taken                                     | Event Output                                              |
+| :------------------------ | :----------------------------------------------- | :-------------------------------------------------------- |
+| `recovery/payment.failed` | Analyzes failure, sends magic link, queues retry | `recovery/attempt.started`                                |
+| `recovery/payment.retry`  | Retries Stripe payment via API                   | `recovery/payment.succeeded` or `recovery/payment.failed` |
+| `recovery/card.updated`   | Customer updated card, triggers retry            | `recovery/payment.succeeded`                              |
+
 ---
 
 ## 1. Product Context

@@ -15,3 +15,18 @@ export {
   requestApprovalAndWait,
   parseAgentEventData,
 } from "./hitl";
+
+export {
+  type ConfidenceEvent,
+  type TraceContext,
+  CONFIDENCE_THRESHOLDS,
+  generateTraceId,
+  createTraceContext,
+  propagateTrace,
+  broadcastConfidence,
+  getConfidenceLevel,
+  requiresConfidenceReview,
+  createSpanAttributes,
+  traceLog,
+  withTracedStep,
+} from "./observability";

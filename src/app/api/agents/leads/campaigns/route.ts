@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 import { inngest } from "@/inngest/client";
+import { LEAD_EVENTS } from "@/inngest/events";
 import { apiSuccess, withErrorHandler, validateBody } from "@/lib/validation";
 import { AppError, ErrorCodes } from "@/lib/errors";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -50,7 +51,7 @@ export const GET = withErrorHandler(async () => {
     throw new AppError(
       ErrorCodes.DATABASE_ERROR,
       "Failed to fetch campaigns",
-      500
+      500,
     );
   }
 
@@ -101,13 +102,13 @@ export const POST = withErrorHandler(async (request: Request) => {
     throw new AppError(
       ErrorCodes.DATABASE_ERROR,
       "Failed to create campaign",
-      500
+      500,
     );
   }
 
   // Trigger Inngest event for background processing
   await inngest.send({
-    name: "leads/campaign.created",
+    name: LEAD_EVENTS.CAMPAIGN_CREATED,
     data: {
       campaignId: (campaign as { id: string }).id,
       orgId: userData.org_id,
@@ -116,4 +117,3 @@ export const POST = withErrorHandler(async (request: Request) => {
 
   return apiSuccess({ campaign }, 201);
 });
-

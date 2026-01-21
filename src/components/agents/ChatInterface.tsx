@@ -26,19 +26,26 @@ interface Message {
 
 interface ChatInterfaceProps {
   agentType: AgentType;
-  agentName: string;
+  agentName?: string; // Optional, defaults to agentType or title
+  title?: string; // Alias for agentName
+  description?: string;
   agentIcon?: React.ReactNode;
   className?: string;
   initialMessages?: Message[];
+  context?: Record<string, any>;
 }
 
 export function ChatInterface({
   agentType,
   agentName,
+  title,
   agentIcon,
   className,
   initialMessages = [],
+  context,
 }: ChatInterfaceProps) {
+  const displayTitle = title || agentName || agentType;
+
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -93,7 +100,7 @@ export function ChatInterface({
       const response = await fetch(`/api/agents/${agentType}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: trimmedInput }),
+        body: JSON.stringify({ message: trimmedInput, context }),
       });
 
       if (!response.ok) {
@@ -195,7 +202,7 @@ export function ChatInterface({
         </div>
         <div>
           <h3 className="font-semibold text-gray-900 dark:text-white">
-            {agentName}
+            {displayTitle}
           </h3>
           <p className="text-xs text-gray-500">
             {isLoading ? "Thinking..." : "Online"}
@@ -209,7 +216,7 @@ export function ChatInterface({
           {messages.length === 0 && (
             <div className="text-center py-12 text-gray-500">
               <Bot className="w-12 h-12 mx-auto mb-4 opacity-30" />
-              <p>Start a conversation with {agentName}</p>
+              <p>Start a conversation with {displayTitle}</p>
               <p className="text-sm mt-1">
                 Ask anything related to my capabilities
               </p>
@@ -295,7 +302,7 @@ export function ChatInterface({
             value={input}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder={`Message ${agentName}...`}
+            placeholder={`Message ${displayTitle}...`}
             className="min-h-[44px] max-h-[200px] resize-none"
             disabled={isLoading}
             rows={1}

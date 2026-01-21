@@ -17,12 +17,10 @@
  */
 
 import { inngest } from "@/inngest/client";
+import { ONBOARDING_EVENTS } from "@/inngest/events";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import { parseAgentEventData } from "@/inngest/utils";
-import {
-  sendNotification,
-  getOrgOwnerNotificationPreferences,
-} from "@/lib/notifications";
+import { sendNotification } from "@/lib/notifications";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 // Type helper
@@ -405,7 +403,7 @@ export const completeTask = inngest.createFunction(
 
     // Check overall progress
     await inngest.send({
-      name: "onboarding/progress.check",
+      name: ONBOARDING_EVENTS.PROGRESS_CHECK,
       data: { userId, orgId },
     });
 

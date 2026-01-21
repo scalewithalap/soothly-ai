@@ -6,7 +6,8 @@
 import { BaseAgent } from "../base/Agent";
 import type { AgentTask, AgentResult, UsageCost } from "../base/types";
 import { getGemini } from "@/lib/ai";
-import { inngest, AgentEvents } from "@/inngest/client";
+import { inngest } from "@/inngest/client";
+import { SEO_EVENTS } from "@/inngest/events";
 
 export class SEOContentAgent extends BaseAgent {
   readonly name = "seo" as const;
@@ -231,7 +232,7 @@ Return ONLY valid JSON array (no markdown, no explanation):
 
     // Trigger async generation
     await inngest.send({
-      name: AgentEvents["content/article.generate"],
+      name: SEO_EVENTS.ARTICLE_GENERATE,
       data: {
         orgId: this.orgId,
         briefId: params.briefId,

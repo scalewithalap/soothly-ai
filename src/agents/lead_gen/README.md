@@ -1,5 +1,15 @@
 # Lead Generation Agent
 
+## 0. Capability Map
+
+| Event Input                | Action Taken                                  | Event Output               |
+| :------------------------- | :-------------------------------------------- | :------------------------- |
+| `leads/campaign.created`   | Scrapes platforms, scores leads, saves to CRM | `leads/campaign.completed` |
+| `leads/enrich.requested`   | Enriches contacts via LinkedIn/Hunter         | `leads/enrich.completed`   |
+| `leads/outreach.scheduled` | Sends personalized outreach emails            | `leads/outreach.sent`      |
+
+---
+
 ## 1. Product Context (The "Why")
 
 | Feature          | Description                                                   |

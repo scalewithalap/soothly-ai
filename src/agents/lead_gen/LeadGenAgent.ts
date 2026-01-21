@@ -6,7 +6,8 @@
 import { BaseAgent } from "../base/Agent";
 import type { AgentTask, AgentResult, UsageCost } from "../base/types";
 import { getGemini } from "@/lib/ai";
-import { inngest, AgentEvents } from "@/inngest/client";
+import { inngest } from "@/inngest/client";
+import { LEAD_EVENTS } from "@/inngest/events";
 import type { Database } from "@/types/database";
 
 // Type aliases for database tables
@@ -113,7 +114,7 @@ export class LeadGenAgent extends BaseAgent {
 
     // Trigger async scraping job via Inngest
     await inngest.send({
-      name: AgentEvents["leads/scrape.requested"],
+      name: LEAD_EVENTS.SCRAPE_REQUESTED,
       data: {
         orgId: this.orgId,
         campaignId: params.campaignId,
@@ -140,7 +141,7 @@ export class LeadGenAgent extends BaseAgent {
 
     // Trigger async enrichment job
     await inngest.send({
-      name: AgentEvents["leads/enrich.requested"],
+      name: LEAD_EVENTS.ENRICH_REQUESTED,
       data: {
         orgId: this.orgId,
         leadId: params.leadId,
@@ -324,7 +325,7 @@ Return ONLY valid JSON array (no markdown):
     }
 
     await inngest.send({
-      name: AgentEvents["leads/outreach.scheduled"],
+      name: LEAD_EVENTS.OUTREACH_SCHEDULED,
       data: {
         orgId: this.orgId,
         leadId: params.leadId,

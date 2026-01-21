@@ -18,6 +18,7 @@
  */
 
 import { inngest } from "@/inngest/client";
+import { SUPERAGENT_EVENTS } from "@/inngest/events";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import { getGemini } from "@/lib/ai";
 import {
@@ -26,10 +27,13 @@ import {
   requestApprovalAndWait,
 } from "@/inngest/utils";
 import {
-  sendNotification,
   notifyAgentCompletion,
   getOrgOwnerNotificationPreferences,
 } from "@/lib/notifications";
+import {
+  CampaignPlanSchema,
+  safeParseLLMOutput,
+} from "@/agents/schemas/llm-output-schemas";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AgentType } from "@/agents/base/types";
 
@@ -168,7 +172,7 @@ function interpolate(
 /**
  * Map agent action to Inngest event
  */
-function getEventName(agentType: AgentType, _action: string): string {
+function getEventName(agentType: AgentType, action: string): string {
   const eventMap: Record<AgentType, string> = {
     lead_gen: "leads/campaign.created",
     seo: "seo/brief.created",
@@ -180,7 +184,7 @@ function getEventName(agentType: AgentType, _action: string): string {
     onboarding: "onboarding/progress.check",
     superagent: "superagent/campaign.execute",
   };
-  return eventMap[agentType] || `${agentType}/action`;
+  return eventMap[agentType] || `${agentType}/${action}`;
 }
 
 // ============================================
@@ -234,11 +238,22 @@ Return JSON array of steps:
 Max 5 steps. Use dependsOn to create proper ordering.`;
 
         const result = await ai.complete(prompt, { model, temperature: 0.5 });
-        try {
-          return JSON.parse(result.content);
-        } catch {
-          return [];
+
+        // Validate with Zod schema per backend-design/SKILL.md
+        const { success, data, errors } = safeParseLLMOutput(
+          CampaignPlanSchema,
+          result.content,
+          [],
+        );
+
+        if (!success) {
+          console.warn(
+            "Superagent campaign plan validation failed:",
+            errors?.issues,
+          );
         }
+
+        return data;
       });
       steps = customPlan;
     }
@@ -276,7 +291,6 @@ Max 5 steps. Use dependsOn to create proper ordering.`;
 
     // Step 4: Check approval for execution
     if (requiresApproval("execute_campaign", autonomy_mode)) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const approval = await requestApprovalAndWait(step as any, {
         orgId,
         agentType: "superagent" as AgentType,
@@ -312,7 +326,7 @@ Max 5 steps. Use dependsOn to create proper ordering.`;
 
     // Step 5: Trigger execution
     await inngest.send({
-      name: "superagent/campaign.execute",
+      name: SUPERAGENT_EVENTS.CAMPAIGN_EXECUTE,
       data: { campaignId: campaign?.id, orgId },
     });
 

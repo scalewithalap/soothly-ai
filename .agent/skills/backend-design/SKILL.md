@@ -123,6 +123,41 @@ All Agents **MUST** accept a `model` parameter in their trigger payload to allow
 - **Validation:** Check against list of allowed models.
 - **Cost Tracking:** Record the specific model used in `usage_logs`.
 
+## 4. Agentic OS Architecture (Industry Standard)
+
+To match "Best in Industry" standards (e.g., Origon AI), we adopt the **Agentic OS** philosophy.
+
+### The "Root Agent" Pattern
+
+Complex workflows MUST NOT be monolithic. Use a **Root Agent** to orchestrate:
+
+- **Delegation:** The Root Agent plans and delegates sub-tasks to specialized sub-agents.
+- **State Management:** The Root Agent holds the "global state" of the task.
+- **Final Synthesis:** The Root Agent aggregates results from sub-agents.
+
+### Mandatory Reflection
+
+All "Reasoning" agents (i.e., those making decisions, not just fetching data) **MUST** include a `Reflect` step.
+
+1.  **Draft:** Generate an initial plan or response.
+2.  **Reflect:** Critique the draft (sanity check, policy check).
+3.  **Finalize:** Output the corrected result.
+
+### Structured Output Only
+
+Direct text responses from LLMs are **FORBIDDEN** for internal logic.
+
+- **JSON Schemas:** All LLM calls must use Zod schemas to enforce structure.
+- **Type Safety:** `z.object({...})` is the only way to consume LLM output.
+- **Free Text:** Only allowed in the final "Presentation Layer" where the agent talks to the user.
+
+### Idempotency & Durability
+
+Since we use Inngest for durability:
+
+- **Tool Idempotency:** Every tool (API call, DB write) MUST be idempotent. Retrying a step should not duplicate side effects.
+- **Step Wrapping:** Every distinct LLM call or side effect MUST be wrapped in `step.run()` to serve as a checkpoint.
+
 ### Semantic Caching
 
 Before generating, always check for similarity.

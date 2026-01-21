@@ -16,7 +16,7 @@ Before documenting or building, you must know where the truth lives.
 
 | Domain             | Source of Truth                                                                                                 |
 | :----------------- | :-------------------------------------------------------------------------------------------------------------- |
-| **Business Logic** | [`backend-design/resources/agents-ecosystem.md`](../backend-design/resources/agents-ecosystem.md)               |
+| **Business Logic** | [`agents-ecosystem/SKILL.md`](../agents-ecosystem/SKILL.md)                                                     |
 | **Pricing/Limits** | [`backend-design/resources/pricing-strategy.md`](../backend-design/resources/pricing-strategy.md)               |
 | **Visual Design**  | [`brand-identity/resources/design-tokens.json`](../brand-identity/resources/design-tokens.json)                 |
 | **Copy/Voice**     | [`brand-identity/resources/voice-tone.md`](../brand-identity/resources/voice-tone.md)                           |
@@ -35,6 +35,13 @@ Before documenting or building, you must know where the truth lives.
 ### A. Agent Documentation (CRITICAL)
 
 Every Agent in `src/agents/{AgentName}` **MUST** have a `README.md` that strictly follows this template.
+
+#### 0. Capability Map (Mandatory)
+
+Every agent documentation MUST start with a "Capability Map" table defining its Event Contract:
+| Event Input | Action Taken | Event Output |
+| :--- | :--- | :--- |
+| `scout.requested` | Scrapes URL, summarizes text | `scout.completed` |
 
 #### 1. Product Context (The "Why")
 
@@ -233,7 +240,7 @@ Every feature must reduce user friction ("Zero Headache").
 
 ## 4. Knowledge Graph
 
-- Agents: `backend-design/resources/agents-ecosystem.md`
+- Agents: `agents-ecosystem/SKILL.md`
 - Pricing: `backend-design/resources/pricing-strategy.md`
 ```
 
