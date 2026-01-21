@@ -14,7 +14,11 @@ import {
   FileText,
   Handshake,
   RefreshCw,
+  AlertTriangle,
+  ArrowRight,
 } from "lucide-react";
+import Link from "next/link";
+import { toast } from "sonner";
 import { useContext } from "react";
 import { LanguageContext } from "@/context/language-context";
 
@@ -44,6 +48,15 @@ interface ChartPoint {
   count: number;
 }
 
+interface PendingApproval {
+  id: string;
+  title: string;
+  agent_type: string;
+  action: string;
+  risk_level: "low" | "medium" | "high" | "critical";
+  created_at: string;
+}
+
 export default function DashboardPage() {
   const ctx = useContext(LanguageContext);
   const t = (ctx?.content?.dashboard || {}) as any;
@@ -57,6 +70,10 @@ export default function DashboardPage() {
   });
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [chartData, setChartData] = useState<ChartPoint[]>([]);
+  const [pendingApprovals, setPendingApprovals] = useState<PendingApproval[]>(
+    [],
+  );
+  const [pendingCount, setPendingCount] = useState(0);
   const [period, setPeriod] = useState("7d");
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -84,6 +101,14 @@ export default function DashboardPage() {
         setAnalytics(analyticsData.metrics);
         setChartData(analyticsData.chartData);
       }
+
+      // Fetch pending approvals
+      const approvalsRes = await fetch("/api/approvals?status=pending");
+      if (approvalsRes.ok) {
+        const approvalsData = await approvalsRes.json();
+        setPendingApprovals(approvalsData.approvals?.slice(0, 3) || []);
+        setPendingCount(approvalsData.pending_count || 0);
+      }
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error);
     } finally {
@@ -100,13 +125,31 @@ export default function DashboardPage() {
   const getAgentIcon = (type: string) => {
     switch (type) {
       case "leads":
+      case "lead_gen":
         return <Users className="w-4 h-4" />;
       case "content":
+      case "seo":
         return <FileText className="w-4 h-4" />;
       case "partners":
+      case "partnership":
         return <Handshake className="w-4 h-4" />;
       default:
         return <Activity className="w-4 h-4" />;
+    }
+  };
+
+  const handleQuickApprove = async (id: string) => {
+    try {
+      const res = await fetch(`/api/approvals/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "approve" }),
+      });
+      if (!res.ok) throw new Error("Failed to approve");
+      toast.success("Approved successfully");
+      fetchData();
+    } catch {
+      toast.error("Failed to approve");
     }
   };
 
@@ -248,6 +291,79 @@ export default function DashboardPage() {
           </div>
         </Card>
       </div>
+
+      {/* Pending Approvals Card */}
+      {pendingCount > 0 && (
+        <Card className="p-6 border-amber-500/30 bg-amber-500/5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-amber-100 dark:bg-amber-900/30">
+                <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Pending Approvals
+                </h2>
+                <p className="text-sm text-gray-500">
+                  {pendingCount} action{pendingCount !== 1 ? "s" : ""} awaiting
+                  your review
+                </p>
+              </div>
+            </div>
+            <Link href="/dashboard/agents/approvals">
+              <Button variant="outline" size="sm" className="gap-2">
+                View All <ArrowRight className="w-3 h-3" />
+              </Button>
+            </Link>
+          </div>
+          <div className="space-y-2">
+            {pendingApprovals.map((approval) => (
+              <div
+                key={approval.id}
+                className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-1.5 rounded-lg bg-gray-100 dark:bg-gray-800">
+                    {getAgentIcon(approval.agent_type)}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                      {approval.title}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {approval.agent_type.toUpperCase()} • {approval.action}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Badge
+                    variant="outline"
+                    className={
+                      approval.risk_level === "critical"
+                        ? "text-red-400 border-red-500/50"
+                        : approval.risk_level === "high"
+                          ? "text-orange-400 border-orange-500/50"
+                          : approval.risk_level === "medium"
+                            ? "text-amber-400 border-amber-500/50"
+                            : "text-green-400 border-green-500/50"
+                    }
+                  >
+                    {approval.risk_level}
+                  </Badge>
+                  <Button
+                    size="sm"
+                    className="h-7 bg-green-600 hover:bg-green-700 text-white"
+                    onClick={() => handleQuickApprove(approval.id)}
+                  >
+                    <CheckCircle2 className="w-3 h-3 mr-1" />
+                    Approve
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Analytics Overview */}

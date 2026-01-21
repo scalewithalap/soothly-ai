@@ -62,7 +62,7 @@ export function ApprovalQueue() {
       const res = await fetch("/api/approvals");
       if (!res.ok) throw new Error("Failed to fetch approvals");
       const data = await res.json();
-      setApprovals(data);
+      setApprovals(data.approvals || []);
     } catch (error) {
       console.error("Error fetching approvals:", error);
       toast.error(t.toasts.error);
@@ -75,9 +75,9 @@ export function ApprovalQueue() {
     try {
       setIsProcessing(true);
       const res = await fetch(`/api/approvals/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: "approved" }),
+        body: JSON.stringify({ action: "approve" }),
       });
 
       if (!res.ok) throw new Error("Failed to approve");
@@ -98,10 +98,10 @@ export function ApprovalQueue() {
     try {
       setIsProcessing(true);
       const res = await fetch(`/api/approvals/${selectedRequest.id}`, {
-        method: "PUT",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          status: "rejected",
+          action: "reject",
           comment: rejectComment,
         }),
       });
@@ -397,4 +397,3 @@ export function ApprovalQueue() {
     </div>
   );
 }
-
