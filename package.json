@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "i18n:validate": "npx tsx scripts/validate-i18n.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",

@@ -33,7 +33,7 @@ export type LegacyAgentType =
   | "spend"
   | "pricing";
 
-// All agent types including Superagent (yearly plans only)
+// All agent types including Superagent (paid plans only)
 export type AgentType = NormalAgentType | "superagent";
 
 // Combined type for migration period (accepts both old and new names)

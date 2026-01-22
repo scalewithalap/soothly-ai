@@ -1,0 +1,114 @@
+# Zero Headache - AI Context
+
+> This file provides context for AI assistants working on this codebase.
+> Last updated: 2026-01-23
+
+## 1. The Mission
+
+Zero Headache is an "Autonomous Revenue Platform" - not a CRUD app.
+
+**Core Promise:** 8 AI Agents working 24/7 to automate revenue operations.
+**Philosophy:** Every feature must reduce user friction ("Zero Headache").
+
+## 2. The Technology Stack
+
+| Layer | Technology |
+|:------|:-----------|
+| Framework | Next.js 16 (App Router) + TypeScript |
+| Database | Supabase (PostgreSQL) with RLS |
+| Vector Store | Supabase pgvector |
+| Auth | Supabase Auth |
+| Orchestration | Inngest (Durable Workflows) |
+| Styling | Tailwind CSS v4 + shadcn/ui |
+| Validation | Zod (mandatory for all inputs) |
+| Forms | react-hook-form + zodResolver |
+| State | React Query (server) + Zustand (client) |
+| Default AI Model | gemini-3-flash |
+
+## 3. The 8-Agent Ecosystem
+
+| Agent | Role | Trigger Pattern |
+|:------|:-----|:----------------|
+| Lead Gen | The Hunter | `agent.leads.*` |
+| SEO | The Publisher | `agent.seo.*` |
+| Partnership | The Connector | `agent.partnership.*` |
+| Proposal | The Closer | `agent.proposal.*` |
+| Competitor Intel | The Spy | `agent.intel.*` |
+| Revenue Recovery | The Collector | `agent.revenue.*` |
+| Onboarding | The Guide | `agent.onboarding.*` |
+| Customer Success | The Advocate | `agent.success.*` |
+| **Superagent** | The Manager | `agent.superagent.*` |
+
+**Architecture:** Hub-and-Spoke. Superagent orchestrates, never executes directly.
+
+## 4. Critical Constraints
+
+### DO
+- Use Inngest `step.run()` for all AI calls (durability)
+- Enforce RLS on every table
+- Validate all inputs with Zod
+- Use Server Components for data fetching
+- Use `sonner` for toast notifications
+- Check pricing-strategy.md before implementing usage/billing logic
+
+### DON'T
+- Call AI providers directly in Route Handlers (timeout risk)
+- Use `service_role` in API routes handling user data
+- Create public landing pages (out of scope)
+- Use mock data in production code
+- Expose 3rd party API keys to client
+
+## 5. Knowledge Graph
+
+| Domain | Source of Truth |
+|:-------|:----------------|
+| Agent Architecture | `.agent/skills/agents-ecosystem/SKILL.md` |
+| Pricing & Limits | `.agent/skills/backend-design/resources/pricing-strategy.md` |
+| Visual Design | `.agent/skills/brand-identity/resources/design-tokens.json` |
+| Copywriting | `.agent/skills/brand-identity/resources/voice-tone.md` |
+| Connections | `.agent/skills/backend-design/resources/connection-architecture.md` |
+
+## 6. Key Directories
+
+```
+src/
+├── agents/           # Agent implementations (prompts, types, memory)
+├── app/
+│   ├── (platform)/   # Protected routes (dashboard, settings)
+│   ├── (auth)/       # Login, signup
+│   └── api/          # Route handlers
+├── components/       # UI components
+├── inngest/          # Durable workflow functions
+├── lib/              # Shared utilities (supabase, ai, auth)
+└── types/            # TypeScript definitions
+```
+
+## 7. Important Patterns
+
+### Durable AI Pattern
+```typescript
+// Always wrap AI calls in step.run()
+const result = await step.run("generate-content", async () => {
+  return ai.generate({ prompt: ... });
+});
+```
+
+### Human-in-the-Loop
+```typescript
+// Pause for approval when needed
+await step.waitForEvent("approval", {
+  event: "app/approval.received",
+  timeout: "7d",
+});
+```
+
+### 3-Tier Autonomy
+- `manual`: Ask after every step
+- `smart`: Ask only if unsure (default)
+- `auto`: Full autopilot
+
+## 8. Brand Identity
+
+- **Colors:** Obsidian (#080808), Violet (#9382FF)
+- **Fonts:** Host Grotesk (headings), Manrope (body), JetBrains Mono (code)
+- **Style:** Dark Glassmorphism, no shadows (use glows)

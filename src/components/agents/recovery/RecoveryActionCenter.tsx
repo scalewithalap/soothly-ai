@@ -50,7 +50,7 @@ export function RecoveryActionCenter({
 
   const copyMagicLink = () => {
     navigator.clipboard.writeText(
-      "https://app.zeroheadache.co/update-payment?token=...",
+      "https://zeroheadache.co/update-payment?token=...",
     );
     toast.success("Recovery link copied to clipboard");
   };

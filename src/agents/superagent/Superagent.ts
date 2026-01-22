@@ -3,7 +3,7 @@
  * Coordinates multiple agents to execute complex, multi-step campaigns
  *
  * Role: "The Manager" - Meta-Orchestrator
- * Access: Yearly Plan Exclusive
+ * Access: All Paid Plans
  * Capability: Triggers other agents' Inngest events via step.invoke
  *
  * Example: "Launch a campaign targeting Real Estate agents"

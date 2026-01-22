@@ -19,7 +19,7 @@ The backend must enforce these hard limits. "Unlimited" features must still have
 | **Onboarding** (Activation)    | 50 Users / mo       | 1,000 Users / mo     | 5,000 Users / mo     | 50,000 Users / mo   |
 | **Customer Success** (Support) | 100 Msgs / mo       | 2,000 Msgs / mo      | 10,000 Msgs / mo     | 50,000 Msgs / mo    |
 | **Rev Recovery** (Retention)   | $0 Recovered (Demo) | Up to $5k / mo       | Up to $50k / mo      | Up to $100k / mo    |
-| **SUPERAGENT**                 | ❌                  | In Yearly Plan       | In Yearly Plan       | In Yearly Plan      |
+| **SUPERAGENT**                 | ❌                  | ✅ Included          | ✅ Included          | ✅ Included         |
 
 ## 2. Technical Implementation Rules
 
@@ -38,12 +38,12 @@ Implement "Fair Use" in every tier.
 
 ### C. The Superagent Gate
 
-- **Check**: The `Superagent` capability is **strictly** gated by `billing_interval === 'year'`.
+- **Check**: The `Superagent` capability is **strictly** gated by paid plans.
 - **Logic**:
   ```typescript
-  if (workflow.agent === "superagent" && subscription.interval !== "year") {
+  if (workflow.agent === "superagent" && subscription.plan === "free") {
     throw new PaymentRequiredError(
-      "The Superagent feature requires a Yearly plan.",
+      "The Superagent feature requires a Paid plan.",
     );
   }
   ```

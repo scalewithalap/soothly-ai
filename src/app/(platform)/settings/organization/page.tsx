@@ -27,6 +27,7 @@ import {
 import { Building2, Globe, Clock, Trash2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useContent } from "@/lib/content";
+import { WidgetConfigCard } from "@/components/settings/widget-config-card";
 
 const LANGUAGES = [
   { value: "en", label: "English" },
@@ -284,6 +285,9 @@ export default function OrganizationSettingsPage() {
         </Form>
       </Card>
 
+      {/* Widget Configuration */}
+      <WidgetConfigCard orgId={org?.id} />
+
       {/* Danger Zone */}
       <Card className="p-6 border-red-200 dark:border-red-900/50">
         <div className="flex items-center gap-3 mb-6">
@@ -315,4 +319,3 @@ export default function OrganizationSettingsPage() {
     </div>
   );
 }
-

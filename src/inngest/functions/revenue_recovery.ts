@@ -204,7 +204,7 @@ export const handlePaymentFailed = inngest.createFunction(
 
     // Step 5: Generate magic link for card update
     const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL || "https://app.zeroheadache.co";
+      process.env.NEXT_PUBLIC_APP_URL || "https://zeroheadache.co";
     const magicLink = await step.run("generate-link", async () => {
       return generateMagicLink(customerId, invoiceId, baseUrl);
     });

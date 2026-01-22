@@ -139,9 +139,9 @@ Complex workflows MUST NOT be monolithic. Use a **Root Agent** to orchestrate:
 
 All "Reasoning" agents (i.e., those making decisions, not just fetching data) **MUST** include a `Reflect` step.
 
-1.  **Draft:** Generate an initial plan or response.
-2.  **Reflect:** Critique the draft (sanity check, policy check).
-3.  **Finalize:** Output the corrected result.
+1. **Draft:** Generate an initial plan or response.
+2. **Reflect:** Critique the draft (sanity check, policy check).
+3. **Finalize:** Output the corrected result.
 
 ### Structured Output Only
 
@@ -209,7 +209,48 @@ Complex actions (e.g., "Deduct Credits + Start Job") must happen atomically.
 
 ---
 
-## 5. Error Handling & Observability
+## 5. Enterprise Security & Compliance (Scale Tier)
+
+To support Enterprise clients, the backend MUST support the following "Advanced" capabilities.
+
+### Single Sign-On (SSO) & SAML
+
+- **Pattern**: Use `workos` or `supabase-sso` for SAML 2.0 integration.
+- **Enforcement**: Allow Organizations to enforce "SSO Only" login policies.
+- **Provisioning**: Support Just-in-Time (JIT) user provisioning upon first login.
+
+### Advanced RBAC (Role-Based Access Control)
+
+- **Granularity**: Beyond standard "Owner/Member", support custom roles.
+- **Schema**:
+  ```sql
+  create table permissions (id uuid, code text); -- e.g. 'agent.leads.execute'
+  create table role_permissions (role text, permission_id uuid);
+  ```
+- **Check**: Middleware must check permissions dynamically: `hasPermission(user, 'agent.leads.execute')`.
+
+### Audit Logging (Immutable History)
+
+- **Requirement**: Track _every_ mutation (Create/Update/Delete) in the `audit_logs` table.
+- **Structure**:
+
+  ```sql
+  create table audit_logs (
+    id uuid primary key,
+    org_id uuid,
+    actor_id uuid,
+    action text,    -- 'agent.config.update'
+    target_id text, -- 'agent_123'
+    diff jsonb,     -- { "old": ..., "new": ... }
+    ip_address inet
+  );
+  ```
+
+- **Retention**: Hot storage for 90 days, cold storage (S3) for 7 years.
+
+---
+
+## 6. Error Handling & Observability
 
 ### Unified Error Response (The "Sleek Toast" Protocol)
 

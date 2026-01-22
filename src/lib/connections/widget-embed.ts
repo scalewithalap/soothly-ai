@@ -198,7 +198,7 @@ export function generateEmbedCode(
   },
 ): string {
   const appUrl =
-    process.env.NEXT_PUBLIC_APP_URL || "https://app.zeroheadache.co";
+    process.env.NEXT_PUBLIC_APP_URL || "https://zeroheadache.co";
   const asyncAttr = options?.async !== false ? " async" : "";
   const deferAttr = options?.defer ? " defer" : "";
 
@@ -223,7 +223,7 @@ export function generateSecureEmbedCode(
   },
 ): string {
   const appUrl =
-    process.env.NEXT_PUBLIC_APP_URL || "https://app.zeroheadache.co";
+    process.env.NEXT_PUBLIC_APP_URL || "https://zeroheadache.co";
 
   const backendExamples: Record<string, string> = {
     javascript: `// Node.js server-side

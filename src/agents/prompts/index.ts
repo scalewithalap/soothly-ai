@@ -62,7 +62,7 @@ This is a generic prompt. Please contact support to configure a specialized prom
 }
 
 /**
- * Check if an agent type requires Superagent (yearly subscription)
+ * Check if an agent type requires Superagent (paid subscription)
  */
 export function isSuperagent(agentType: string): boolean {
   const normalized = normalizeAgentType(agentType as AnyAgentType);

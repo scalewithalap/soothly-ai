@@ -5,7 +5,7 @@
  * @description Streams AI responses for agent conversations.
  *              Supports all 8 agent types plus Superagent.
  *
- * @security Requires authentication. Superagent requires yearly plan.
+ * @security Requires authentication. Superagent requires paid plan.
  *
  * @param {string} agentId - Agent type (lead_gen, seo, partnership, etc.)
  *
@@ -27,7 +27,7 @@
  * @errors
  * - 400: Invalid agent type or request body
  * - 401: Unauthorized
- * - 403: Superagent requires yearly plan
+ * - 403: Superagent requires paid plan
  * - 500: Internal server error
  */
 
@@ -110,19 +110,19 @@ export async function POST(
     const { orgId } = authResult;
     const supabase = await createClient();
 
-    // Check yearly subscription for Superagent (per pricing-strategy.md)
-    // The Superagent capability is **strictly** gated by billing_interval === 'year'
+    // Check paid subscription for Superagent (per pricing-strategy.md)
+    // The Superagent capability is **strictly** gated by paid plans
     if (isSuperagent(agentType)) {
       const { data: orgData } = await supabase
         .from("organizations")
-        .select("billing_interval")
+        .select("subscription_tier")
         .eq("id", orgId)
         .single();
 
-      // Superagent requires yearly billing interval per pricing-strategy.md
-      if (orgData?.billing_interval !== "year") {
+      // Superagent requires paid plan per pricing-strategy.md
+      if (!orgData?.subscription_tier || orgData.subscription_tier === "free") {
         return AppError.subscriptionRequired(
-          "The Superagent feature requires a Yearly plan.",
+          "The Superagent feature requires a Paid plan.",
         ).toResponse();
       }
     }
