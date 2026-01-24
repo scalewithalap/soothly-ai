@@ -15,7 +15,9 @@ export type AuditAction =
   | "login"
   | "logout"
   | "invite"
-  | "billing";
+  | "billing"
+  | "webhook_test"
+  | "trigger_executed";
 
 export type EntityType =
   | "user"
@@ -28,16 +30,19 @@ export type EntityType =
   | "upload"
   | "notification"
   | "affiliate"
-  | "affiliate_payout";
+  | "affiliate_payout"
+  | "webhook"
+  | "webhook_trigger";
 
 interface AuditLogEntry {
   orgId: string;
-  userId?: string;
+  userId?: string | null;
   action: AuditAction;
   entityType: EntityType;
   entityId?: string;
   oldValues?: Record<string, unknown>;
   newValues?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
 }
@@ -163,4 +168,3 @@ export async function getAuditLog(
 const auditService = { logAuditEvent, getRequestContext, getAuditLog };
 
 export default auditService;
-

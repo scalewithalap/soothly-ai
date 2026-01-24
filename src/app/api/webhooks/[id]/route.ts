@@ -1,6 +1,7 @@
 /**
  * Webhook Management by ID
  *
+ * GET: Get webhook details with stats
  * DELETE: Delete webhook
  * PATCH: Update webhook
  */
@@ -8,7 +9,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAuth, isErrorResponse } from "@/lib/auth";
-import { WEBHOOK_EVENTS } from "@/lib/webhooks";
+import { WEBHOOK_EVENTS, getWebhook, getWebhookStats } from "@/lib/webhooks";
 import { logAuditEvent, getRequestContext } from "@/lib/audit";
 import { createClient } from "@supabase/supabase-js";
 

@@ -50,8 +50,8 @@ export async function GET(
     10,
   );
 
-  const [deliveries, stats] = await Promise.all([
-    getWebhookDeliveries(id, authResult.orgId, limit),
+  const [{ deliveries }, stats] = await Promise.all([
+    getWebhookDeliveries(id, authResult.orgId, { limit }),
     getWebhookStats(id, authResult.orgId),
   ]);
 

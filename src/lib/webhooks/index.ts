@@ -1,29 +1,178 @@
 /**
  * Webhook Service
  *
- * Create, manage, and deliver webhooks.
+ * Create, manage, and deliver webhooks for Zapier/Make integration.
+ * Supports outbound webhooks with HMAC signing and retry logic.
  */
 
 import { createClient } from "@supabase/supabase-js";
 import { createHmac, randomBytes } from "crypto";
 
+// ============================================================================
+// Webhook Events - Comprehensive list for all agent activities
+// ============================================================================
+
 export const WEBHOOK_EVENTS = [
+  // Agent Lifecycle Events
+  "agent.task.started",
   "agent.task.completed",
   "agent.task.failed",
-  "usage.limit.reached",
+  "agent.approval.requested",
+  "agent.approval.resolved",
+  "agent.approval.expired",
+
+  // Lead Generation Events
+  "lead.campaign.created",
+  "lead.campaign.completed",
+  "lead.scraped",
+  "lead.enriched",
+  "lead.scored",
+  "lead.enrolled_sequence",
+
+  // Email Sequence Events
+  "sequence.created",
+  "sequence.activated",
+  "sequence.email.sent",
+  "sequence.email.opened",
+  "sequence.email.clicked",
+  "sequence.email.replied",
+  "sequence.email.bounced",
+  "sequence.enrollment.created",
+  "sequence.enrollment.completed",
+  "sequence.enrollment.paused",
+
+  // Content/SEO Events
+  "content.brief.created",
+  "content.article.generated",
+  "content.article.optimized",
+  "content.article.published",
+
+  // Partnership Events
+  "partner.discovered",
+  "partner.qualified",
+  "partner.outreach.sent",
+  "partner.outreach.replied",
+
+  // Proposal Events
+  "proposal.created",
+  "proposal.sent",
+  "proposal.viewed",
+
+  // Revenue/Payment Events
+  "payment.failed",
+  "payment.retry.scheduled",
+  "payment.recovered",
   "subscription.renewed",
   "subscription.cancelled",
+  "subscription.upgraded",
+  "subscription.downgraded",
+
+  // Customer Success Events
+  "customer.health.changed",
+  "customer.churn.risk.detected",
+  "support.ticket.created",
+  "support.ticket.resolved",
+
+  // Competitor Intelligence Events
+  "competitor.change.detected",
+  "competitor.added",
+
+  // Team/Admin Events
   "team.member.added",
   "team.member.removed",
+  "team.member.role.changed",
+  "usage.limit.reached",
+  "usage.limit.warning",
 ] as const;
 
 export type WebhookEvent = (typeof WEBHOOK_EVENTS)[number];
+
+// Event categories for UI grouping
+export const WEBHOOK_EVENT_CATEGORIES = {
+  "Agent Lifecycle": [
+    "agent.task.started",
+    "agent.task.completed",
+    "agent.task.failed",
+    "agent.approval.requested",
+    "agent.approval.resolved",
+    "agent.approval.expired",
+  ],
+  "Lead Generation": [
+    "lead.campaign.created",
+    "lead.campaign.completed",
+    "lead.scraped",
+    "lead.enriched",
+    "lead.scored",
+    "lead.enrolled_sequence",
+  ],
+  "Email Sequences": [
+    "sequence.created",
+    "sequence.activated",
+    "sequence.email.sent",
+    "sequence.email.opened",
+    "sequence.email.clicked",
+    "sequence.email.replied",
+    "sequence.email.bounced",
+    "sequence.enrollment.created",
+    "sequence.enrollment.completed",
+    "sequence.enrollment.paused",
+  ],
+  "Content & SEO": [
+    "content.brief.created",
+    "content.article.generated",
+    "content.article.optimized",
+    "content.article.published",
+  ],
+  Partnerships: [
+    "partner.discovered",
+    "partner.qualified",
+    "partner.outreach.sent",
+    "partner.outreach.replied",
+  ],
+  Proposals: ["proposal.created", "proposal.sent", "proposal.viewed"],
+  "Revenue & Payments": [
+    "payment.failed",
+    "payment.retry.scheduled",
+    "payment.recovered",
+    "subscription.renewed",
+    "subscription.cancelled",
+    "subscription.upgraded",
+    "subscription.downgraded",
+  ],
+  "Customer Success": [
+    "customer.health.changed",
+    "customer.churn.risk.detected",
+    "support.ticket.created",
+    "support.ticket.resolved",
+  ],
+  "Competitor Intelligence": ["competitor.change.detected", "competitor.added"],
+  "Team & Admin": [
+    "team.member.added",
+    "team.member.removed",
+    "team.member.role.changed",
+    "usage.limit.reached",
+    "usage.limit.warning",
+  ],
+} as const;
+
+// ============================================================================
+// Types
+// ============================================================================
 
 interface CreateWebhookParams {
   orgId: string;
   name: string;
   url: string;
   events: WebhookEvent[];
+  description?: string;
+}
+
+interface UpdateWebhookParams {
+  name?: string;
+  url?: string;
+  events?: WebhookEvent[];
+  description?: string;
+  isActive?: boolean;
 }
 
 interface WebhookPayload {
@@ -46,8 +195,37 @@ interface WebhookDelivery {
   created_at: string;
 }
 
+export interface Webhook {
+  id: string;
+  org_id: string;
+  name: string;
+  description: string | null;
+  url: string;
+  secret: string;
+  events: WebhookEvent[];
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 // Retry delays in seconds: 1min, 5min, 15min
 const RETRY_DELAYS = [60, 300, 900];
+
+// ============================================================================
+// Helper Functions
+// ============================================================================
+
+/**
+ * Get Supabase admin client
+ */
+function getSupabaseAdmin() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+  return createClient(supabaseUrl, serviceRoleKey, {
+    auth: { persistSession: false },
+  });
+}
 
 /**
  * Generate a webhook secret
@@ -64,18 +242,25 @@ export function signPayload(payload: string, secret: string): string {
 }
 
 /**
+ * Calculate next retry time based on attempt number
+ */
+function calculateNextRetry(currentAttempt: number): string | null {
+  if (currentAttempt >= RETRY_DELAYS.length) return null;
+  const delaySeconds = RETRY_DELAYS[currentAttempt];
+  return new Date(Date.now() + delaySeconds * 1000).toISOString();
+}
+
+// ============================================================================
+// Webhook CRUD Operations
+// ============================================================================
+
+/**
  * Create a new webhook
  */
 export async function createWebhook(
   params: CreateWebhookParams,
 ): Promise<{ success: boolean; id?: string; secret?: string; error?: string }> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-  const supabase = createClient(supabaseUrl, serviceRoleKey, {
-    auth: { persistSession: false },
-  });
-
+  const supabase = getSupabaseAdmin();
   const secret = generateWebhookSecret();
 
   const { data, error } = await supabase
@@ -83,9 +268,11 @@ export async function createWebhook(
     .insert({
       org_id: params.orgId,
       name: params.name,
+      description: params.description,
       url: params.url,
       events: params.events,
       secret,
+      is_active: true,
     })
     .select("id")
     .single();
@@ -99,28 +286,220 @@ export async function createWebhook(
 }
 
 /**
- * List webhooks for an organization
+ * Update an existing webhook
  */
-export async function listWebhooks(orgId: string) {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+export async function updateWebhook(
+  webhookId: string,
+  orgId: string,
+  params: UpdateWebhookParams,
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = getSupabaseAdmin();
 
-  const supabase = createClient(supabaseUrl, serviceRoleKey, {
-    auth: { persistSession: false },
-  });
+  const updateData: Record<string, unknown> = {};
+  if (params.name !== undefined) updateData.name = params.name;
+  if (params.url !== undefined) updateData.url = params.url;
+  if (params.events !== undefined) updateData.events = params.events;
+  if (params.description !== undefined)
+    updateData.description = params.description;
+  if (params.isActive !== undefined) updateData.is_active = params.isActive;
+
+  const { error } = await supabase
+    .from("webhooks")
+    .update(updateData)
+    .eq("id", webhookId)
+    .eq("org_id", orgId);
+
+  if (error) {
+    console.error("Failed to update webhook:", error);
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
+}
+
+/**
+ * Delete a webhook
+ */
+export async function deleteWebhook(
+  webhookId: string,
+  orgId: string,
+): Promise<{ success: boolean; error?: string }> {
+  const supabase = getSupabaseAdmin();
+
+  const { error } = await supabase
+    .from("webhooks")
+    .delete()
+    .eq("id", webhookId)
+    .eq("org_id", orgId);
+
+  if (error) {
+    console.error("Failed to delete webhook:", error);
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
+}
+
+/**
+ * Toggle webhook active status
+ */
+export async function toggleWebhook(
+  webhookId: string,
+  orgId: string,
+  isActive: boolean,
+): Promise<{ success: boolean; error?: string }> {
+  return updateWebhook(webhookId, orgId, { isActive });
+}
+
+/**
+ * Get a single webhook by ID
+ */
+export async function getWebhook(
+  webhookId: string,
+  orgId: string,
+): Promise<Webhook | null> {
+  const supabase = getSupabaseAdmin();
 
   const { data, error } = await supabase
     .from("webhooks")
-    .select("id, name, url, events, is_active, created_at")
+    .select("*")
+    .eq("id", webhookId)
+    .eq("org_id", orgId)
+    .single();
+
+  if (error) {
+    console.error("Failed to get webhook:", error);
+    return null;
+  }
+
+  return data;
+}
+
+/**
+ * List webhooks for an organization
+ */
+export async function listWebhooks(
+  orgId: string,
+  options?: { limit?: number; offset?: number; isActive?: boolean },
+): Promise<{ webhooks: Webhook[]; total: number }> {
+  const supabase = getSupabaseAdmin();
+
+  let query = supabase
+    .from("webhooks")
+    .select("*", { count: "exact" })
     .eq("org_id", orgId)
     .order("created_at", { ascending: false });
 
-  if (error) {
-    console.error("Failed to list webhooks:", error);
-    return [];
+  if (options?.isActive !== undefined) {
+    query = query.eq("is_active", options.isActive);
   }
 
-  return data || [];
+  if (options?.limit) {
+    query = query.limit(options.limit);
+  }
+
+  if (options?.offset) {
+    query = query.range(
+      options.offset,
+      options.offset + (options.limit || 50) - 1,
+    );
+  }
+
+  const { data, error, count } = await query;
+
+  if (error) {
+    console.error("Failed to list webhooks:", error);
+    return { webhooks: [], total: 0 };
+  }
+
+  return { webhooks: data || [], total: count || 0 };
+}
+
+/**
+ * Regenerate webhook secret
+ */
+export async function regenerateWebhookSecret(
+  webhookId: string,
+  orgId: string,
+): Promise<{ success: boolean; secret?: string; error?: string }> {
+  const supabase = getSupabaseAdmin();
+  const newSecret = generateWebhookSecret();
+
+  const { error } = await supabase
+    .from("webhooks")
+    .update({ secret: newSecret })
+    .eq("id", webhookId)
+    .eq("org_id", orgId);
+
+  if (error) {
+    console.error("Failed to regenerate webhook secret:", error);
+    return { success: false, error: error.message };
+  }
+
+  return { success: true, secret: newSecret };
+}
+
+// ============================================================================
+// Webhook Delivery
+// ============================================================================
+
+/**
+ * Test a webhook by sending a test payload
+ */
+export async function testWebhook(
+  webhookId: string,
+  orgId: string,
+): Promise<{
+  success: boolean;
+  responseStatus?: number;
+  responseTime?: number;
+  error?: string;
+}> {
+  const webhook = await getWebhook(webhookId, orgId);
+  if (!webhook) {
+    return { success: false, error: "Webhook not found" };
+  }
+
+  const testPayload: WebhookPayload = {
+    event: "agent.task.completed",
+    timestamp: new Date().toISOString(),
+    data: {
+      test: true,
+      message: "This is a test webhook from Zero Headache",
+      webhookId,
+    },
+  };
+
+  const payloadString = JSON.stringify(testPayload);
+  const signature = signPayload(payloadString, webhook.secret);
+
+  try {
+    const startTime = Date.now();
+    const response = await fetch(webhook.url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Webhook-Signature": signature,
+        "X-Webhook-Event": "agent.task.completed",
+        "X-Webhook-Test": "true",
+      },
+      body: payloadString,
+    });
+
+    const responseTime = Date.now() - startTime;
+
+    return {
+      success: response.ok,
+      responseStatus: response.status,
+      responseTime,
+      error: response.ok ? undefined : `HTTP ${response.status}`,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Network error",
+    };
+  }
 }
 
 /**
@@ -131,12 +510,7 @@ export async function deliverWebhookEvent(
   event: WebhookEvent,
   data: Record<string, unknown>,
 ): Promise<void> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-  const supabase = createClient(supabaseUrl, serviceRoleKey, {
-    auth: { persistSession: false },
-  });
+  const supabase = getSupabaseAdmin();
 
   // Get matching webhooks
   const { data: webhooks } = await supabase
@@ -207,27 +581,13 @@ export async function deliverWebhookEvent(
 }
 
 /**
- * Calculate next retry time based on attempt number
- */
-function calculateNextRetry(currentAttempt: number): string | null {
-  if (currentAttempt >= RETRY_DELAYS.length) return null;
-  const delaySeconds = RETRY_DELAYS[currentAttempt];
-  return new Date(Date.now() + delaySeconds * 1000).toISOString();
-}
-
-/**
  * Retry a failed webhook delivery with exponential backoff
  */
 export async function retryWebhookDelivery(
   deliveryId: string,
   orgId: string,
 ): Promise<{ success: boolean; error?: string }> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-  const supabase = createClient(supabaseUrl, serviceRoleKey, {
-    auth: { persistSession: false },
-  });
+  const supabase = getSupabaseAdmin();
 
   // Get delivery and webhook info
   const { data: delivery, error: fetchError } = await supabase
@@ -241,7 +601,7 @@ export async function retryWebhookDelivery(
     return { success: false, error: "delivery_not_found" };
   }
 
-  const webhook = delivery.webhooks;
+  const webhook = delivery.webhooks as { url: string; secret: string };
   const payloadString = JSON.stringify(delivery.payload);
   const signature = signPayload(payloadString, webhook.secret);
 
@@ -297,35 +657,36 @@ export async function retryWebhookDelivery(
   }
 }
 
+// ============================================================================
+// Delivery History
+// ============================================================================
+
 /**
  * List delivery history for a webhook
  */
 export async function getWebhookDeliveries(
   webhookId: string,
   orgId: string,
-  limit: number = 50,
-): Promise<WebhookDelivery[]> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+  options?: { limit?: number; offset?: number },
+): Promise<{ deliveries: WebhookDelivery[]; total: number }> {
+  const supabase = getSupabaseAdmin();
+  const limit = options?.limit || 50;
+  const offset = options?.offset || 0;
 
-  const supabase = createClient(supabaseUrl, serviceRoleKey, {
-    auth: { persistSession: false },
-  });
-
-  const { data, error } = await supabase
+  const { data, error, count } = await supabase
     .from("webhook_deliveries")
-    .select("*")
+    .select("*", { count: "exact" })
     .eq("webhook_id", webhookId)
     .eq("org_id", orgId)
     .order("created_at", { ascending: false })
-    .limit(limit);
+    .range(offset, offset + limit - 1);
 
   if (error) {
     console.error("Failed to fetch webhook deliveries:", error);
-    return [];
+    return { deliveries: [], total: 0 };
   }
 
-  return data || [];
+  return { deliveries: data || [], total: count || 0 };
 }
 
 /**
@@ -338,39 +699,65 @@ export async function getWebhookStats(
   total: number;
   success: number;
   failed: number;
+  pending: number;
   successRate: number;
+  avgResponseTime: number;
 }> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-  const supabase = createClient(supabaseUrl, serviceRoleKey, {
-    auth: { persistSession: false },
-  });
+  const supabase = getSupabaseAdmin();
 
   const { data, error } = await supabase
     .from("webhook_deliveries")
-    .select("status")
+    .select("status, response_time_ms")
     .eq("webhook_id", webhookId)
     .eq("org_id", orgId);
 
   if (error || !data) {
-    return { total: 0, success: 0, failed: 0, successRate: 0 };
+    return {
+      total: 0,
+      success: 0,
+      failed: 0,
+      pending: 0,
+      successRate: 0,
+      avgResponseTime: 0,
+    };
   }
 
   const total = data.length;
   const success = data.filter((d) => d.status === "success").length;
   const failed = data.filter((d) => d.status === "failed").length;
+  const pending = data.filter((d) => d.status === "pending_retry").length;
   const successRate = total > 0 ? Math.round((success / total) * 100) : 0;
 
-  return { total, success, failed, successRate };
+  const responseTimes = data
+    .filter((d) => d.response_time_ms !== null)
+    .map((d) => d.response_time_ms as number);
+  const avgResponseTime =
+    responseTimes.length > 0
+      ? Math.round(
+          responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
+        )
+      : 0;
+
+  return { total, success, failed, pending, successRate, avgResponseTime };
 }
+
+// ============================================================================
+// Default Export
+// ============================================================================
 
 const webhookService = {
   WEBHOOK_EVENTS,
+  WEBHOOK_EVENT_CATEGORIES,
   generateWebhookSecret,
   signPayload,
   createWebhook,
+  updateWebhook,
+  deleteWebhook,
+  toggleWebhook,
+  getWebhook,
   listWebhooks,
+  regenerateWebhookSecret,
+  testWebhook,
   deliverWebhookEvent,
   retryWebhookDelivery,
   getWebhookDeliveries,
