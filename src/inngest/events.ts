@@ -39,11 +39,13 @@ export const SEO_EVENTS = {
 // =============================================================================
 export const LEAD_EVENTS = {
   CAMPAIGN_CREATED: "leads/campaign.created",
+  CAMPAIGN_COMPLETED: "leads/campaign.completed",
   SCRAPE_REQUESTED: "leads/scrape.requested",
   ENRICH_REQUESTED: "leads/enrich.requested",
   ENRICH_COMPLETED: "leads/enrich.completed",
   OUTREACH_SCHEDULED: "leads/outreach.scheduled",
   OUTREACH_SENT: "leads/outreach.sent",
+  AUTO_ENROLL_SEQUENCE: "leads/auto-enroll.sequence",
 } as const;
 
 // =============================================================================
@@ -146,6 +148,18 @@ export const APPROVAL_EVENTS = {
 } as const;
 
 // =============================================================================
+// Email Sequence Events
+// =============================================================================
+export const SEQUENCE_EVENTS = {
+  ENROLLMENT_CREATED: "sequence/enrollment.created",
+  SCHEDULER_TICK: "sequence/scheduler.tick",
+  STEP_SEND: "sequence/step.send",
+  STEP_COMPLETED: "sequence/step.completed",
+  REPLY_DETECTED: "sequence/reply.detected",
+  BOUNCE_DETECTED: "sequence/bounce.detected",
+} as const;
+
+// =============================================================================
 // Combined Event Types
 // =============================================================================
 export type SeoEventName = (typeof SEO_EVENTS)[keyof typeof SEO_EVENTS];
@@ -166,6 +180,8 @@ export type SuperagentEventName =
 export type AgentEventName = (typeof AGENT_EVENTS)[keyof typeof AGENT_EVENTS];
 export type ApprovalEventName =
   (typeof APPROVAL_EVENTS)[keyof typeof APPROVAL_EVENTS];
+export type SequenceEventName =
+  (typeof SEQUENCE_EVENTS)[keyof typeof SEQUENCE_EVENTS];
 
 export type AllEventName =
   | SeoEventName
@@ -178,7 +194,8 @@ export type AllEventName =
   | IntelEventName
   | SuperagentEventName
   | AgentEventName
-  | ApprovalEventName;
+  | ApprovalEventName
+  | SequenceEventName;
 
 // =============================================================================
 // Helper Functions

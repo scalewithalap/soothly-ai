@@ -17,6 +17,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  Mail,
 } from "lucide-react";
 
 export function Sidebar() {
@@ -42,6 +43,7 @@ export function Sidebar() {
       icon: LayoutDashboard,
     },
     { name: content.sidebar.agents, href: "/agents", icon: Users },
+    { name: "Sequences", href: "/sequences", icon: Mail },
     { name: content.sidebar.billing, href: "/billing", icon: CreditCard },
     { name: content.sidebar.settings, href: "/settings", icon: Settings },
   ];

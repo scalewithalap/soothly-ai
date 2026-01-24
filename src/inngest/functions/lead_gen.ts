@@ -302,6 +302,16 @@ ${JSON.stringify(scrapedLeads.slice(0, 20).map((l, i) => ({ index: i, name: l.na
       }
     });
 
+    // Step 8: Emit campaign completed event for sequence integration
+    await step.sendEvent("emit-campaign-completed", {
+      name: "leads/campaign.completed",
+      data: {
+        campaignId,
+        orgId,
+        leadsFound: savedCount,
+      },
+    });
+
     return { success: true, leadsFound: savedCount };
   },
 );

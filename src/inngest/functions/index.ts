@@ -50,6 +50,21 @@ import {
 // Superagent Functions
 import { planCampaign, executeCampaign, cancelCampaign } from "./superagent";
 
+// Email Sequence Functions
+import {
+  handleEnrollmentCreated,
+  sequenceSchedulerTick,
+  sendSequenceStep,
+  handleReplyDetected,
+  handleBounceDetected,
+} from "./sequences";
+
+// Sequence Integration Functions
+import {
+  autoEnrollLeadsInSequence,
+  onCampaignComplete,
+} from "./sequence-integration";
+
 /**
  * All Inngest functions to be registered with the serve handler
  */
@@ -97,4 +112,15 @@ export const functions = [
   planCampaign,
   executeCampaign,
   cancelCampaign,
+
+  // Email Sequences
+  handleEnrollmentCreated,
+  sequenceSchedulerTick,
+  sendSequenceStep,
+  handleReplyDetected,
+  handleBounceDetected,
+
+  // Sequence Integration
+  autoEnrollLeadsInSequence,
+  onCampaignComplete,
 ];
