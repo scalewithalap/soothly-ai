@@ -2,6 +2,9 @@
 
 # dependencies
 /node_modules
+node_modules/
+packages/setup-wizard/node_modules/
+packages/setup-wizard/dist/
 /.pnp
 .pnp.*
 .yarn/*
@@ -9,7 +12,9 @@
 !.yarn/plugins
 !.yarn/releases
 !.yarn/versions
-supabase/.temp/*
+
+# Software Bill of Materials
+sbom.json
 
 # testing
 /coverage
@@ -17,10 +22,9 @@ supabase/.temp/*
 # next.js
 /.next/
 /out/
-/examples
 
 # production
-/build
+/build/
 
 # misc
 .DS_Store
@@ -34,6 +38,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+.env.local
+.env.production
+.env.staging
 !.env.example
 
 # vercel
@@ -42,3 +49,24 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+# Trigger.dev
+.trigger
+
+# Fumadocs
+.source
+
+# graphify
+graphify-out/manifest.json
+graphify-out/cost.json
+graphify-out/cache/
+
+# GitHub
+.git/

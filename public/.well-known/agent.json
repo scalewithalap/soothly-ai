@@ -1,11 +1,11 @@
 {
-  "name": "Zero Headache AI Agents SaaS",
-  "url": "https://zeroheadache.co",
+  "name": "Soothly AI AI Agents SaaS",
+  "url": "https://soothly.ai",
   "version": "1.0.0",
   "description": "Multi-agent AI platform for content creation, lead generation, and business automation",
   "provider": {
-    "name": "Zero Headache",
-    "url": "https://zeroheadache.co"
+    "name": "Soothly AI",
+    "url": "https://soothly.ai"
   },
   "capabilities": {
     "streaming": true,

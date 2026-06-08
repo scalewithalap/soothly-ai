@@ -1,0 +1,231 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ===================================================
+   Soothly AI Brand Design Tokens
+   Visual Language: Trustworthy Futurist
+   =================================================== */
+
+:root {
+  /* Typography */
+  --font-heading: "Host Grotesk", sans-serif;
+  --font-body: "Manrope", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Border Radius */
+  --radius: 0.5rem;
+
+  /* Light theme (secondary) */
+  --background: #ffffff;
+  --foreground: #18181b;
+  --card: #ffffff;
+  --card-foreground: #18181b;
+  --popover: #ffffff;
+  --popover-foreground: #18181b;
+  --primary: #9382ff;
+  --primary-hover: #7b6af0;
+  --primary-foreground: #030014;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;
+  --accent: #9382ff;
+  --accent-foreground: #030014;
+  --destructive: #ef4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --border: #e4e4e7;
+  --input: #e4e4e7;
+  --ring: #9382ff;
+
+  /* Chart colors */
+  --chart-1: #9382ff;
+  --chart-2: #8b5cf6;
+  --chart-3: #10b981;
+  --chart-4: #f59e0b;
+  --chart-5: #ef4444;
+
+  /* Sidebar */
+  --sidebar: #fafafa;
+  --sidebar-foreground: #18181b;
+  --sidebar-primary: #9382ff;
+  --sidebar-primary-foreground: #030014;
+  --sidebar-accent: #f4f4f5;
+  --sidebar-accent-foreground: #18181b;
+  --sidebar-border: #e4e4e7;
+  --sidebar-ring: #9382ff;
+
+  /* Glassmorphism */
+  --glass-background: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-blur: blur(12px);
+}
+
+/* ===================================================
+   Dark Theme - Primary Brand Experience
+   Base: Obsidian #080808, Gunmetal #030014
+   =================================================== */
+.dark {
+  --background: #080808;
+  --foreground: #f4f0ff;
+  --card: #0d0d0d;
+  --card-foreground: #f4f0ff;
+  --popover: #0d0d0d;
+  --popover-foreground: #f4f0ff;
+  --primary: #9382ff;
+  --primary-hover: #7b6af0;
+  --primary-foreground: #030014;
+  --secondary: #27272a;
+  --secondary-foreground: #f4f0ff;
+  --muted: #27272a;
+  --muted-foreground: #a1a1aa;
+  --accent: #9382ff;
+  --accent-foreground: #030014;
+  --destructive: #ef4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --border: rgba(255, 255, 255, 0.1);
+  --input: rgba(255, 255, 255, 0.08);
+  --ring: #9382ff;
+
+  /* Chart colors - vibrant on dark */
+  --chart-1: #9382ff;
+  --chart-2: #8b5cf6;
+  --chart-3: #10b981;
+  --chart-4: #f59e0b;
+  --chart-5: #ef4444;
+
+  /* Sidebar */
+  --sidebar: #0a0a0a;
+  --sidebar-foreground: #f4f0ff;
+  --sidebar-primary: #9382ff;
+  --sidebar-primary-foreground: #030014;
+  --sidebar-accent: #1a1a1a;
+  --sidebar-accent-foreground: #f4f0ff;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #9382ff;
+
+  /* Glassmorphism - prominent on dark */
+  --glass-background: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-hover: rgba(255, 255, 255, 0.2);
+  --glass-blur: blur(12px);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-mono);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+}
+
+/* ===================================================
+   Base Styles
+   =================================================== */
+body {
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.02em;
+}
+
+code,
+pre,
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* ===================================================
+   Glassmorphism Utility Classes
+   =================================================== */
+.glass {
+  background: var(--glass-background);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-card {
+  background: var(--glass-background);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+}
+
+.glass-card:hover {
+  border-color: var(--glass-border-hover, var(--glass-border));
+}
+
+/* ===================================================
+   Brand Gradient
+   =================================================== */
+.brand-gradient {
+  background: linear-gradient(135deg, #9382ff, #8b5cf6);
+}
+
+.brand-gradient-text {
+  background: linear-gradient(135deg, #9382ff, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

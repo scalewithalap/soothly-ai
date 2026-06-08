@@ -1,0 +1,1533 @@
+{
+  "auth": {
+    "social": {
+      "google": "Google",
+      "github": "GitHub"
+    },
+    "layout": {
+      "headline": "8 AI Agents Working <br /> 24/7 For Your Business",
+      "subheadline": "Lead generation, content creation, contract review, and more—all on autopilot.",
+      "valueProps": [
+        "Find and reach your ideal customers automatically",
+        "Generate SEO-optimized content at scale",
+        "Monitor compliance and review contracts with AI",
+        "Optimize pricing and reduce spending"
+      ],
+      "testimonial": {
+        "quote": "Soothly AI transformed how we do business. Our lead generation is up 300%, and we've saved 20 hours per week on content creation.",
+        "author": "Sarah Miller",
+        "role": "CEO, TechScale Inc"
+      },
+      "copyright": "All rights reserved."
+    },
+    "login": {
+      "headline": "Welcome back",
+      "subheadline": "Sign in to access your dashboard",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "you@company.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "rememberMe": "Keep me signed in",
+      "submitButton": "Sign in",
+      "forgotPasswordLink": "Forgot password?",
+      "signupPrompt": "No account?",
+      "signupLink": "Create one",
+      "socialDivider": "Or continue with",
+      "errors": {
+        "invalidCredentials": "Invalid email or password. Please try again.",
+        "tooManyAttempts": "Too many attempts. Try again in 5 minutes."
+      }
+    },
+    "signup": {
+      "headline": "Create your account",
+      "subheadline": "Start your 14‑day free trial, no credit card needed.",
+      "fullNameLabel": "Full name",
+      "fullNamePlaceholder": "Jane Smith",
+      "emailLabel": "Work email",
+      "emailPlaceholder": "jane@company.com",
+      "passwordLabel": "Create password",
+      "passwordPlaceholder": "At least 8 characters",
+      "confirmPasswordLabel": "Confirm password",
+      "confirmPasswordPlaceholder": "Re-enter your password",
+      "terms": {
+        "prefix": "I agree to the ",
+        "tos": "Terms of Service",
+        "and": " and ",
+        "privacy": "Privacy Policy"
+      },
+      "submitButton": "Create account",
+      "loginPrompt": "Already have an account?",
+      "loginLink": "Sign in",
+      "passwordStrength": {
+        "weak": "Weak",
+        "fair": "Fair",
+        "good": "Good",
+        "strong": "Strong"
+      },
+      "errors": {
+        "emailExists": "An account with this email already exists.",
+        "passwordMismatch": "Passwords don't match.",
+        "weakPassword": "Choose a stronger password."
+      },
+      "socialDivider": "Or continue with"
+    },
+    "forgotPassword": {
+      "headline": "Forgot your password?",
+      "subheadline": "No worries, we'll send you reset instructions.",
+      "emailLabel": "Email",
+      "emailPlaceholder": "you@example.com",
+      "submitButton": "Send reset link",
+      "submittingButton": "Sending...",
+      "backToLogin": "Back to login",
+      "successHeadline": "Check your email",
+      "successMessage": "If an account exists for {email}, we've sent a password reset link.",
+      "errorEmailNotFound": "No account found with that email."
+    },
+    "resetPassword": {
+      "headline": "Set new password",
+      "subheadline": "Your new password must be at least 8 characters.",
+      "passwordLabel": "New Password",
+      "passwordPlaceholder": "••••••••",
+      "confirmPasswordLabel": "Confirm Password",
+      "confirmPasswordPlaceholder": "••••••••",
+      "submitButton": "Reset password",
+      "submittingButton": "Resetting...",
+      "backToLogin": "Back to login",
+      "successHeadline": "Password reset successful!",
+      "successMessage": "Redirecting you to login...",
+      "successButton": "Go to login now",
+      "invalidLinkHeadline": "Reset link invalid",
+      "invalidLinkButton": "Request new reset link",
+      "errors": {
+        "invalidToken": "Invalid or missing reset token",
+        "passwordLength": "Password must be at least 8 characters",
+        "mismatch": "Passwords do not match",
+        "expired": "This reset link has expired. Please request a new one.",
+        "alreadyUsed": "This reset link has already been used.",
+        "generic": "Failed to reset password"
+      }
+    }
+  },
+  "dashboard": {
+    "welcomeMessage": "Welcome back, {firstName}",
+    "welcomeSubtext": "Here's what's happening with your agents today.",
+    "usageBalance": {
+      "title": "Usage remaining",
+      "lowBalanceWarning": "Approaching usage limit",
+      "upgradeCTA": "Upgrade plan"
+    },
+    "agentStatus": {
+      "title": "Your agents",
+      "active": "Active",
+      "inactive": "Inactive",
+      "paused": "Paused",
+      "lastActive": "Last active",
+      "enableCTA": "Enable",
+      "configureCTA": "Configure"
+    },
+    "quickActions": {
+      "title": "Quick actions",
+      "actions": ["Create lead campaign", "Generate content", "Find partners"]
+    },
+    "stats": {
+      "totalTasks": "Total Tasks",
+      "activeAgents": "Active Agents",
+      "timeSaved": "Time Saved",
+      "completed": "Completed",
+      "running": "Running"
+    },
+    "recentActivity": {
+      "title": "Recent activity",
+      "viewAll": "View all",
+      "emptyState": "No recent activity. Enable an agent to get started.",
+      "items": [
+        "Sales Bot found 50 new qualified leads",
+        "Content Agent published 3 new blog posts",
+        "Subscription renewed successfully",
+        "New team member invite accepted"
+      ]
+    },
+    "newAgent": "New Agent",
+    "title": "Dashboard",
+    "subtitle": "Monitor your AI agents and track performance",
+    "refresh": "Refresh",
+    "status": {
+      "completed": "Completed",
+      "failed": "Failed",
+      "running": "Running"
+    },
+    "analytics": {
+      "title": "Performance Analytics",
+      "noData": "No data for this period"
+    },
+    "agents": {
+      "leads": "Leads",
+      "content": "Content",
+      "partners": "Partners"
+    },
+    "activity": {
+      "title": "Recent Activity",
+      "empty": "No recent activity"
+    },
+    "successRate": {
+      "title": "Success Rate",
+      "tasks": "tasks"
+    }
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "agents": "Agents",
+    "billing": "Billing",
+    "settings": "Settings",
+    "signOut": "Sign out"
+  },
+  "header": {
+    "searchPlaceholder": "Search...",
+    "usage": "Usage",
+    "account": {
+      "usage": "Usage",
+      "plan": "Plan",
+      "profile": "Profile",
+      "billing": "Billing",
+      "settings": "Settings",
+      "logout": "Sign out"
+    }
+  },
+  "agents": {
+    "leadGeneration": {
+      "name": "Sales Outreach Bot",
+      "short": "Find, enrich, and reach ideal customers.",
+      "long": "Our Lead Generation agent scrapes LinkedIn, enriches contacts, scores leads, and sends personalized outreach automatically."
+    },
+    "seoContent": {
+      "name": "Content Generator",
+      "short": "Research keywords and publish SEO articles automatically.",
+      "long": "The Content agent analyzes competitors, finds keyword opportunities, generates high‑quality articles, and schedules publishing for organic traffic."
+    },
+    "partnerships": {
+      "name": "Partnership Scout",
+      "short": "Discover and recruit affiliates and partners.",
+      "long": "Find potential partners, score fit, and automate outreach to build your affiliate network."
+    },
+    "contractReview": {
+      "name": "Legal Review Bot",
+      "short": "Analyze contracts for risks and suggest improvements.",
+      "long": "Upload a contract and our AI flags risky clauses and recommends amendments."
+    },
+    "regulatoryMonitoring": {
+      "name": "Compliance Watchdog",
+      "short": "Stay ahead of compliance changes.",
+      "long": "Monitor regulatory updates, assess impact, and generate compliance documentation automatically."
+    },
+    "accountsReceivable": {
+      "name": "Finance Assistant",
+      "short": "Automate invoice follow‑ups and improve cash flow.",
+      "long": "Sync invoices, send reminder sequences, and negotiate payment terms with AI."
+    },
+    "spendAnalysis": {
+      "name": "Cost Optimizer",
+      "short": "Find hidden savings in spending.",
+      "long": "Categorize transactions, identify redundant subscriptions, and discover cheaper alternatives to cut costs."
+    },
+    "dynamicPricing": {
+      "name": "Pricing Strategist",
+      "short": "Optimize prices based on demand and competition.",
+      "long": "Monitor competitor pricing, run A/B tests, and let AI find revenue‑maximizing price points."
+    },
+    "dataScraper": {
+      "name": "Data Scraper",
+      "short": "Extract data from completely any website.",
+      "long": "Automated web scraping at scale."
+    }
+  },
+  "agentsPage": {
+    "title": "Your AI Agents",
+    "subtitle": "Configure, launch, and monitor your autonomous business agents.",
+    "searchPlaceholder": "Search agents...",
+    "filterAll": "All",
+    "filterActive": "Active",
+    "filterPaused": "Paused",
+    "emptyState": "No agents match your search.",
+    "configureButton": "Configure",
+    "launchButton": "Launch",
+    "pauseButton": "Pause",
+    "viewLogsButton": "View Logs",
+    "viewStatsButton": "View Stats",
+    "statusActive": "Active",
+    "statusPaused": "Paused",
+    "statusSetup": "Setup Required",
+    "lastRunLabel": "Last run",
+    "runsLabel": "Runs",
+    "tasksCompletedLabel": "Tasks",
+    "valueGeneratedLabel": "Value Generated",
+    "autonomy": {
+      "title": "Autonomy Level",
+      "wait": "Wait for approval",
+      "waitDesc": "Agent pauses and asks before every action",
+      "aiDecides": "AI decides",
+      "aiDecidesDesc": "Agent uses judgment on when to ask",
+      "alwaysProceed": "Full autopilot",
+      "alwaysProceedDesc": "Agent executes without interruption"
+    },
+    "statsPage": {
+      "title": "Agent Statistics",
+      "backToAgents": "Back to Agents",
+      "overview": "Overview",
+      "successRate": "Success Rate",
+      "totalRuns": "Total Runs",
+      "avgUsage": "Avg Usage",
+      "hoursSaved": "Hours Saved",
+      "recentActivity": "Recent Activity",
+      "thoughtStream": "Thought Stream",
+      "noThoughts": "No activity yet. Launch the agent to see its thinking process.",
+      "performanceChart": "Performance (Last 30 Days)",
+      "tasksLabel": "Tasks",
+      "usageConsumed": "Usage Consumed",
+      "valueLabel": "Value ($)"
+    },
+    "toasts": {
+      "activated": "Agent activated successfully",
+      "deactivated": "Agent paused",
+      "autonomyUpdated": "Autonomy level updated",
+      "error": "Failed to update agent"
+    }
+  },
+  "errors": {
+    "generic": {
+      "server": "Something went wrong. Please try again later.",
+      "network": "Unable to connect. Check your internet connection.",
+      "sessionExpired": "Session expired. Please sign in again.",
+      "unauthorized": "You don't have permission for this action.",
+      "notFound": "We couldn't find what you're looking for."
+    },
+    "auth": {
+      "unauthorized": "Please sign in to continue.",
+      "session_expired": "Your session has expired. Please sign in again.",
+      "forbidden": "You don't have permission for this action.",
+      "no_organization": "Please set up your organization first.",
+      "invalid_credentials": "Invalid email or password.",
+      "email_not_verified": "Please verify your email address."
+    },
+    "validation": {
+      "required": "This field is required.",
+      "invalidEmail": "Enter a valid email address.",
+      "passwordTooShort": "Password must be at least 8 characters.",
+      "invalidURL": "Enter a valid URL.",
+      "numberRequired": "Enter a number.",
+      "fileTooLarge": "File must be under {size}MB.",
+      "invalid_input": "Please check your input and try again.",
+      "missing_field": "A required field is missing.",
+      "invalid_format": "The format is not valid."
+    },
+    "usage": {
+      "insufficient": "Usage limit reached. Upgrade your plan.",
+      "limitReached": "Monthly limit reached. Limits reset on {date}.",
+      "limit_exceeded": "You've reached your usage limit for this action."
+    },
+    "agent": {
+      "not_found": "Agent not found.",
+      "invalid_type": "Invalid agent type.",
+      "task_failed": "The agent task failed. Please try again.",
+      "already_running": "This agent is already running."
+    },
+    "billing": {
+      "payment_failed": "Payment failed. Please check your payment method.",
+      "subscription_required": "A subscription is required for this feature."
+    },
+    "team": {
+      "invite_expired": "This invitation has expired.",
+      "invite_invalid": "This invitation is not valid.",
+      "member_not_found": "Team member not found.",
+      "admin_required": "Admin privileges are required for this action."
+    },
+    "mcp": {
+      "connection_failed": "Failed to connect to the MCP server.",
+      "server_not_found": "MCP server not found."
+    },
+    "database": {
+      "error": "A database error occurred. Please try again."
+    },
+    "server": {
+      "internal_error": "An unexpected error occurred. Please try again.",
+      "not_found": "The requested resource was not found."
+    }
+  },
+  "tooltips": {
+    "usageBalance": "Usage is tracked when agents perform actions. Different actions consume different amounts.",
+    "passwordVisibility": {
+      "show": "Show password",
+      "hide": "Hide password"
+    },
+    "termsLink": "View Terms of Service",
+    "privacyLink": "Read Privacy Policy",
+    "copyButton": "Copy to clipboard",
+    "copySuccess": "Copied!"
+  },
+  "loadingStates": {
+    "signingIn": "Signing in...",
+    "creatingAccount": "Creating your account...",
+    "sendingEmail": "Sending reset link...",
+    "processing": "Processing...",
+    "saving": "Saving changes..."
+  },
+  "settings": {
+    "profile": {
+      "title": "Profile Information",
+      "description": "Update your personal details",
+      "fullNameLabel": "Full Name",
+      "fullNamePlaceholder": "John Doe",
+      "emailLabel": "Email Address",
+      "emailDescription": "Email cannot be changed. Contact support if needed.",
+      "saveButton": "Save Changes",
+      "savingButton": "Saving...",
+      "toasts": {
+        "updateSuccess": "Profile updated successfully",
+        "updateError": "Failed to update profile"
+      },
+      "password": {
+        "title": "Change Password",
+        "description": "Update your account password",
+        "currentLabel": "Current Password",
+        "newLabel": "New Password",
+        "confirmLabel": "Confirm New Password",
+        "placeholder": "••••••••",
+        "updateButton": "Update Password",
+        "updatingButton": "Updating...",
+        "toasts": {
+          "success": "Password changed successfully",
+          "error": "Failed to change password"
+        }
+      },
+      "twoFactor": {
+        "title": "Two-Factor Authentication",
+        "description": "Add an extra layer of security to your account",
+        "notEnabled": "Two-factor authentication is not yet enabled for your account.",
+        "enableButton": "Enable 2FA (Coming Soon)"
+      },
+      "dangerZone": {
+        "title": "Danger Zone",
+        "description": "Irreversible and destructive actions",
+        "deleteWarning": "Once you delete your account, there is no going back. Please be certain.",
+        "deleteButton": "Delete Account (Contact Support)"
+      },
+      "validation": {
+        "nameTooShort": "Name must be at least 2 characters",
+        "invalidEmail": "Invalid email address",
+        "passwordTooShort": "Password must be at least 8 characters",
+        "passwordMismatch": "Passwords don't match"
+      }
+    },
+    "security": {
+      "title": "Security Settings",
+      "mfa": {
+        "title": "Multi-Factor Authentication",
+        "description": "Secure your account with an additional verification step",
+        "enabled": "MFA is enabled",
+        "disabled": "MFA is not enabled",
+        "setupTitle": "Set up MFA",
+        "setupDescription": "Scan this QR code with your authenticator app",
+        "verifyCode": "Enter 6-digit code",
+        "verifyButton": "Verify and Enable",
+        "verifyingButton": "Verifying...",
+        "removeButton": "Remove MFA",
+        "removingButton": "Removing...",
+        "toasts": {
+          "enableSuccess": "MFA successfully enabled!",
+          "enableError": "Failed to start MFA enrollment",
+          "verifyError": "Verification failed",
+          "removeSuccess": "MFA disabled",
+          "removeError": "Failed to remove MFA"
+        },
+        "enableButton": "Enable Two-Factor Authentication",
+        "authenticatorApp": "Authenticator App",
+        "manualEntry": "Can't scan? Enter this code manually:",
+        "removeConfirm": "Remove this authentication method?"
+      },
+      "recommendations": {
+        "title": "Security Recommendations",
+        "tip1": "Use a strong, unique password",
+        "tip2": "Enable two-factor authentication",
+        "tip3": "Keep your recovery codes in a safe place",
+        "tip4": "Review your active sessions regularly"
+      }
+    },
+    "organization": {
+      "title": "Organization Settings",
+      "description": "Manage your organization details",
+      "nameLabel": "Organization Name",
+      "namePlaceholder": "Acme Inc.",
+      "languageLabel": "Default Language",
+      "languagePlaceholder": "Select language",
+      "timezoneLabel": "Timezone",
+      "timezonePlaceholder": "Select timezone",
+      "saveButton": "Save Changes",
+      "savingButton": "Saving...",
+      "toasts": {
+        "updateSuccess": "Organization settings updated",
+        "updateError": "Failed to update organization"
+      },
+      "validation": {
+        "nameTooShort": "Name must be at least 2 characters"
+      },
+      "localization": {
+        "title": "Localization",
+        "description": "Set your default language and timezone",
+        "languageDesc": "Default language for your organization",
+        "timezoneDesc": "Used for scheduling and activity timestamps"
+      },
+      "dangerZone": {
+        "title": "Danger Zone",
+        "description": "Destructive actions for your organization",
+        "deleteWarning": "Deleting your organization will remove all data including team members, agents, and generated content. This action cannot be undone.",
+        "deleteButton": "Delete Organization (Contact Support)"
+      }
+    },
+    "mcp": {
+      "title": "MCP Servers",
+      "description": "Manage Model Context Protocol server connections",
+      "addButton": "Add Server",
+      "editButton": "Edit",
+      "deleteButton": "Delete",
+      "testButton": "Test Connection",
+      "nameLabel": "Server Name",
+      "namePlaceholder": "My MCP Server",
+      "urlLabel": "Server URL",
+      "urlPlaceholder": "https://mcp.example.com",
+      "saveButton": "Save",
+      "cancelButton": "Cancel",
+      "emptyState": "No MCP servers configured",
+      "emptyStateDesc": "Add a server to extend agent capabilities",
+      "toasts": {
+        "saveSuccess": "Server saved",
+        "saveError": "Failed to save server",
+        "deleteSuccess": "Server deleted",
+        "deleteError": "Failed to delete server",
+        "testSuccess": "Connection successful",
+        "testError": "Connection test failed",
+        "validationError": "Name and URL are required"
+      },
+      "addTitle": "Add MCP Server",
+      "editTitle": "Edit Server",
+      "updateButton": "Update",
+      "addFirstButton": "Add Your First Server",
+      "deleteConfirm": "Delete this MCP server?",
+      "lastChecked": "Last checked",
+      "transportLabel": "Transport",
+      "transportSSE": "SSE (Server-Sent Events)",
+      "transportWebSocket": "WebSocket",
+      "transportStdio": "Stdio (Local)",
+      "authLabel": "Authentication",
+      "authNone": "None",
+      "authApiKey": "API Key",
+      "authBearer": "Bearer Token",
+      "authBasic": "Basic Auth",
+      "credentialsLabel": "Credentials",
+      "credentialsPlaceholder": "Enter credentials",
+      "credentialsPlaceholderEdit": "Leave empty to keep existing",
+      "health": {
+        "healthy": "Healthy",
+        "degraded": "Degraded",
+        "unhealthy": "Unhealthy",
+        "unknown": "Unknown"
+      }
+    },
+    "team": {
+      "title": "Team Members",
+      "description": "Manage who has access to your organization",
+      "inviteButton": "Invite member",
+      "membersList": {
+        "title": "Members"
+      },
+      "pendingInvites": {
+        "title": "Pending Invitations",
+        "expires": "Expires"
+      },
+      "actions": {
+        "makeAdmin": "Make Admin",
+        "makeMember": "Make Member",
+        "removeFromTeam": "Remove from team",
+        "you": "(you)"
+      },
+      "inviteModal": {
+        "title": "Invite team member",
+        "description": "Send an invitation to join your organization",
+        "emailLabel": "Email address",
+        "roleLabel": "Role",
+        "member": "Member",
+        "memberDesc": "Can view and use agents",
+        "admin": "Admin",
+        "adminDesc": "Can manage team & settings",
+        "cancel": "Cancel",
+        "sendButton": "Send invitation"
+      },
+      "toasts": {
+        "invitationRevoked": "Invitation revoked",
+        "invitationRevokeFailed": "Failed to revoke invitation",
+        "invitationSent": "Invitation sent to {email}",
+        "invitationFailed": "Failed to send invitation",
+        "memberRemoved": "Member removed from team",
+        "memberRemoveFailed": "Failed to remove member",
+        "roleUpdated": "Role updated to {role}",
+        "roleUpdateFailed": "Failed to update role"
+      }
+    },
+    "notifications": {
+      "emailTitle": "Email Notifications",
+      "emailDesc": "Manage which emails you receive",
+      "smsTitle": "SMS & WhatsApp",
+      "smsDesc": "Urgent notifications via text",
+      "inAppTitle": "In-App Notifications",
+      "inAppDesc": "Desktop and browser notifications",
+      "saveButton": "Save Preferences",
+      "savingButton": "Saving...",
+      "successMessage": "Notification preferences saved",
+      "errorMessage": "Failed to save preferences",
+      "smsWarning": "SMS/WhatsApp notifications require phone number verification in your profile.",
+      "fields": {
+        "agentCompletion": {
+          "label": "Agent Completion",
+          "desc": "When an agent finishes a task"
+        },
+        "agentErrors": {
+          "label": "Agent Errors",
+          "desc": "When an agent encounters an error"
+        },
+        "weeklyReport": {
+          "label": "Weekly Report",
+          "desc": "Summary of agent activity"
+        },
+        "teamInvites": {
+          "label": "Team Invitations",
+          "desc": "When you're invited to a team"
+        },
+        "securityAlerts": {
+          "label": "Security Alerts",
+          "desc": "Login from new device, etc.",
+          "descSms": "Suspicious activity detected"
+        },
+        "criticalErrors": {
+          "label": "Critical Errors",
+          "desc": "Agent failures only"
+        },
+        "allNotifications": {
+          "label": "All Notifications",
+          "desc": "Show in notification center"
+        },
+        "soundEffects": {
+          "label": "Sound Effects",
+          "desc": "Play sound for notifications"
+        }
+      },
+      "channels": {
+        "discord": {
+          "title": "Discord",
+          "description": "Send notifications to a Discord channel",
+          "enableLabel": "Enable Discord Notifications",
+          "webhookLabel": "Webhook URL",
+          "webhookPlaceholder": "https://discord.com/api/webhooks/..."
+        },
+        "slack": {
+          "title": "Slack",
+          "description": "Send notifications to a Slack channel",
+          "enableLabel": "Enable Slack Notifications",
+          "webhookLabel": "Webhook URL",
+          "webhookPlaceholder": "https://hooks.slack.com/services/..."
+        },
+        "telegram": {
+          "title": "Telegram",
+          "description": "Send notifications via Telegram Bot",
+          "enableLabel": "Enable Telegram Notifications",
+          "tokenLabel": "Bot Token",
+          "tokenPlaceholder": "123456:ABC-DEF...",
+          "chatIdLabel": "Chat ID",
+          "chatIdPlaceholder": "-1001234567890"
+        },
+        "jira": {
+          "title": "Jira",
+          "description": "Create Jira issues for agent alerts",
+          "enableLabel": "Enable Jira Integration",
+          "urlLabel": "Jira URL",
+          "urlPlaceholder": "https://yourcompany.atlassian.net",
+          "projectLabel": "Project Key",
+          "projectPlaceholder": "PROJ",
+          "emailLabel": "Email",
+          "emailPlaceholder": "you@company.com",
+          "apiTokenLabel": "API Token",
+          "apiTokenPlaceholder": "••••••••"
+        }
+      },
+      "types": {
+        "title": "Notification Types",
+        "description": "Choose which events trigger notifications"
+      }
+    },
+    "integrations": {
+      "apiKeys": {
+        "title": "API Keys",
+        "description": "Manage your API access keys",
+        "generateButton": "Generate Key",
+        "revokeButton": "Revoke",
+        "emptyState": "No API keys yet",
+        "emptyStateDesc": "Generate a key to access the API programmatically",
+        "generatedSuccess": "API key generated! Copy it now - it won't be shown again.",
+        "revokedSuccess": "API key revoked!",
+        "copySuccess": "Copied to clipboard",
+        "newKeyLabel": "Your new API key (copy it now - it won't be shown again):",
+        "dismissButton": "Dismiss",
+        "generateError": "Failed to generate API key",
+        "revokeError": "Failed to revoke API key",
+        "createdLabel": "Created"
+      },
+      "webhooks": {
+        "title": "Webhooks",
+        "description": "Receive real-time notifications for events",
+        "urlLabel": "Webhook URL",
+        "placeholder": "https://your-server.com/webhook",
+        "saveButton": "Save",
+        "helperText": "We'll send POST requests to this URL when events occur",
+        "eventsTitle": "Available Events"
+      },
+      "connectedServices": {
+        "title": "Connected Services",
+        "description": "Third-party integrations and OAuth connections",
+        "emptyState": "No connected services",
+        "comingSoon": "OAuth integrations coming soon"
+      }
+    },
+    "billing": {
+      "currentPlan": {
+        "title": "Current Plan",
+        "description": "Manage your subscription",
+        "oneTimeBadge": "One-time",
+        "monthSuffix": "/month",
+        "customPricing": "Custom pricing",
+        "upgradeButton": "Upgrade Plan (Coming Soon)",
+        "manageButton": "Manage Subscription"
+      },
+      "usageLimits": {
+        "title": "Usage Limits",
+        "descriptionRecurring": "Track your monthly usage consumption",
+        "descriptionOneTime": "Your usage limits",
+        "usageText": "{used} of {total} used",
+        "resetTextRecurring": "Limits reset on the 1st of each month",
+        "resetTextOneTime": "View your usage breakdown"
+      },
+      "availablePlans": {
+        "title": "Available Plans",
+        "currentBadge": "Current",
+        "monthSuffix": "/mo",
+        "custom": "Custom",
+        "free": "Free"
+      },
+      "invoiceHistory": {
+        "title": "Invoice History",
+        "description": "Download past invoices",
+        "emptyState": "No invoices yet",
+        "emptyStateDesc": "Invoices will appear here after your first payment"
+      }
+    }
+  },
+  "invite": {
+    "welcome": "Welcome to the team!",
+    "redirecting": "Redirecting you to the dashboard...",
+    "invalid": {
+      "title": "Invalid Invitation",
+      "homeButton": "Go to homepage"
+    },
+    "expired": {
+      "titleExpired": "Invitation Expired",
+      "titleUsed": "Invitation Used",
+      "message": "This invitation is no longer valid. Please contact your team admin for a new invitation."
+    },
+    "valid": {
+      "title": "You're invited!",
+      "messagePart1": "has invited you to join as",
+      "loginButton": "Sign in to accept",
+      "acceptButton": "Accept invitation",
+      "signupPrompt": "Don't have an account?",
+      "signupLink": "Create one"
+    }
+  },
+  "mockData": {
+    "time": {
+      "twoMinutesAgo": "2m ago",
+      "fifteenMinutesAgo": "15m ago",
+      "oneHourAgo": "1h ago",
+      "twoHoursAgo": "2 hours ago",
+      "fiveHoursAgo": "5 hours ago",
+      "oneDayAgo": "1 day ago"
+    }
+  },
+  "agentUI": {
+    "leadGen": {
+      "title": "Lead Generation",
+      "createCampaign": "Create Campaign",
+      "campaignName": "Campaign Name",
+      "targetCriteria": "Target Criteria",
+      "scrape": "Scrape Leads",
+      "leadsFound": "Leads Found",
+      "enrichmentStatus": "Enrichment",
+      "score": "Lead Score",
+      "outreachStatus": "Outreach",
+      "dialog": {
+        "description": "Define your target audience to start generating leads",
+        "labels": {
+          "industry": "Industry",
+          "jobTitle": "Job Title",
+          "location": "Location"
+        },
+        "placeholders": {
+          "campaignName": "e.g., Q1 SaaS Outreach",
+          "industry": "e.g., SaaS, FinTech",
+          "jobTitle": "e.g., CEO, Head of Marketing",
+          "location": "e.g., United States, Europe"
+        },
+        "buttons": {
+          "cancel": "Cancel",
+          "creating": "Creating..."
+        },
+        "toasts": {
+          "created": "Campaign created! Background processing started.",
+          "failed": "Failed to create campaign"
+        }
+      }
+    },
+    "content": {
+      "title": "SEO Content",
+      "createBrief": "Create Brief",
+      "topic": "Topic / Keyword",
+      "contentType": "Content Type",
+      "wordCount": "Word Count",
+      "generate": "Generate Article",
+      "seoScore": "SEO Score",
+      "publish": "Publish",
+      "dialog": {
+        "description": "Define your content requirements for AI generation",
+        "labels": {
+          "articleTitle": "Article Title",
+          "aiModel": "AI Model"
+        },
+        "contentTypes": {
+          "blogPost": "Blog Post",
+          "landingPage": "Landing Page",
+          "pillarContent": "Pillar Content"
+        },
+        "placeholders": {
+          "title": "e.g., 10 Ways to Improve SEO",
+          "keyword": "e.g., SEO best practices",
+          "selectModel": "Select AI Model"
+        },
+        "modelHint": "Choose the AI model for article generation",
+        "buttons": {
+          "cancel": "Cancel",
+          "creating": "Creating..."
+        },
+        "toasts": {
+          "created": "Brief created! {model} is now generating your content.",
+          "failed": "Failed to create brief"
+        }
+      }
+    },
+    "partners": {
+      "title": "Partnerships",
+      "findPartners": "Find Partners",
+      "industry": "Industry",
+      "partnerType": "Partner Type",
+      "fitScore": "Fit Score",
+      "outreach": "Send Outreach"
+    },
+    "common": {
+      "cancel": "Cancel",
+      "creating": "Creating...",
+      "validationMinChars": "must be at least {count} characters"
+    }
+  },
+  "content": {
+    "calendar": {
+      "title": "Content Calendar",
+      "subtitle": "Plan and schedule your content",
+      "newBrief": "New Brief",
+      "scheduled": "Content scheduled",
+      "unscheduled": "Removed from calendar",
+      "error": "Failed to update schedule",
+      "unscheduledTitle": "Unscheduled",
+      "noUnscheduled": "All content is scheduled"
+    }
+  },
+  "leads": {
+    "pipeline": {
+      "title": "Lead Pipeline",
+      "subtitle": "Manage your sales pipeline",
+      "refresh": "Refresh",
+      "addLead": "Add Lead",
+      "moved": "Lead moved",
+      "error": "Failed to move lead",
+      "empty": "No leads"
+    }
+  },
+  "onboarding": {
+    "createOrg": {
+      "title": "Set Up Your Organization",
+      "description": "Tell us about your organization to get started with Soothly AI.",
+      "nameLabel": "Organization Name",
+      "namePlaceholder": "e.g., Acme Inc",
+      "nameRequired": "Organization name is required",
+      "industryLabel": "Industry",
+      "industryPlaceholder": "Select your industry",
+      "sizeLabel": "Company Size",
+      "sizePlaceholder": "Select company size",
+      "submit": "Create Organization",
+      "creating": "Creating...",
+      "success": "Organization created successfully!",
+      "error": "Failed to create organization"
+    }
+  },
+  "billing": {
+    "upgrade": {
+      "title": "Upgrade to Pro",
+      "description": "Unlock the full power of Soothly AI with a Pro subscription.",
+      "featureRequiresPro": "requires a Pro subscription",
+      "proTitle": "Pro Plan Benefits",
+      "startingAt": "Starting at",
+      "upgradeNow": "Upgrade Now"
+    }
+  },
+  "superagentPage": {
+    "title": "Superagent",
+    "description": "Your AI Agents Manager with access to all agent data. Get unified insights, coordinate actions, and make strategic decisions from one conversation.",
+    "premiumBadge": "Premium Feature",
+    "featuresTitle": "What Superagent Can Do",
+    "feature1": "Cross-Agent Intelligence",
+    "feature1Desc": "See patterns across all your agents that individual agents can't detect.",
+    "feature2": "Unified Command Center",
+    "feature2Desc": "Control all agents from one conversation interface.",
+    "feature3": "Business Health Dashboard",
+    "feature3Desc": "Get real-time insights across leads, content, finance, and operations.",
+    "feature4": "Strategic Recommendations",
+    "feature4Desc": "Receive prioritized action items based on all your data.",
+    "upgradeTitle": "Unlock Superagent",
+    "upgradeDesc": "Upgrade to any paid plan to access Superagent and take control of all your AI agents from one place.",
+    "upgradeButton": "View Plans",
+    "agentStatus": "Agent Status",
+    "clickToView": "Click to view",
+    "online": "Online",
+    "quickActions": "Quick Actions",
+    "viewAssets": "View Assets Library",
+    "viewUsage": "Usage Stats"
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "users": "Users",
+    "organizations": "Organizations",
+    "auditLog": "Audit Log",
+    "stats": {
+      "totalUsers": "Total Users",
+      "tasksThisMonth": "Tasks This Month",
+      "messagesThisMonth": "Messages This Month",
+      "usageRemaining": "Usage Remaining"
+    },
+    "actions": {
+      "updateRole": "Update Role",
+      "viewDetails": "View Details"
+    },
+    "unauthorized": "You don't have permission to access this page.",
+    "refresh": "Refresh",
+    "usersPage": {
+      "title": "User Management",
+      "description": "users in your organization",
+      "tableHeaders": {
+        "user": "User",
+        "role": "Role",
+        "joined": "Joined",
+        "lastActive": "Last Active",
+        "actions": "Actions"
+      },
+      "roles": {
+        "owner": "Owner",
+        "admin": "Admin",
+        "member": "Member"
+      },
+      "noName": "No name",
+      "never": "Never",
+      "toasts": {
+        "roleUpdated": "User role updated",
+        "roleUpdateFailed": "Failed to update role"
+      }
+    },
+    "couponsPage": {
+      "title": "Discount Coupons",
+      "createButton": "Create Coupon",
+      "cancelButton": "Cancel",
+      "createFormTitle": "Create New Coupon",
+      "tableHeaders": {
+        "code": "Code",
+        "type": "Type",
+        "value": "Value",
+        "uses": "Uses",
+        "status": "Status"
+      },
+      "labels": {
+        "code": "Code",
+        "type": "Type",
+        "value": "Value",
+        "maxUses": "Max Uses",
+        "validDays": "Valid Days"
+      },
+      "placeholders": {
+        "code": "SAVE20",
+        "unlimited": "Unlimited",
+        "forever": "Forever"
+      },
+      "types": {
+        "percentage": "Percentage",
+        "fixed": "Fixed Amount",
+        "bonus": "Bonus"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "analytics": {
+        "totalRedemptions": "Total Redemptions",
+        "totalSaved": "Total Saved",
+        "activeCoupons": "Active Coupons"
+      },
+      "emptyState": "No coupons created yet",
+      "toasts": {
+        "createSuccess": "Coupon created successfully",
+        "createFailed": "Failed to create coupon",
+        "codeExists": "Code already exists",
+        "validationError": "Code and value are required"
+      },
+      "creating": "Creating..."
+    },
+    "sso": {
+      "title": "SSO Settings",
+      "description": "Configure Single Sign-On for your organization",
+      "samlEnabled": "SAML SSO Enabled",
+      "entityId": "Entity ID",
+      "ssoUrl": "SSO URL",
+      "certificate": "X.509 Certificate",
+      "testConnection": "Test Connection",
+      "saveButton": "Save",
+      "toasts": {
+        "saveSuccess": "SSO settings saved",
+        "saveFailed": "Failed to save SSO settings"
+      }
+    },
+    "featureFlags": {
+      "title": "Feature Flags",
+      "description": "Manage feature toggles for your application",
+      "createButton": "Create Flag",
+      "tableHeaders": {
+        "name": "Name",
+        "key": "Key",
+        "status": "Status",
+        "rollout": "Rollout"
+      },
+      "status": {
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+      },
+      "emptyState": "No feature flags configured"
+    },
+    "featureFlagsPage": {
+      "title": "Feature Flags",
+      "description": "Control feature rollouts and access",
+      "newButton": "New Flag",
+      "cancelButton": "Cancel",
+      "createFormTitle": "Create Feature Flag",
+      "editFormTitle": "Edit Flag",
+      "labels": {
+        "name": "Flag Name",
+        "description": "Description",
+        "rollout": "Rollout Percentage",
+        "enabled": "Enabled",
+        "allowedTiers": "Allowed Tiers"
+      },
+      "placeholders": {
+        "name": "new_feature_enabled",
+        "description": "Enable new feature for users"
+      },
+      "hints": {
+        "nameFormat": "Lowercase with underscores",
+        "emptyTiers": "Empty = available to all tiers"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "emptyState": "No feature flags configured",
+      "emptyStateAction": "Create Your First Flag",
+      "rolloutLabel": "rollout",
+      "tiersLabel": "Tiers",
+      "editButton": "Edit",
+      "saveButton": "Create Flag",
+      "updateButton": "Update Flag",
+      "savingButton": "Saving...",
+      "toasts": {
+        "created": "Flag created",
+        "updated": "Flag updated",
+        "deleted": "Flag deleted",
+        "enabled": "Flag enabled",
+        "disabled": "Flag disabled",
+        "saveFailed": "Failed to save flag",
+        "toggleFailed": "Failed to toggle flag",
+        "deleteFailed": "Failed to delete flag",
+        "nameRequired": "Flag name is required"
+      },
+      "deleteConfirm": "Delete this feature flag?"
+    },
+    "ssoPage": {
+      "title": "Single Sign-On (SSO)",
+      "description": "Configure enterprise SSO for your organization",
+      "enterpriseFeature": "Enterprise Feature",
+      "enterpriseDescription": "SAML SSO is available on the Enterprise plan. Contact our sales team to enable SSO for your organization.",
+      "contactSales": "Contact Sales",
+      "samlConfig": {
+        "title": "SAML 2.0 Configuration",
+        "description": "Use these values to configure your Identity Provider (IdP):",
+        "acsUrl": "ACS URL (Assertion Consumer Service)",
+        "entityId": "Entity ID / Audience URI",
+        "copy": "Copy",
+        "copied": "Copied!"
+      },
+      "supportedProviders": "Supported Identity Providers",
+      "setupProcess": {
+        "title": "Setup Process",
+        "step1": "Contact our team to enable SSO for your organization",
+        "step2": "Configure your IdP with the ACS URL and Entity ID above",
+        "step3": "Provide your IdP metadata URL or XML to our team",
+        "step4": "SSO will be enabled for your configured domains"
+      },
+      "helpText": "Need help setting up SSO?",
+      "viewDocs": "View Documentation"
+    },
+    "auditLogPage": {
+      "title": "Audit Log",
+      "description": "View all system activity",
+      "totalEntries": "total entries",
+      "refresh": "Refresh",
+      "tableHeaders": {
+        "time": "Time",
+        "action": "Action",
+        "entity": "Entity",
+        "entityId": "Entity ID"
+      },
+      "emptyState": "No audit entries found",
+      "pagination": {
+        "page": "Page",
+        "of": "of"
+      }
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markRead": "Mark as read",
+    "markAllRead": "Mark all as read",
+    "noNotifications": "No notifications yet",
+    "viewAll": "View all notifications",
+    "types": {
+      "agent_completed": "Agent completed",
+      "agent_failed": "Agent failed",
+      "usage_running_low": "Usage running low",
+      "usage_limit_reached": "Usage limit reached",
+      "team_invite": "Team invite",
+      "subscription_renewed": "Subscription renewed",
+      "system": "System notification"
+    }
+  },
+  "platform": {
+    "onboarding": {
+      "steps": {
+        "profile": "Profile",
+        "organization": "Organization",
+        "firstAgent": "First Agent",
+        "complete": "Complete"
+      },
+      "step1": {
+        "title": "Tell us about yourself",
+        "description": "Let's personalize your experience",
+        "labels": {
+          "fullName": "Full Name",
+          "jobTitle": "Job Title"
+        },
+        "placeholders": {
+          "fullName": "John Doe",
+          "jobTitle": "Founder, CEO, Marketing Lead..."
+        }
+      },
+      "step2": {
+        "title": "Your Organization",
+        "description": "Help us understand your business",
+        "labels": {
+          "orgName": "Organization Name",
+          "industry": "Industry"
+        },
+        "placeholders": {
+          "orgName": "Acme Inc.",
+          "industry": "E-commerce, SaaS, Agency..."
+        }
+      },
+      "step3": {
+        "title": "Create Your First Agent",
+        "description": "What do you want to automate?",
+        "labels": {
+          "agentName": "Agent Name",
+          "agentGoal": "What should it do?"
+        },
+        "placeholders": {
+          "agentName": "Lead Generator, Content Writer...",
+          "agentGoal": "Find leads, write blog posts..."
+        },
+        "defaultAgentName": "My First Agent"
+      },
+      "step4": {
+        "title": "You're all set!",
+        "description": "Your workspace is ready. Let's start automating your business with AI agents."
+      },
+      "buttons": {
+        "back": "Back",
+        "continue": "Continue",
+        "getStarted": "Get Started"
+      },
+      "toasts": {
+        "welcome": "Welcome to Soothly AI! 🎉",
+        "saveFailed": "Failed to save progress"
+      }
+    },
+    "library": {
+      "title": "Asset Library",
+      "description": "All your uploaded files, generated reports, and scraped data in one place.",
+      "refresh": "Refresh",
+      "searchPlaceholder": "Search assets...",
+      "filters": {
+        "allTypes": "All Types",
+        "uploads": "Uploads",
+        "reports": "Reports",
+        "exports": "Exports",
+        "generated": "Generated",
+        "scraped": "Scraped"
+      },
+      "assetTypes": {
+        "upload": "Upload",
+        "report": "Report",
+        "export": "Export",
+        "generated": "Generated",
+        "scraped": "Scraped"
+      },
+      "emptyState": {
+        "title": "No assets yet",
+        "description": "Upload files or run agents to populate your library."
+      },
+      "sourceAgent": "From",
+      "agentSuffix": "agent",
+      "download": "Download",
+      "deleteConfirm": "Are you sure you want to delete this asset?",
+      "pagination": {
+        "showing": "Showing",
+        "of": "of",
+        "assets": "assets"
+      }
+    }
+  },
+  "gdpr": {
+    "export": "Export My Data",
+    "exportDescription": "Download all your personal data in JSON format.",
+    "exportSuccess": "Your data export is ready.",
+    "exportButton": "Download Export",
+    "deleteAccount": "Delete Account",
+    "deleteWarning": "This action cannot be undone."
+  },
+  "apiKeys": {
+    "title": "API Keys",
+    "description": "Manage API keys for programmatic access.",
+    "create": "Create API Key",
+    "name": "Key Name",
+    "namePlaceholder": "My Integration",
+    "permissions": "Permissions",
+    "readOnly": "Read Only",
+    "readWrite": "Read & Write",
+    "rateLimit": "Rate Limit",
+    "rateLimitDesc": "Requests per minute",
+    "expiresIn": "Expires In",
+    "never": "Never",
+    "copyWarning": "Copy this key now. You won't be able to see it again.",
+    "revoke": "Revoke Key",
+    "revokeConfirm": "Are you sure you want to revoke this API key?",
+    "lastUsed": "Last Used",
+    "usageCount": "Usage Count"
+  },
+  "webhooks": {
+    "title": "Webhooks",
+    "description": "Receive real-time notifications when events happen.",
+    "create": "Create Webhook",
+    "name": "Webhook Name",
+    "url": "Webhook URL",
+    "urlPlaceholder": "https://your-server.com/webhook",
+    "events": "Events",
+    "secret": "Secret",
+    "secretWarning": "Copy this secret now. You won't be able to see it again.",
+    "test": "Send Test",
+    "testSuccess": "Test webhook sent successfully.",
+    "disable": "Disable",
+    "enable": "Enable"
+  },
+  "coupons": {
+    "title": "Discount Coupons",
+    "code": "Coupon Code",
+    "codePlaceholder": "SAVE20",
+    "apply": "Apply Coupon",
+    "applying": "Applying...",
+    "applied": "Coupon applied!",
+    "invalid": "Invalid coupon code",
+    "expired": "This coupon has expired",
+    "alreadyUsed": "You have already used this coupon",
+    "minPurchase": "Minimum purchase not met",
+    "discount": "Discount",
+    "youSave": "You save"
+  },
+  "agentPlatform": {
+    "workflows": {
+      "title": "Workflows",
+      "subtitle": "Build and manage multi-agent automation pipelines",
+      "create": "Create Workflow",
+      "empty": "No workflows yet",
+      "emptyDesc": "Create your first workflow to automate multi-step processes",
+      "name": "Workflow Name",
+      "namePlaceholder": "e.g., Lead Qualification Pipeline",
+      "description": "Description",
+      "descriptionPlaceholder": "What does this workflow do?",
+      "trigger": "Trigger Type",
+      "triggerManual": "Manual",
+      "triggerSchedule": "Scheduled",
+      "triggerWebhook": "Webhook",
+      "triggerEvent": "Event-driven",
+      "statusTitle": "Status",
+      "status": {
+        "draft": "Draft",
+        "active": "Active",
+        "paused": "Paused",
+        "archived": "Archived"
+      },
+      "run": {
+        "start": "Run Workflow",
+        "cancel": "Cancel Run",
+        "running": "Running",
+        "completed": "Completed",
+        "failed": "Failed",
+        "pending": "Pending"
+      },
+      "builder": {
+        "title": "Workflow Builder",
+        "addNode": "Add Step",
+        "agentNode": "Agent Action",
+        "conditionNode": "Condition",
+        "delayNode": "Delay",
+        "reviewNode": "Human Review",
+        "save": "Save Workflow",
+        "publish": "Publish",
+        "test": "Test Run"
+      },
+      "toasts": {
+        "created": "Workflow created successfully",
+        "updated": "Workflow updated",
+        "deleted": "Workflow deleted",
+        "started": "Workflow run started",
+        "error": "Failed to save workflow"
+      }
+    },
+    "approvals": {
+      "title": "Approval Queue",
+      "subtitle": "Review and approve pending agent actions",
+      "empty": "No pending approvals",
+      "emptyDesc": "Agent actions requiring approval will appear here",
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "expired": "Expired",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approving": "Approving...",
+      "rejecting": "Rejecting...",
+      "comment": "Add a comment (optional)",
+      "commentPlaceholder": "Reason for decision...",
+      "requestedBy": "Requested by",
+      "expiresIn": "Expires in",
+      "riskLevel": {
+        "low": "Low Risk",
+        "medium": "Medium Risk",
+        "high": "High Risk",
+        "critical": "Critical"
+      },
+      "toasts": {
+        "approved": "Action approved",
+        "rejected": "Action rejected",
+        "error": "Failed to process approval"
+      }
+    },
+    "traces": {
+      "title": "Execution Traces",
+      "subtitle": "Monitor agent activity, performance, and costs",
+      "empty": "No traces yet",
+      "emptyDesc": "Agent execution traces will appear here",
+      "traceId": "Trace ID",
+      "agent": "Agent",
+      "action": "Action",
+      "status": "Status",
+      "duration": "Duration",
+      "tokens": "Tokens",
+      "cost": "Cost",
+      "filters": {
+        "allAgents": "All Agents",
+        "allStatus": "All Status",
+        "dateRange": "Date Range"
+      },
+      "statusState": {
+        "running": "Running",
+        "success": "Success",
+        "error": "Error"
+      },
+      "stats": {
+        "title": "Statistics",
+        "totalTraces": "Total Traces",
+        "totalTokens": "Total Tokens",
+        "totalCost": "Total Cost",
+        "avgDuration": "Avg Duration",
+        "errorRate": "Error Rate"
+      }
+    },
+    "guardrails": {
+      "title": "Guardrails",
+      "subtitle": "Configure safety policies for agent behavior",
+      "empty": "No guardrail policies",
+      "emptyDesc": "Create policies to control agent actions",
+      "create": "Create Policy",
+      "name": "Policy Name",
+      "namePlaceholder": "e.g., Cost Limit Policy",
+      "description": "Description",
+      "enabled": "Enabled",
+      "disabled": "Disabled",
+      "priority": "Priority",
+      "appliesTo": "Applies To",
+      "allAgents": "All Agents",
+      "allActions": "All Actions",
+      "rules": "Rules",
+      "addRule": "Add Rule",
+      "ruleTypes": {
+        "costCap": "Cost Cap",
+        "actionLimit": "Action Limit",
+        "piiDetection": "PII Detection",
+        "contentPolicy": "Content Policy",
+        "inputValidation": "Input Validation",
+        "outputFilter": "Output Filter"
+      },
+      "actions": {
+        "block": "Block",
+        "warn": "Warn",
+        "requireApproval": "Require Approval",
+        "log": "Log Only"
+      },
+      "violations": {
+        "title": "Violations",
+        "empty": "No violations recorded",
+        "policy": "Policy",
+        "rule": "Rule",
+        "action": "Action Taken",
+        "timestamp": "Timestamp"
+      },
+      "toasts": {
+        "created": "Policy created",
+        "updated": "Policy updated",
+        "deleted": "Policy deleted",
+        "error": "Failed to save policy"
+      }
+    },
+    "common": {
+      "viewDetails": "View Details",
+      "edit": "Edit",
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "loading": "Loading...",
+      "noData": "No data available"
+    }
+  },
+  "affiliate": {
+    "title": "Affiliate Program",
+    "subtitle": "Earn commissions by referring customers to Soothly AI",
+    "linkCopied": "Referral link copied!",
+    "pendingApproval": "Your affiliate application is pending approval. You'll be notified once approved.",
+    "requestPayout": "Request Payout",
+    "commissionRate": "Commission rate",
+    "stats": {
+      "referrals": "Total Referrals",
+      "conversions": "Conversions",
+      "earned": "Total Earned",
+      "pending": "Pending Balance"
+    },
+    "referralLink": {
+      "title": "Your Referral Link",
+      "description": "Share this link to earn commissions on referrals"
+    },
+    "tabs": {
+      "referrals": "Referrals",
+      "payouts": "Payouts"
+    },
+    "referrals": {
+      "title": "Recent Referrals",
+      "date": "Date",
+      "status": "Status",
+      "page": "Landing Page",
+      "empty": "No referrals yet"
+    },
+    "payouts": {
+      "title": "Payout History",
+      "date": "Date",
+      "amount": "Amount",
+      "method": "Method",
+      "status": "Status",
+      "empty": "No payouts yet"
+    },
+    "notAffiliate": {
+      "title": "Not an Affiliate Yet",
+      "description": "Join our affiliate program to earn commissions by referring customers.",
+      "cta": "Apply Now"
+    },
+    "apply": {
+      "title": "Join Our Affiliate Program",
+      "subtitle": "Partner with us and earn commissions on every referral",
+      "alreadyApplied": "You have already applied",
+      "success": "Application submitted successfully!",
+      "error": "Failed to submit application",
+      "benefits": {
+        "commission": {
+          "title": "20% Commission",
+          "description": "On every successful referral"
+        },
+        "tracking": {
+          "title": "Real-time Tracking",
+          "description": "Monitor your referrals live"
+        },
+        "payouts": {
+          "title": "Fast Payouts",
+          "description": "Weekly payouts via PayPal"
+        }
+      },
+      "form": {
+        "title": "Application Form",
+        "description": "Fill out the form below to apply for our affiliate program",
+        "paymentMethod": "Preferred Payment Method",
+        "paypalEmail": "PayPal Email",
+        "termsLabel": "I agree to the affiliate program terms and conditions",
+        "submit": "Submit Application"
+      }
+    },
+    "errors": {
+      "loadFailed": "Failed to load affiliate data",
+      "minPayout": "Minimum payout is $50",
+      "payoutFailed": "Failed to request payout"
+    }
+  }
+}

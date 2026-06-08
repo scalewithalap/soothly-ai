@@ -1,11 +1,11 @@
 /**
- * Zero Headache Embeddable Widget
+ * Soothly AI Embeddable Widget
  *
  * Per connection-architecture.md - Layer 2: Authenticated Widget + Remote Functions
  *
  * Usage:
  * <script
- *   src="https://zeroheadache.co/widget.js"
+ *   src="https://soothly.ai/widget.js"
  *   data-org-id="your-org-id"
  *   data-user-id="user_123"
  *   data-signature="HMAC_SHA256_hash"
@@ -24,7 +24,7 @@
   "use strict";
 
   // Configuration
-  const API_BASE = window.ZH_API_BASE || "https://api.zeroheadache.co";
+  const API_BASE = window.ZH_API_BASE || "https://api.soothly.ai";
 
   // Get script attributes
   const script = document.currentScript;

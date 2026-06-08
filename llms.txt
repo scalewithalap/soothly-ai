@@ -1,14 +1,14 @@
-# Zero Headache - AI Context
+# Soothly AI - AI Context
 
 > This file provides context for AI assistants working on this codebase.
 > Last updated: 2026-01-23
 
 ## 1. The Mission
 
-Zero Headache is an "Autonomous Revenue Platform" - not a CRUD app.
+Soothly AI is an "Autonomous Revenue Platform" - not a CRUD app.
 
 **Core Promise:** 8 AI Agents working 24/7 to automate revenue operations.
-**Philosophy:** Every feature must reduce user friction ("Zero Headache").
+**Philosophy:** Every feature must reduce user friction ("Soothly AI").
 
 ## 2. The Technology Stack
 
