@@ -19,6 +19,8 @@ In the Supabase dashboard → SQL editor, run **in this exact order**:
 - [ ] `supabase/migrations/0002_subscription_plans_seed.sql` — plan catalog for billing UI
 - [ ] `supabase/migrations/0003_agent_config_consolidation.sql` — merges duplicate config tables
 - [ ] `supabase/migrations/0004_vector_search_rpcs.sql` — pgvector + RAG/memory/cache RPCs
+- [ ] `supabase/migrations/0005_agent_work_tables.sql` — prospects, proposals, support_tickets
+- [ ] `supabase/migrations/0006_lifecycle_agent_tables.sql` — onboarding_tasks, competitors + snapshots/changes
 
 Verification queries (all should pass):
 
@@ -30,6 +32,7 @@ SELECT proname FROM pg_proc WHERE proname IN
   ('check_and_increment_usage','get_usage_summary','get_org_usage',
    'search_knowledge_base','match_semantic_cache','search_agent_memories',
    'access_agent_memory','get_trace_tree','get_knowledge_base_stats'); -- expect 9 rows
+SELECT to_regclass('public.support_tickets'), to_regclass('public.competitors'); -- both non-NULL
 ```
 
 ## Step 3 — Create service resources
@@ -76,6 +79,9 @@ POLAR_PRODUCT_SCALE_YEARLY=
 # Upstash (rate limiting)
 UPSTASH_REDIS_REST_URL=
 UPSTASH_REDIS_REST_TOKEN=
+
+# Apify (Lead Gen scraping — Phase 4a+)
+APIFY_API_TOKEN=
 ```
 
 ## Step 5 — Deploy
@@ -96,7 +102,7 @@ UPSTASH_REDIS_REST_TOKEN=
 - [ ] Cancel the sandbox subscription → tier returns to `free`
 - [ ] Inngest dashboard: `onboarding/user.created` event appears after a new signup completes onboarding
 
-## Known deferred items (not blockers for Phases 0–3)
+## Known deferred items
 
-- Phase 4 credentials (when we get there): `APIFY_API_TOKEN` (Lead Gen), AWS SES keys (email/sequences), Plivo (SMS — currently stubbed)
+- Phase 4c credentials: AWS SES keys (email/sequences), Plivo (SMS — currently stubbed)
 - Production Polar org + production Inngest keys land in Phase 6

@@ -4,6 +4,7 @@ import { inngest } from "@/inngest/client";
 import { INTEL_EVENTS } from "@/inngest/events";
 import { apiSuccess, withErrorHandler, validateBody } from "@/lib/validation";
 import { AppError, ErrorCodes } from "@/lib/errors";
+import { requireAgentQuota, deductAgentUsage } from "@/lib/usage";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 const addCompetitorSchema = z.object({
@@ -104,7 +105,13 @@ export const POST = withErrorHandler(async (request: Request) => {
   // Extract name from URL if not provided
   const name = parsed.name || new URL(parsed.url).hostname.replace("www.", "");
 
+  // Quota: competitors tier limit caps how many competitors can be added
+  // per billing period (1 free / 3 launch / 15 growth / 50 scale).
+  // Pre-check here; deduction happens after a successful insert below.
+  await requireAgentQuota(userData.org_id, "competitor_intel");
+
   // Insert competitor
+
   const { data: competitor, error } = await supabase
     .from("competitors")
     .insert({
@@ -125,6 +132,9 @@ export const POST = withErrorHandler(async (request: Request) => {
       500,
     );
   }
+
+  // Deduct one competitors unit for the successful add (success-based).
+  await deductAgentUsage(userData.org_id, "competitor_intel", 1);
 
   // Trigger initial scan
   await inngest.send({

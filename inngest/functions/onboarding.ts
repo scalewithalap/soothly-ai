@@ -17,6 +17,7 @@
  */
 
 import { inngest } from "@/inngest/client";
+import { deductAgentUsage } from "@/lib/usage";
 import { ONBOARDING_EVENTS } from "@/inngest/events";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import { parseAgentEventData } from "@/inngest/utils";
@@ -175,6 +176,11 @@ export const handleUserCreated = inngest.createFunction(
       await supabase.from("onboarding_tasks").insert(taskRecords);
 
       return personalizedTasks;
+    });
+
+    // Success-based billing: one onboarding_users unit per user activated.
+    await step.run("deduct-usage", async () => {
+      return deductAgentUsage(orgId, "onboarding", 1);
     });
 
     // Step 3: Update user with onboarding status

@@ -18,6 +18,7 @@
  */
 
 import { inngest } from "@/inngest/client";
+import { deductAgentUsage } from "@/lib/usage";
 import { SUPPORT_EVENTS } from "@/inngest/events";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import { getGemini } from "@/lib/ai";
@@ -157,6 +158,9 @@ export const handleTicketCreated = inngest.createFunction(
 
     if (cachedResponse) {
       // Use cached response
+      await step.run("deduct-usage-cached", async () => {
+        return deductAgentUsage(orgId, "customer_success", 1);
+      });
       await step.run("save-cached-response", async () => {
         const supabase = getUntypedClient();
         await supabase
@@ -184,11 +188,26 @@ export const handleTicketCreated = inngest.createFunction(
       const supabase = getUntypedClient();
 
       // Search knowledge base for relevant docs
-      const { data: docs } = await supabase
-        .from("knowledge_base")
-        .select("title, content")
-        .textSearch("content", question.split(" ").slice(0, 5).join(" | "))
-        .limit(5);
+      // Semantic RAG via the shared 768-dim embedding service + pgvector RPC
+      // (was: full-text search against a "knowledge_base" table that doesn't
+      // exist — the real table is knowledge_base_documents, queried through
+      // search_knowledge_base in migration 0004).
+      let docs: Array<{ title: string; content: string }> = [];
+      try {
+        const { generateEmbedding, formatVectorForDB } = await import(
+          "@/lib/ai/embeddings"
+        );
+        const queryEmbedding = await generateEmbedding(question);
+        const { data: matches } = await supabase.rpc("search_knowledge_base", {
+          p_org_id: orgId,
+          p_query_embedding: formatVectorForDB(queryEmbedding),
+          p_match_threshold: 0.65,
+          p_match_count: 5,
+        });
+        docs = (matches as Array<{ title: string; content: string }>) ?? [];
+      } catch (ragError) {
+        console.error("KB semantic search failed (continuing without docs):", ragError);
+      }
 
       // Search past resolved tickets for similar questions
       const { data: pastTickets } = await supabase
@@ -201,7 +220,7 @@ export const handleTicketCreated = inngest.createFunction(
         .limit(3);
 
       return {
-        docs: docs?.map((d) => `[${d.title}]: ${d.content}`) || [],
+        docs: docs.map((d) => `[${d.title}]: ${d.content}`),
         pastTickets:
           pastTickets?.map((t) => ({ q: t.question, a: t.response })) || [],
       };
@@ -356,6 +375,11 @@ Return JSON:
     }
 
     // Step 8: Save response and resolve ticket
+    // Success-based billing: one support_messages unit per handled ticket.
+    await step.run("deduct-usage", async () => {
+      return deductAgentUsage(orgId, "customer_success", 1);
+    });
+
     await step.run("save-response", async () => {
       const supabase = getUntypedClient();
       await supabase

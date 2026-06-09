@@ -96,7 +96,19 @@ Remaining Phase 1 scope (next session): auth flow verification against hosted Su
 3. Smoke: create campaign on free tier → 11th lead save logs over-limit warning; create 2nd brief on free tier → 429 with upgrade message
 
 ### Batch B — Lifecycle (Onboarding, Customer Success, Competitor Intel)
-**Status:** ⚪ Not started
+**Status:** 🟡 Code complete 2026-06-10; owner applies migration 0006
+
+| Date | Change | Details |
+|---|---|---|
+| 2026-06-10 | Support front door | NOTHING emitted support/ticket.created — Customer Success was unreachable. NEW POST/GET /api/support/tickets: widget bearer-token auth (widget_auth_sessions) or platform session, quota pre-check, ticket insert, event dispatch (ADR-009) |
+| 2026-06-10 | RAG step fixed | customer_success queried nonexistent knowledge_base table via textSearch; now uses shared embeddings + search_knowledge_base pgvector RPC with graceful degradation |
+| 2026-06-10 | Lifecycle tables | migrations/0006: onboarding_tasks, competitors, competitor_snapshots, competitor_changes (all phantom) with org-scoped RLS |
+| 2026-06-10 | Quota wiring | customer_success: 1/handled ticket (cached + full paths); onboarding: 1/activated user; competitor_intel: pre-check + deduct at add (scans of existing competitors not re-billed) |
+| 2026-06-10 | Audit notes | Onboarding flow verified: user.created → role analysis → personalized checklist → welcome → 1h/24h nudges (durable sleeps) → progress checks. Intel cron: daily 8am → per-org scan → fetch pages → hash diff → AI change analysis → snapshots/changes → alerts. Both sound |
+
+### Owner actions needed to activate
+1. Run migration 0006 (after 0001-0005)
+2. Smoke: POST /api/support/tickets with a question → ticket resolves or escalates; add competitor on free tier → 2nd add returns 429
 
 ### Batch C — Revenue Ops (Revenue Recovery, Partnership, Sequences)
 **Status:** ⚪ Not started
