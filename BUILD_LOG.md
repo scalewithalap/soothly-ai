@@ -30,7 +30,17 @@
 ---
 
 ## Phase 1 — Foundation
-**Status:** ⚪ Not started — schema → hosted Supabase, plan seeds, auth flows, Upstash rate limiting, first Vercel preview.
+**Status:** 🟡 Code complete 2026-06-10; owner applies migrations + env
+
+| Date | Change | Details |
+|---|---|---|
+| 2026-06-10 | Distributed rate limiting | proxy.ts now uses Upstash Redis REST (fixed-window INCR+PEXPIRE, 800ms timeout) when UPSTASH_REDIS_REST_* set; in-memory Map demoted to fallback — fixes per-instance limiting on serverless |
+| 2026-06-10 | Agent config consolidation | migrations/0003: agent_configs merged into agent_config (settings→config, enabled→is_active), unique (org_id, agent_type) index; Agent base class repointed; no-row now defaults to enabled (quota still gates) |
+
+### Owner actions needed to activate
+1. Run migration 0003 after 0001/0002
+2. Set UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN in Vercel env (else in-memory fallback)
+Remaining Phase 1 scope (next session): auth flow verification against hosted Supabase, onboarding flow check, first Vercel preview.
 
 ## Phase 2 — Billing Core (code complete — pulled forward with Phase 1 foundations)
 **Status:** 🟡 Code landed 2026-06-10; owner to apply migrations + configure Polar products

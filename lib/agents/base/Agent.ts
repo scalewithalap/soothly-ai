@@ -154,35 +154,42 @@ export abstract class BaseAgent {
   abstract cleanup(): Promise<void>;
 
   /**
-   * Get the agent's configuration from the database
+   * Get the agent's configuration from the database.
+   * Canonical table: agent_config (agent_configs is consolidated into it —
+   * migration 0003; same table the toggle/stats routes already use).
    */
   protected async getConfig(): Promise<Record<string, unknown>> {
     const { data } = (await this.db
-      .from("agent_configs")
-      .select("settings, enabled")
+      .from("agent_config")
+      .select("config, is_active")
       .eq("org_id", this.orgId)
       .eq("agent_type", this.name)
       .single()) as {
-      data: { settings: Record<string, unknown>; enabled: boolean } | null;
+      data: {
+        config: Record<string, unknown> | null;
+        is_active: boolean | null;
+      } | null;
     };
 
     if (!data) return {};
-    return data.settings || {};
+    return data.config || {};
   }
 
   /**
-   * Check if the agent is enabled for this organization
+   * Check if the agent is enabled for this organization.
+   * No row = enabled by default (tier quota limits still gate execution);
+   * an explicit is_active=false row disables the agent.
    */
   protected async isEnabled(): Promise<boolean> {
     const { data } = (await this.db
-      .from("agent_configs")
-      .select("enabled")
+      .from("agent_config")
+      .select("is_active")
       .eq("org_id", this.orgId)
       .eq("agent_type", this.name)
-      .single()) as { data: { enabled: boolean } | null };
+      .single()) as { data: { is_active: boolean | null } | null };
 
-    if (!data) return false;
-    return data.enabled || false;
+    if (!data) return true;
+    return data.is_active !== false;
   }
 
   /**
