@@ -4,3 +4,4 @@
  */
 
 export { deductAgentUsage, checkAgentUsage, getUsageSummary } from "./deduct";
+export { requireAgentQuota } from "./guard";

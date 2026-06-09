@@ -6,6 +6,7 @@
 import { inngest } from "@/inngest/client";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import { generateWithModel, getGemini } from "@/lib/ai";
+import { deductAgentUsage } from "@/lib/usage";
 import {
   notifyAgentCompletion,
   getOrgOwnerNotificationPreferences,
@@ -434,6 +435,13 @@ Return JSON:
 
       return data;
     });
+
+    // Step 4.5: Success-based billing — one seo_articles unit per saved article.
+    if (savedArticle) {
+      await step.run("deduct-usage", async () => {
+        return deductAgentUsage(orgId, "seo", 1);
+      });
+    }
 
     // Step 5: Update brief status
     await step.run("update-brief-status", async () => {

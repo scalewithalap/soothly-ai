@@ -4,6 +4,7 @@ import { inngest } from "@/inngest/client";
 import { LEAD_EVENTS } from "@/inngest/events";
 import { apiSuccess, withErrorHandler, validateBody } from "@/lib/validation";
 import { AppError, ErrorCodes } from "@/lib/errors";
+import { requireAgentQuota } from "@/lib/usage";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 const createCampaignSchema = z.object({
@@ -83,6 +84,10 @@ export const POST = withErrorHandler(async (request: Request) => {
   if (userError || !userData?.org_id) {
     throw new AppError(ErrorCodes.NOT_FOUND, "Organization not found", 404);
   }
+
+  // Pre-check quota before creating + dispatching (success-based billing:
+  // actual deduction happens in the workflow per lead saved).
+  await requireAgentQuota(userData.org_id, "lead_gen");
 
   const { data: campaign, error } = await supabase
     .from("lead_campaigns")

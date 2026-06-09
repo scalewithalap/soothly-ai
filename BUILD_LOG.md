@@ -79,7 +79,27 @@ Remaining Phase 1 scope (next session): auth flow verification against hosted Su
 3. In Inngest Cloud, sync the app at {app-url}/api/inngest
 
 ## Phase 4 — All 8 Agents
-**Status:** ⚪ Not started — Batch A: Lead Gen, SEO, Proposal. Batch B: Onboarding, Customer Success, Competitor Intel. Batch C: Revenue Recovery, Partnership, Sequences.
+
+### Batch A — Outbound (Lead Gen, SEO, Proposal)
+**Status:** 🟡 Code complete 2026-06-10; owner applies migration 0005 + APIFY_API_TOKEN
+
+| Date | Change | Details |
+|---|---|---|
+| 2026-06-10 | Missing work tables | migrations/0005: prospects, proposals, support_tickets (Proposal + Customer Success agents wrote to tables that didn't exist) — org-scoped RLS policies included |
+| 2026-06-10 | Quota enforcement wired | ZERO usage calls existed across all agents. Now: requireAgentQuota() pre-check in trigger routes (campaigns, briefs, proposals) + deductAgentUsage() on completion in workflows (lead_gen per-lead-saved, seo per-article, proposal per-proposal) per ADR-008 |
+| 2026-06-10 | Proposal PDF path | jsPDF was a dependency but never imported. NEW GET /api/agents/proposals/[id]/pdf renders stored proposal JSON (exec summary/challenge/solution/outcomes/whyUs/nextSteps) to A4 PDF on demand |
+| 2026-06-10 | Audit notes | Lead Gen flow verified: Apify scrape (LinkedIn/GMaps) → AI score (model-selectable) → HITL gate (smart mode) → upsert contacts → lead_contacts link → notify → sequences handoff. SEO flow: brief → keywords → outline → generate → reflect → save draft. Both sound; failures fall back gracefully (empty scrape array, default scores) |
+
+### Owner actions needed to activate
+1. Run migration 0005 (after 0001-0004)
+2. Set APIFY_API_TOKEN (Lead Gen scraping; LinkedIn + Google Maps actors)
+3. Smoke: create campaign on free tier → 11th lead save logs over-limit warning; create 2nd brief on free tier → 429 with upgrade message
+
+### Batch B — Lifecycle (Onboarding, Customer Success, Competitor Intel)
+**Status:** ⚪ Not started
+
+### Batch C — Revenue Ops (Revenue Recovery, Partnership, Sequences)
+**Status:** ⚪ Not started
 
 ## Phase 5 — Superagent
 **Status:** ⚪ Not started — campaign plan/execute/cancel chaining real agents, paid gating, success-based deduction.

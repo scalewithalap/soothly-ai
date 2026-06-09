@@ -4,6 +4,7 @@ import { inngest } from "@/inngest/client";
 import { SEO_EVENTS } from "@/inngest/events";
 import { apiSuccess, withErrorHandler, validateBody } from "@/lib/validation";
 import { AppError, ErrorCodes } from "@/lib/errors";
+import { requireAgentQuota } from "@/lib/usage";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 // Supported AI models for article generation
@@ -94,6 +95,9 @@ export const POST = withErrorHandler(async (request: Request) => {
   if (userError || !userData?.org_id) {
     throw new AppError(ErrorCodes.NOT_FOUND, "Organization not found", 404);
   }
+
+  // Pre-check quota before creating + dispatching (deduction on completion).
+  await requireAgentQuota(userData.org_id, "seo");
 
   const { data: brief, error } = await supabase
     .from("content_briefs")

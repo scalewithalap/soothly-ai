@@ -22,6 +22,7 @@ import {
   requiresApproval,
   requestApprovalAndWait,
 } from "@/inngest/utils";
+import { deductAgentUsage } from "@/lib/usage";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 // Type helper to work around typed client limitations
@@ -303,6 +304,14 @@ ${JSON.stringify(scrapedLeads.slice(0, 20).map((l, i) => ({ index: i, name: l.na
         }
       }
     });
+
+    // Step 7.5: Success-based billing — deduct leads_scraped quota only for
+    // leads actually saved (per SKILL.md: deduct on completed work only).
+    if (savedCount > 0) {
+      await step.run("deduct-usage", async () => {
+        return deductAgentUsage(orgId, "lead_gen", savedCount);
+      });
+    }
 
     // Step 8: Emit campaign completed event for sequence integration
     await step.sendEvent("emit-campaign-completed", {

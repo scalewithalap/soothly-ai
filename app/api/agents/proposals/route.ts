@@ -3,6 +3,7 @@ import { z } from "zod";
 import { inngest } from "@/inngest/client";
 import { apiSuccess, withErrorHandler, validateBody } from "@/lib/validation";
 import { AppError, ErrorCodes } from "@/lib/errors";
+import { requireAgentQuota } from "@/lib/usage";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 const analyzeSchema = z.object({
@@ -97,6 +98,9 @@ export const POST = withErrorHandler(async (request: Request) => {
   if (!userData?.org_id) {
     throw new AppError(ErrorCodes.NOT_FOUND, "Organization not found", 404);
   }
+
+  // Pre-check quota before dispatch (deduction happens on completion).
+  await requireAgentQuota(userData.org_id, "proposal");
 
   // Trigger full proposal workflow
   await inngest.send({

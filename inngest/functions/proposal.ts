@@ -16,6 +16,7 @@
  */
 
 import { inngest } from "@/inngest/client";
+import { deductAgentUsage } from "@/lib/usage";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import { getGemini } from "@/lib/ai";
 import {
@@ -267,6 +268,11 @@ Return JSON:
 
       if (error) throw new Error(`Failed to save proposal: ${error.message}`);
       return data;
+    });
+
+    // Step 6.5: Success-based billing — one proposals unit per saved proposal.
+    await step.run("deduct-usage", async () => {
+      return deductAgentUsage(orgId, "proposal", 1);
     });
 
     // Step 7: Update prospect status
