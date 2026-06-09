@@ -4,6 +4,7 @@
  */
 
 import { inngest } from "@/inngest/client";
+import { deductAgentUsage } from "@/lib/usage";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import { discoverPartnersOnLinkedIn, getCompanyDetails } from "@/lib/apify";
 import { getGemini } from "@/lib/ai";
@@ -139,6 +140,13 @@ export const discoverPartners = inngest.createFunction(
 
       return count;
     });
+
+    // Success-based billing: one partner_contacts unit per partner saved.
+    if (createdCount > 0) {
+      await step.run("deduct-usage", async () => {
+        return deductAgentUsage(orgId, "partnership", createdCount);
+      });
+    }
 
     // Step 3: Log activity
     await step.run("log-activity", async () => {

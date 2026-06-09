@@ -19,6 +19,7 @@
  */
 
 import { inngest } from "@/inngest/client";
+import { deductAgentUsage } from "@/lib/usage";
 import { RECOVERY_EVENTS } from "@/inngest/events";
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import {
@@ -268,6 +269,12 @@ The Soothly AI Team`;
         .from("payment_recoveries")
         .update({ status: "link_sent", notified_at: new Date().toISOString() })
         .eq("id", recovery?.id);
+    });
+
+    // Success-based billing: one recovery_attempts unit per dunning
+    // notification actually sent (not per inbound failure event).
+    await step.run("deduct-usage", async () => {
+      return deductAgentUsage(orgId, "revenue_recovery", 1);
     });
 
     // Step 8: Send SMS if available and opted-in

@@ -4,6 +4,7 @@ import { inngest } from "@/inngest/client";
 import { PARTNERSHIP_EVENTS } from "@/inngest/events";
 import { apiSuccess, withErrorHandler, validateBody } from "@/lib/validation";
 import { AppError, ErrorCodes } from "@/lib/errors";
+import { requireAgentQuota } from "@/lib/usage";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 const discoverPartnersSchema = z.object({
@@ -84,6 +85,9 @@ export const POST = withErrorHandler(async (request: Request) => {
   if (userError || !userData?.org_id) {
     throw new AppError(ErrorCodes.NOT_FOUND, "Organization not found", 404);
   }
+
+  // Pre-check partner_contacts quota before dispatch (deduct on completion).
+  await requireAgentQuota(userData.org_id, "partnership");
 
   // Trigger Inngest event for background partner discovery
   await inngest.send({

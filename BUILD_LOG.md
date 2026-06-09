@@ -111,7 +111,20 @@ Remaining Phase 1 scope (next session): auth flow verification against hosted Su
 2. Smoke: POST /api/support/tickets with a question → ticket resolves or escalates; add competitor on free tier → 2nd add returns 429
 
 ### Batch C — Revenue Ops (Revenue Recovery, Partnership, Sequences)
-**Status:** ⚪ Not started
+**Status:** 🟡 Code complete 2026-06-10; owner applies migration 0007 + SES creds
+
+| Date | Change | Details |
+|---|---|---|
+| 2026-06-10 | Webhook receiver implemented | createWebhookConnection() issued URLs under /api/webhooks/receive/... but NO route existed — Revenue Recovery was unreachable from customer Stripe events. NEW dynamic route: HMAC verification per provider (Stripe/Shopify/custom), event logging, subscription filtering, mapping to recovery/payment.failed + recovery/card.updated (ADR-010) |
+| 2026-06-10 | Crash typo fixed | webhook-receiver read NEXT_PUBLIC_SUPAAB_URL (typo) — every endpoint lookup would have thrown |
+| 2026-06-10 | payment_recoveries table | migrations/0007: the table the entire recovery workflow reads/writes never existed; created with org RLS + notified_at/next_retry_at |
+| 2026-06-10 | Quota wiring | revenue_recovery: 1 unit per dunning email actually sent (not per inbound event); partnership: pre-check at POST /api/agents/partners + deduct per partner saved |
+| 2026-06-10 | Audit notes | Sequences engine verified sound: enrollment → 5-min cron scheduler → personalize → SES send → bounce/complaint webhook (app/api/webhooks/ses) → reply detection. Billed via parent flows, not separately. Recovery SMS remains stubbed (log-sms-intent) pending Plivo creds |
+
+### Owner actions needed to activate
+1. Run migration 0007 (after 0001-0006)
+2. Set AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_REGION + verify SES sender domain; SES_FROM_EMAIL optional (defaults noreply@soothly.ai)
+3. Connect a customer Stripe (test mode) via the connections UI → paste issued URL into Stripe webhooks → fire invoice.payment_failed test event → recovery email sends, payment_recoveries row created, 1 recovery_attempts deducted
 
 ## Phase 5 — Superagent
 **Status:** ⚪ Not started — campaign plan/execute/cancel chaining real agents, paid gating, success-based deduction.
