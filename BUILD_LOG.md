@@ -63,7 +63,20 @@ Remaining Phase 1 scope (next session): auth flow verification against hosted Su
 4. Point Polar webhook at {app-url}/api/polar/webhook
 
 ## Phase 3 — Agent Infrastructure
-**Status:** ⚪ Not started — Inngest Cloud, Gemini provider, traces/memory, HITL approvals, RAG pipeline.
+**Status:** 🟡 Code complete 2026-06-10; owner applies migration 0004 + env
+
+| Date | Change | Details |
+|---|---|---|
+| 2026-06-10 | HITL loop closed | PATCH /api/approvals/[id] now emits approval/resolved after DB resolve — workflows paused on step.waitForEvent resume immediately instead of hanging to the 7d timeout (ADR-007) |
+| 2026-06-10 | Inngest app id fixed | zero-headache → soothly-ai (env-overridable via INNGEST_APP_ID); signing-key handling documented in client |
+| 2026-06-10 | Onboarding trigger wired | onboarding/user.created (the agent's documented trigger, never emitted anywhere) now fires from onboarding completion with org context |
+| 2026-06-10 | Unified embeddings | NEW lib/ai/embeddings.ts — Gemini text-embedding-004, 768-dim, single provider; KnowledgeBase (was OpenAI 1536), VectorStore (was OpenAI 1536), SemanticCache (was Gemini w/ no RPC) all delegate to it (ADR-006) |
+| 2026-06-10 | Vector layer made real | migrations/0004: pgvector extension, embedding columns text→vector(768), HNSW indexes, and the 6 missing RPCs implemented: search_knowledge_base, get_knowledge_base_stats, match_semantic_cache, search_agent_memories, access_agent_memory, get_trace_tree |
+
+### Owner actions needed to activate
+1. Run migration 0004 (after 0001-0003) — requires pgvector (preinstalled on Supabase)
+2. Set INNGEST_EVENT_KEY + INNGEST_SIGNING_KEY (Inngest Cloud app: soothly-ai), GOOGLE_AI_API_KEY
+3. In Inngest Cloud, sync the app at {app-url}/api/inngest
 
 ## Phase 4 — All 8 Agents
 **Status:** ⚪ Not started — Batch A: Lead Gen, SEO, Proposal. Batch B: Onboarding, Customer Success, Competitor Intel. Batch C: Revenue Recovery, Partnership, Sequences.

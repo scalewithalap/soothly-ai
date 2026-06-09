@@ -5,7 +5,7 @@
 
 import { createClient } from "@supabase/supabase-js";
 import type { Database, Json } from "@/types/database";
-import { getGemini } from "@/lib/ai";
+import { tryGenerateEmbedding } from "@/lib/ai/embeddings";
 import crypto from "crypto";
 
 // Typed client for standard operations
@@ -226,14 +226,9 @@ export class SemanticCache {
    * Generate embedding using Gemini
    */
   private async generateEmbedding(text: string): Promise<number[] | null> {
-    try {
-      const gemini = getGemini();
-      const result = await gemini.embed(text);
-      return result?.embedding || null;
-    } catch (error) {
-      console.error("Embedding generation error:", error);
-      return null;
-    }
+    // Shared embedding service (ADR-006) — same 768-dim vectors as
+    // KnowledgeBase and AgentMemory, so cache hits are actually possible.
+    return tryGenerateEmbedding(text);
   }
 
   /**

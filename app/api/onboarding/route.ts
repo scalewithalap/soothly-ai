@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth, isErrorResponse } from "@/lib/auth";
 import { createClient } from "@supabase/supabase-js";
+import { inngest } from "@/inngest/client";
 
 export async function PATCH(request: NextRequest) {
   const authResult = await requireAuth();
@@ -51,6 +52,34 @@ export async function PATCH(request: NextRequest) {
             updated_at: new Date().toISOString(),
           })
           .eq("id", user.org_id);
+      }
+    }
+
+    // Hand off to the Onboarding agent when product onboarding completes.
+    // This was the agent's documented trigger (auth.user.created) but nothing
+    // ever emitted it — fired here, where we reliably know org context exists.
+    if (completed) {
+      try {
+        const { data: user } = await supabase
+          .from("users")
+          .select("org_id, email, full_name")
+          .eq("id", authResult.id)
+          .single();
+        if (user?.org_id) {
+          await inngest.send({
+            name: "onboarding/user.created",
+            data: {
+              orgId: user.org_id,
+              userId: authResult.id,
+              email: user.email,
+              fullName: user.full_name ?? null,
+              source: "product_onboarding",
+            },
+          });
+        }
+      } catch (eventError) {
+        // Non-fatal: onboarding completion must not fail on event emit.
+        console.error("onboarding/user.created emit failed:", eventError);
       }
     }
 

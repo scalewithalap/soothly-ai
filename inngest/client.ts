@@ -6,8 +6,13 @@
 import { Inngest } from "inngest";
 
 export const inngest = new Inngest({
-  id: "zero-headache",
+  // App ID must match the app configured in Inngest Cloud.
+  // Override via env so staging/prod can use distinct apps without a deploy.
+  // (Renamed from legacy "zero-headache" pre-launch — no deployed consumers.)
+  id: process.env.INNGEST_APP_ID || "soothly-ai",
   eventKey: process.env.INNGEST_EVENT_KEY,
+  // The /api/inngest serve() handler reads INNGEST_SIGNING_KEY from env
+  // automatically; the event key above authorizes outbound sends.
 });
 
 /**

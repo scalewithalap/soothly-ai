@@ -8,6 +8,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { ApprovalGate } from "@/lib/agents/hitl";
+import { inngest } from "@/inngest/client";
 
 interface RouteParams {
   params: Promise<{ approvalId: string }>;
@@ -106,6 +107,29 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json(
         { error: "Failed to update approval" },
         { status: 500 },
+      );
+    }
+
+    // CRITICAL: wake the paused Inngest workflow. requestApprovalAndWait()
+    // blocks on step.waitForEvent("approval/resolved", match:"data.approvalId")
+    // — without this emit, approved workflows would hang until the 7d timeout.
+    try {
+      await inngest.send({
+        name: "approval/resolved",
+        data: {
+          approvalId,
+          status: action === "approve" ? "approved" : "rejected",
+          comment: comment ?? null,
+          resolvedBy: user.id,
+          orgId: userData.org_id,
+        },
+      });
+    } catch (eventError) {
+      // DB state is already resolved; surface the event failure loudly so
+      // ops can replay it (Inngest dashboard) instead of silently hanging.
+      console.error(
+        "approval/resolved event emit failed — workflow will not resume until replayed:",
+        eventError,
       );
     }
 

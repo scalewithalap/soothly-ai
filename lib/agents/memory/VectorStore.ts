@@ -6,6 +6,10 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/database";
 import { DEFAULT_EMBEDDING_CONFIG, type EmbeddingConfig } from "./types";
+import {
+  generateEmbedding as sharedGenerateEmbedding,
+  generateEmbeddings as sharedGenerateEmbeddings,
+} from "@/lib/ai/embeddings";
 
 export class VectorStore {
   private db: SupabaseClient<Database>;
@@ -20,98 +24,21 @@ export class VectorStore {
   }
 
   /**
-   * Generate embedding for text content using configured provider
+   * Generate embedding via the shared embedding service (ADR-006:
+   * Gemini text-embedding-004, 768 dims — one provider for all vectors).
    */
   async generateEmbedding(text: string): Promise<number[]> {
-    if (this.config.provider === "openai") {
-      return this.generateOpenAIEmbedding(text);
-    }
-    throw new Error(`Unsupported embedding provider: ${this.config.provider}`);
+    return sharedGenerateEmbedding(text);
   }
 
-  /**
-   * Generate embedding using OpenAI API
-   */
-  private async generateOpenAIEmbedding(text: string): Promise<number[]> {
-    const apiKey = this.config.apiKey || process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      throw new Error("OpenAI API key not configured");
-    }
-
-    const response = await fetch("https://api.openai.com/v1/embeddings", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        input: text,
-        model: this.config.model,
-      }),
-    });
-
-    if (!response.ok) {
-      const error = await response.text();
-      throw new Error(`OpenAI embedding error: ${error}`);
-    }
-
-    const data = await response.json();
-    return data.data[0].embedding;
-  }
 
   /**
-   * Batch generate embeddings for multiple texts
+   * Batch generate embeddings via the shared embedding service.
    */
   async generateEmbeddings(texts: string[]): Promise<number[][]> {
-    if (this.config.provider === "openai") {
-      return this.generateOpenAIEmbeddings(texts);
-    }
-    throw new Error(`Unsupported embedding provider: ${this.config.provider}`);
+    return sharedGenerateEmbeddings(texts);
   }
 
-  /**
-   * Batch generate embeddings using OpenAI API
-   */
-  private async generateOpenAIEmbeddings(texts: string[]): Promise<number[][]> {
-    const apiKey = this.config.apiKey || process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      throw new Error("OpenAI API key not configured");
-    }
-
-    // OpenAI supports batch embeddings up to 2048 inputs
-    const batchSize = 100;
-    const allEmbeddings: number[][] = [];
-
-    for (let i = 0; i < texts.length; i += batchSize) {
-      const batch = texts.slice(i, i + batchSize);
-
-      const response = await fetch("https://api.openai.com/v1/embeddings", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          input: batch,
-          model: this.config.model,
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(`OpenAI embedding error: ${error}`);
-      }
-
-      const data = await response.json();
-      const embeddings = data.data
-        .sort((a: { index: number }, b: { index: number }) => a.index - b.index)
-        .map((d: { embedding: number[] }) => d.embedding);
-
-      allEmbeddings.push(...embeddings);
-    }
-
-    return allEmbeddings;
-  }
 
   /**
    * Compute cosine similarity between two vectors

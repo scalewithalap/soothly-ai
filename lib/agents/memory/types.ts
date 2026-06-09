@@ -87,18 +87,19 @@ export interface MemoryConsolidationResult {
  * Embedding provider configuration
  */
 export interface EmbeddingConfig {
-  provider: "openai" | "local";
+  provider: "gemini" | "openai" | "local";
   model: string;
   dimensions: number;
   apiKey?: string;
 }
 
 /**
- * Default embedding configuration using OpenAI
+ * Default embedding configuration (shared Gemini service — ADR-006)
  */
 export const DEFAULT_EMBEDDING_CONFIG: EmbeddingConfig = {
-  provider: "openai",
-  model: "text-embedding-3-small",
-  dimensions: 1536,
+  // ADR-006: all embeddings via shared Gemini service (lib/ai/embeddings)
+  provider: "gemini",
+  model: "text-embedding-004",
+  dimensions: 768,
 };
 
