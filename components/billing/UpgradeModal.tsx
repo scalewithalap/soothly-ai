@@ -87,7 +87,8 @@ export function UpgradeModal({ open, onClose, feature }: UpgradeModalProps) {
               {t.startingAt || "Starting at"}
             </p>
             <p className="text-2xl font-bold text-gray-900 dark:text-white">
-              $49<span className="text-sm font-normal text-gray-500">/mo</span>
+              $129
+              <span className="text-sm font-normal text-gray-500">/mo</span>
             </p>
           </div>
           <Button onClick={handleUpgrade} className="gap-2">

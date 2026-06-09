@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Soothly AI
 
-## Getting Started
+**Autonomous Revenue Platform** — 8 specialized AI agents + a Superagent orchestrator automating revenue operations 24/7: lead generation, SEO content, partnerships, proposals, competitor intel, payment recovery, onboarding, and customer support.
 
-First, run the development server:
+> 🚧 **MVP build in progress** on the `hyperagent` branch — see [BUILD_LOG.md](BUILD_LOG.md) for current status and [docs/build-plan.md](docs/build-plan.md) for the phase plan.
+
+## Stack
+
+Next.js 16 (App Router) · TypeScript · Supabase (Postgres + RLS + pgvector) · Inngest (durable workflows) · Polar (payments) · Tailwind v4 + shadcn/ui · Gemini/OpenAI/Anthropic via provider factory
+
+Full architecture: [docs/architecture.md](docs/architecture.md) · AI agent context: [llms.txt](llms.txt)
+
+## Getting started
 
 ```bash
+npm install
+cp .env.example .env.local   # fill in credentials (see docs/runbook.md)
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The app expects a Supabase project with `supabase/schema.sql` applied, an Inngest app, and Polar (sandbox) for billing. Setup details: [docs/runbook.md](docs/runbook.md).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Repository map
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Path | What lives there |
+|---|---|
+| `app/(platform)` | Authenticated product: dashboard, agents, leads, content, sequences, superagent, billing, affiliate |
+| `app/agents` | Agent ops console: approvals, guardrails, memory, traces, workflows |
+| `app/api` | Route handlers (~40 groups): polar, webhooks, widget, a2a, inngest, … |
+| `inngest/functions` | One durable workflow per agent |
+| `lib/agents` | Prompts, schemas, memory, HITL, safety per agent |
+| `lib/services`, `lib/usage` | Tier limits + atomic quota enforcement |
+| `supabase/schema.sql` | Database schema (67 tables) |
+| `.agents/skills` | Source-of-truth docs: pricing, agent ecosystem, connections, brand |
+| `docs/` | Build plan, architecture, runbook, decision records |
 
-## Learn More
+## Docs
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [BUILD_LOG.md](BUILD_LOG.md) — chronological build record + phase verification
+- [docs/build-plan.md](docs/build-plan.md) — the 7-phase MVP plan
+- [docs/architecture.md](docs/architecture.md) — system overview
+- [docs/runbook.md](docs/runbook.md) — environments, deploys, webhooks, incidents
+- [docs/decisions.md](docs/decisions.md) — architecture decision records

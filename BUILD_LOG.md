@@ -1,0 +1,65 @@
+# Soothly AI — MVP Build Log
+
+> Chronological record of all work performed on the `hyperagent` branch by the Developer agent.
+> Each phase ends with a verification report. Newest entries first within each phase.
+
+**Mission:** Scaffolded codebase → live production MVP. All 8 agents + Superagent end-to-end, real Polar payments, deployed on Vercel.
+
+**Build plan:** see [docs/build-plan.md](docs/build-plan.md)
+
+---
+
+## Phase 0 — Access & Environment Bootstrap
+
+**Status:** 🟡 In progress
+**Started:** 2026-06-10
+
+| Date | Change | Details |
+|---|---|---|
+| 2026-06-10 | Branch access verified | PAT has admin/push on repo; `hyperagent` branch confirmed (baseline identical to `dev` @ 60de2d5) |
+| 2026-06-10 | Docs scaffolded | Added BUILD_LOG.md, docs/build-plan.md, docs/architecture.md, docs/runbook.md, docs/decisions.md |
+| 2026-06-10 | README replaced | Boilerplate Next.js README → product README with repo map + docs links |
+| 2026-06-10 | Delivery model set | Owner directive: agent writes code only; owner runs env/builds/deploys (sandbox npm install OOM-killed — verification shifts to owner's machine/CI) |
+
+### Phase 0 verification
+- [x] Write access to `hyperagent` branch (PAT: push+admin confirmed)
+- [x] Docs scaffold committed (BUILD_LOG, build-plan, architecture, runbook, decisions)
+- [x] soothly-deploy skill created (git push via API + env checker)
+- [~] Build verification delegated to owner (sandbox lacks memory for npm install)
+
+---
+
+## Phase 1 — Foundation
+**Status:** ⚪ Not started — schema → hosted Supabase, plan seeds, auth flows, Upstash rate limiting, first Vercel preview.
+
+## Phase 2 — Billing Core (code complete — pulled forward with Phase 1 foundations)
+**Status:** 🟡 Code landed 2026-06-10; owner to apply migrations + configure Polar products
+
+| Date | Change | Details |
+|---|---|---|
+| 2026-06-10 | lib/billing/tiers.ts | NEW single source of truth: canonical tiers (free/launch/growth/scale), limits + safety caps per pricing-strategy.md, AGENT_FEATURE_KEY mapping, env-driven Polar product maps, normalizeTier() for legacy names |
+| 2026-06-10 | Polar checkout rewritten | GET query adapter → POST /api/polar/checkout creating sessions server-side with metadata {org_id, tier, interval}; product IDs from POLAR_PRODUCT_* env; POLAR_SERVER decouples billing env from NODE_ENV (ADR-004) |
+| 2026-06-10 | Polar webhook rewritten | org resolution: metadata.org_id first, email fallback; canonical tier names fix the starter/enterprise mismatch; persists polar_customer_id/polar_subscription_id; created/updated/canceled handled; legacy onOrderCreated dropped |
+| 2026-06-10 | Usage RPCs implemented | supabase/migrations/0001_billing_enforcement.sql: check_and_increment_usage (atomic, anchor-aligned periods, safety caps), get_usage_summary, get_org_usage + tier_feature_limits seeds for all 4 tiers × 10 features (ADR-005) |
+| 2026-06-10 | deduct.ts rewritten | Was calling nonexistent RPC against nonexistent wide columns; now uses check_and_increment_usage + shared AGENT_FEATURE_KEY; fails closed; logs overage to activities |
+| 2026-06-10 | usage-limits.ts extended | FEATURE_KEYS += recovery_attempts, superagent_campaigns; agent mapping += revenue_recovery, superagent |
+| 2026-06-10 | subscription_plans seed | supabase/migrations/0002: 4 canonical plans for the billing UI; legacy tier rows deactivated |
+| 2026-06-10 | Billing page wired | Upgrade buttons → POST /api/polar/checkout → hosted checkout redirect; UpgradeModal price corrected to $129 |
+
+### Owner actions needed to activate
+1. Run migrations 0001 + 0002 in Supabase SQL editor (after schema.sql)
+2. Create 6 Polar sandbox products (launch/growth/scale × monthly/yearly) and set POLAR_PRODUCT_* env vars
+3. Set POLAR_ACCESS_TOKEN, POLAR_WEBHOOK_SECRET, POLAR_SERVER=sandbox
+4. Point Polar webhook at {app-url}/api/polar/webhook
+
+## Phase 3 — Agent Infrastructure
+**Status:** ⚪ Not started — Inngest Cloud, Gemini provider, traces/memory, HITL approvals, RAG pipeline.
+
+## Phase 4 — All 8 Agents
+**Status:** ⚪ Not started — Batch A: Lead Gen, SEO, Proposal. Batch B: Onboarding, Customer Success, Competitor Intel. Batch C: Revenue Recovery, Partnership, Sequences.
+
+## Phase 5 — Superagent
+**Status:** ⚪ Not started — campaign plan/execute/cancel chaining real agents, paid gating, success-based deduction.
+
+## Phase 6 — Production Launch
+**Status:** ⚪ Not started — security pass, Polar production, prod Vercel + domain, Inngest prod, smoke tests, runbook.

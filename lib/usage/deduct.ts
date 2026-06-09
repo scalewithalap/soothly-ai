@@ -1,26 +1,45 @@
 /**
  * Agent Usage Deduction Utility
- * Centralized middleware for deducting usage after successful agent runs
+ * Centralized helpers for the success-based billing model.
  *
- * Per SKILL.md: "Usage is deducted ONLY when an agent returns a status: completed result."
+ * Per agents-ecosystem SKILL.md: "Usage is deducted ONLY when an agent
+ * returns a status: completed result."
+ *
+ * Model (aligned with supabase/migrations/0001_billing_enforcement.sql):
+ * - org_usage holds one row per (org, feature_key, period_start)
+ * - tier_feature_limits holds (tier, feature_key, monthly_limit, safety_cap)
+ * - check_and_increment_usage RPC performs the atomic check+increment
+ * - Agent types map to feature keys via AGENT_FEATURE_KEY (lib/billing/tiers)
+ *
+ * Two usage patterns:
+ * 1. PRE-CHECK (cheap, advisory): checkAgentUsage() before starting work, so
+ *    we don't burn AI spend on a run that can't be credited.
+ * 2. DEDUCT (atomic, authoritative): deductAgentUsage() after completion.
+ *    This is the call that actually consumes quota.
  */
 
 import { createSupabaseAdminClient } from "@/lib/supabase/server";
 import type { AgentType } from "@/lib/agents/base/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { AGENT_FEATURE_KEY } from "@/lib/billing/tiers";
 
-// Get untyped client for flexibility
 function getUntypedClient() {
   return createSupabaseAdminClient() as unknown as SupabaseClient;
 }
 
+interface UsageRpcResult {
+  allowed: boolean;
+  error?: string;
+  message?: string;
+  current_count: number;
+  limit: number;
+  remaining: number;
+  period_end?: string;
+}
+
 /**
- * Deduct usage for an agent action after successful completion
- *
- * @param orgId - Organization ID
- * @param agentType - Type of agent that completed
- * @param usageCount - Number of usage units to deduct (from AgentResult.usageCount)
- * @returns Success status and updated usage info
+ * Deduct usage for an agent action after successful completion.
+ * Atomic via check_and_increment_usage RPC. Logs to activities.
  */
 export async function deductAgentUsage(
   orgId: string,
@@ -31,14 +50,18 @@ export async function deductAgentUsage(
     return { success: true, remaining: undefined };
   }
 
+  const featureKey = AGENT_FEATURE_KEY[agentType];
+  if (!featureKey) {
+    return { success: false, error: `Unknown agent type: ${agentType}` };
+  }
+
   const supabase = getUntypedClient();
 
   try {
-    // Call the database function to atomically increment usage
-    const { data, error } = await supabase.rpc("increment_agent_usage", {
+    const { data, error } = await supabase.rpc("check_and_increment_usage", {
       p_org_id: orgId,
-      p_agent_type: agentType,
-      p_count: usageCount,
+      p_feature_key: featureKey,
+      p_increment_by: usageCount,
     });
 
     if (error) {
@@ -46,18 +69,36 @@ export async function deductAgentUsage(
       return { success: false, error: error.message };
     }
 
-    // Log the deduction to activities
+    const result = data as UsageRpcResult;
+    if (!result.allowed) {
+      // Completed work exceeded remaining quota (e.g. a scrape returned more
+      // rows than remaining). Record the overage instead of silently losing
+      // it; billing can reconcile from activities.
+      console.warn(
+        `Usage deduction over limit for ${agentType} (${featureKey}): ${result.message}`,
+      );
+    }
+
     await supabase.from("activities").insert({
       org_id: orgId,
       agent_type: agentType,
       action: "usage_deducted",
       entity_type: "usage",
-      entity_id: agentType,
-      description: `Deducted ${usageCount} usage unit(s) for ${agentType}`,
-      metadata: { usageCount, remaining: data?.remaining },
+      entity_id: featureKey,
+      description: `Deducted ${usageCount} ${featureKey} unit(s) for ${agentType}`,
+      metadata: {
+        usageCount,
+        allowed: result.allowed,
+        remaining: result.remaining,
+        limit: result.limit,
+      },
     });
 
-    return { success: true, remaining: data?.remaining };
+    return {
+      success: result.allowed,
+      remaining: result.remaining,
+      error: result.allowed ? undefined : result.error,
+    };
   } catch (err) {
     console.error(`Usage deduction error for ${agentType}:`, err);
     return { success: false, error: String(err) };
@@ -65,112 +106,107 @@ export async function deductAgentUsage(
 }
 
 /**
- * Check if organization has remaining usage for an agent type
- *
- * @param orgId - Organization ID
- * @param agentType - Type of agent to check
- * @returns Whether usage is available and current remaining count
+ * Read-only check: does the org have remaining quota for an agent type?
+ * Uses current-period org_usage row + tier_feature_limits. Fails CLOSED
+ * (no quota) on error, consistent with lib/services/usage-limits.ts.
  */
 export async function checkAgentUsage(
   orgId: string,
   agentType: AgentType,
 ): Promise<{ hasUsage: boolean; remaining: number; limit: number }> {
+  const featureKey = AGENT_FEATURE_KEY[agentType];
+  if (!featureKey) {
+    return { hasUsage: false, remaining: 0, limit: 0 };
+  }
+
   const supabase = getUntypedClient();
 
-  const { data, error } = await supabase
-    .from("org_usage")
-    .select("*")
-    .eq("org_id", orgId)
-    .single();
+  try {
+    const { data: org } = await supabase
+      .from("organizations")
+      .select("subscription_tier")
+      .eq("id", orgId)
+      .single();
+    const tier = org?.subscription_tier || "free";
 
-  if (error || !data) {
-    // Default to allowing usage if we can't check
-    return { hasUsage: true, remaining: 999, limit: 999 };
+    const { data: limitRow } = await supabase
+      .from("tier_feature_limits")
+      .select("monthly_limit")
+      .eq("tier", tier)
+      .eq("feature_key", featureKey)
+      .single();
+
+    const limit = limitRow?.monthly_limit ?? 0;
+    if (limit < 0) {
+      // -1 = feature not available on this tier (e.g. superagent on free)
+      return { hasUsage: false, remaining: 0, limit: 0 };
+    }
+
+    const nowIso = new Date().toISOString();
+    const { data: usageRows } = await supabase
+      .from("org_usage")
+      .select("current_count, period_end")
+      .eq("org_id", orgId)
+      .eq("feature_key", featureKey)
+      .gt("period_end", nowIso)
+      .order("period_start", { ascending: false })
+      .limit(1);
+
+    const used = usageRows?.[0]?.current_count ?? 0;
+    const remaining = Math.max(0, limit - used);
+    return { hasUsage: remaining > 0, remaining, limit };
+  } catch (err) {
+    console.error(`Usage check error for ${agentType}:`, err);
+    return { hasUsage: false, remaining: 0, limit: 0 };
   }
-
-  // Map agent type to usage column
-  const usageMap: Record<AgentType, { count: string; limit: string }> = {
-    lead_gen: { count: "leads_scraped_count", limit: "leads_scraped_limit" },
-    seo: { count: "seo_articles_count", limit: "seo_articles_limit" },
-    partnership: {
-      count: "partner_contacts_count",
-      limit: "partner_contacts_limit",
-    },
-    proposal: { count: "proposals_count", limit: "proposals_limit" },
-    competitor_intel: {
-      count: "competitors_count",
-      limit: "competitors_limit",
-    },
-    revenue_recovery: {
-      count: "recovery_attempts_count",
-      limit: "recovery_attempts_limit",
-    },
-    onboarding: {
-      count: "onboarding_users_count",
-      limit: "onboarding_users_limit",
-    },
-    customer_success: {
-      count: "support_messages_count",
-      limit: "support_messages_limit",
-    },
-    superagent: {
-      count: "superagent_campaigns_count",
-      limit: "superagent_campaigns_limit",
-    },
-  };
-
-  const mapping = usageMap[agentType];
-  if (!mapping) {
-    return { hasUsage: true, remaining: 999, limit: 999 };
-  }
-
-  const count = (data[mapping.count] as number) || 0;
-  const limit = (data[mapping.limit] as number) || 0;
-  const remaining = Math.max(0, limit - count);
-
-  return {
-    hasUsage: remaining > 0,
-    remaining,
-    limit,
-  };
 }
 
 /**
- * Get usage summary for an organization
+ * Usage summary for an organization across all agent types.
+ * Single RPC round-trip (get_usage_summary), shaped for dashboard cards.
  */
 export async function getUsageSummary(
   orgId: string,
 ): Promise<
   Record<AgentType, { count: number; limit: number; remaining: number }>
 > {
-  const agentTypes: AgentType[] = [
-    "lead_gen",
-    "seo",
-    "partnership",
-    "proposal",
-    "competitor_intel",
-    "revenue_recovery",
-    "onboarding",
-    "customer_success",
-    "superagent",
-  ];
-
-  const summary: Record<
-    AgentType,
-    { count: number; limit: number; remaining: number }
-  > = {} as Record<
+  const supabase = getUntypedClient();
+  const empty = {} as Record<
     AgentType,
     { count: number; limit: number; remaining: number }
   >;
 
-  for (const agentType of agentTypes) {
-    const usage = await checkAgentUsage(orgId, agentType);
-    summary[agentType] = {
-      count: usage.limit - usage.remaining,
-      limit: usage.limit,
-      remaining: usage.remaining,
-    };
-  }
+  try {
+    const { data, error } = await supabase.rpc("get_usage_summary", {
+      p_org_id: orgId,
+    });
+    if (error || !data) {
+      console.error("get_usage_summary failed:", error);
+      return empty;
+    }
 
-  return summary;
+    const features =
+      (
+        data as {
+          features?: Record<
+            string,
+            { used: number; limit: number; remaining: number }
+          >;
+        }
+      ).features ?? {};
+
+    const summary = empty;
+    for (const [agentType, featureKey] of Object.entries(AGENT_FEATURE_KEY)) {
+      const f = features[featureKey];
+      summary[agentType as AgentType] = {
+        count: f?.used ?? 0,
+        limit: f?.limit ?? 0,
+        remaining: f?.remaining ?? 0,
+      };
+    }
+    return summary;
+  } catch (err) {
+    console.error("Usage summary error:", err);
+    return empty;
+  }
 }

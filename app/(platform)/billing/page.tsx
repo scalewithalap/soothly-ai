@@ -45,6 +45,35 @@ export default function BillingSettingsPage() {
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [currentTier, setCurrentTier] = useState("free");
   const [usageData, setUsageData] = useState<UsageData[]>([]);
+  const [checkoutTier, setCheckoutTier] = useState<string | null>(null);
+
+  /**
+   * Start a Polar checkout for a paid tier.
+   * POST /api/polar/checkout creates the session server-side (with org
+   * metadata) and returns the hosted checkout URL.
+   */
+  async function startCheckout(tier: string) {
+    if (!["launch", "growth", "scale"].includes(tier)) return;
+    setCheckoutTier(tier);
+    try {
+      const res = await fetch("/api/polar/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tier, interval: "month" }),
+      });
+      const json = await res.json();
+      const url = json?.data?.url ?? json?.url;
+      if (res.ok && url) {
+        window.location.href = url;
+        return;
+      }
+      console.error("Checkout failed:", json);
+      setCheckoutTier(null);
+    } catch (err) {
+      console.error("Checkout error:", err);
+      setCheckoutTier(null);
+    }
+  }
 
   async function fetchBillingData() {
     try {
@@ -192,8 +221,15 @@ export default function BillingSettingsPage() {
         </div>
 
         <div className="flex gap-3">
-          {currentTier !== "enterprise" && (
-            <Button className="gap-2" disabled>
+          {currentTier !== "scale" && (
+            <Button
+              className="gap-2"
+              onClick={() =>
+                document
+                  .getElementById("available-plans")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
+            >
               <ArrowUpRight className="w-4 h-4" />
               {content.settings.billing.currentPlan.upgradeButton}
             </Button>
@@ -267,7 +303,7 @@ export default function BillingSettingsPage() {
       </Card>
 
       {/* Available Plans */}
-      <div>
+      <div id="available-plans">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           {content.settings.billing.availablePlans.title}
         </h3>
@@ -320,6 +356,23 @@ export default function BillingSettingsPage() {
                   </li>
                 ))}
               </ul>
+              {plan.tier !== currentTier && plan.price_monthly > 0 && (
+                <Button
+                  size="sm"
+                  className="w-full mt-3 gap-1"
+                  disabled={checkoutTier !== null}
+                  onClick={() => startCheckout(plan.tier)}
+                >
+                  {checkoutTier === plan.tier ? (
+                    "Redirecting…"
+                  ) : (
+                    <>
+                      <ArrowUpRight className="w-3 h-3" />
+                      Upgrade
+                    </>
+                  )}
+                </Button>
+              )}
             </Card>
           ))}
         </div>

@@ -1,173 +1,161 @@
+/**
+ * POST /api/polar/webhook — Polar subscription lifecycle webhook.
+ *
+ * Responsibilities:
+ * - Resolve the organization for a subscription event (metadata.org_id first,
+ *   customer email as legacy fallback — ADR-004).
+ * - Map Polar product → tier via env-configured product IDs
+ *   (lib/billing/tiers.ts), writing canonical tier names
+ *   (free|launch|growth|scale) that match tier_feature_limits rows.
+ * - Persist polar_customer_id / polar_subscription_id for support + dunning.
+ * - Reset billing_cycle_anchor on create; downgrade to free on cancel.
+ *
+ * Signature verification is handled by @polar-sh/nextjs (POLAR_WEBHOOK_SECRET).
+ */
 import { Webhooks } from "@polar-sh/nextjs";
 import { createClient } from "@supabase/supabase-js";
+import {
+  polarProductToTier,
+  normalizeTier,
+  type Tier,
+} from "@/lib/billing/tiers";
 
-// Use service role for admin operations
+// Service role: this route receives no user JWT; org writes are gated by
+// signature verification above. Never reuse this client for user-driven routes.
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
-// Map Polar product IDs to our subscription tiers
-const POLAR_PRODUCT_TO_TIER: Record<string, string> = {
-  // These will need to be configured with actual Polar product IDs
-  prod_starter: "starter",
-  prod_growth: "growth",
-  prod_scale: "scale",
-  prod_enterprise: "enterprise",
-};
+interface SubscriptionLike {
+  id?: string;
+  productId?: string;
+  status?: string;
+  recurringInterval?: string;
+  metadata?: Record<string, unknown> | null;
+  customer?: { id?: string; email?: string | null } | null;
+}
+
+/**
+ * Resolve org_id for a webhook payload.
+ * Priority: checkout metadata (trusted, set server-side by our checkout
+ * route) → customer email lookup (legacy fallback for subscriptions created
+ * before metadata support).
+ */
+async function resolveOrgId(sub: SubscriptionLike): Promise<string | null> {
+  const metaOrgId = sub.metadata?.org_id;
+  if (typeof metaOrgId === "string" && metaOrgId.length > 0) {
+    // Verify the org actually exists before writing to it.
+    const { data: org } = await supabase
+      .from("organizations")
+      .select("id")
+      .eq("id", metaOrgId)
+      .single();
+    if (org?.id) return org.id;
+    console.error(`Polar webhook: metadata org_id ${metaOrgId} not found`);
+  }
+
+  const email = sub.customer?.email;
+  if (!email) return null;
+  const { data: user } = await supabase
+    .from("users")
+    .select("id, org_id")
+    .eq("email", email)
+    .single();
+  return user?.org_id ?? null;
+}
+
+function resolveTier(sub: SubscriptionLike): Tier {
+  const productMap = polarProductToTier();
+  if (sub.productId && productMap[sub.productId]) {
+    return productMap[sub.productId];
+  }
+  // Metadata tier (set by our checkout route) as secondary signal.
+  const metaTier = sub.metadata?.tier;
+  if (typeof metaTier === "string") return normalizeTier(metaTier);
+  console.error(
+    `Polar webhook: unknown product ${sub.productId} and no metadata tier — defaulting to launch. Configure POLAR_PRODUCT_* env vars.`,
+  );
+  return "launch";
+}
+
+async function applySubscription(
+  sub: SubscriptionLike,
+  opts: { resetAnchor: boolean },
+): Promise<void> {
+  const orgId = await resolveOrgId(sub);
+  if (!orgId) {
+    console.error(
+      "Polar webhook: could not resolve organization (no metadata.org_id, email lookup failed) — manual reconciliation needed",
+      { subscriptionId: sub.id, email: sub.customer?.email ?? null },
+    );
+    return;
+  }
+
+  const tier = resolveTier(sub);
+  const billingInterval = sub.recurringInterval === "year" ? "year" : "month";
+
+  const update: Record<string, unknown> = {
+    subscription_tier: tier,
+    billing_interval: billingInterval,
+    updated_at: new Date().toISOString(),
+  };
+  if (opts.resetAnchor) {
+    update.billing_cycle_anchor = new Date().toISOString();
+  }
+  if (sub.customer?.id) update.polar_customer_id = sub.customer.id;
+  if (sub.id) update.polar_subscription_id = sub.id;
+
+  const { error } = await supabase
+    .from("organizations")
+    .update(update)
+    .eq("id", orgId);
+  if (error) {
+    console.error("Polar webhook: org update failed", { orgId, error });
+  }
+}
+
+async function downgradeToFree(sub: SubscriptionLike): Promise<void> {
+  const orgId = await resolveOrgId(sub);
+  if (!orgId) {
+    console.error("Polar webhook: cancel — could not resolve organization", {
+      subscriptionId: sub.id,
+    });
+    return;
+  }
+  const { error } = await supabase
+    .from("organizations")
+    .update({
+      subscription_tier: "free",
+      billing_interval: "month",
+      polar_subscription_id: null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", orgId);
+  if (error) {
+    console.error("Polar webhook: downgrade failed", { orgId, error });
+  }
+}
 
 export const POST = Webhooks({
   webhookSecret: process.env.POLAR_WEBHOOK_SECRET!,
 
   onSubscriptionCreated: async (payload) => {
-    const customer = payload.data.customer;
-    const email = customer?.email;
-
-    if (!email) {
-      // Skip - no email in subscription webhook
-      return;
-    }
-
-    // Find user by email
-    const { data: user } = await supabase
-      .from("users")
-      .select("id, org_id")
-      .eq("email", email)
-      .single();
-
-    if (!user?.org_id) {
-      // Skip - user or org not found
-      return;
-    }
-
-    // Determine tier from product
-    const productId = payload.data.productId;
-    const tier = POLAR_PRODUCT_TO_TIER[productId] || "starter";
-
-    // Extract billing interval from subscription (month or year)
-    // Polar uses recurringInterval: 'month' | 'year'
-    const recurringInterval = (payload.data as { recurringInterval?: string })
-      .recurringInterval;
-    const billingInterval = recurringInterval === "year" ? "year" : "month";
-
-    // Update organization subscription with tier and billing interval
-    await supabase
-      .from("organizations")
-      .update({
-        subscription_tier: tier,
-        billing_interval: billingInterval,
-        billing_cycle_anchor: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", user.org_id);
-
-    // Usage is now tracked via org_usage table atomically per-action
-    // No initial usage needed - limits are enforced per tier
-
-    // Subscription created - tier applied
+    await applySubscription(payload.data as SubscriptionLike, {
+      resetAnchor: true,
+    });
   },
 
   onSubscriptionUpdated: async (payload) => {
-    const customer = payload.data.customer;
-    const email = customer?.email;
-
-    if (!email) return;
-
-    const { data: user } = await supabase
-      .from("users")
-      .select("id, org_id")
-      .eq("email", email)
-      .single();
-
-    if (!user?.org_id) return;
-
-    // Handle cancellation
-    if (payload.data.status === "canceled") {
-      await supabase
-        .from("organizations")
-        .update({
-          subscription_tier: "free",
-          billing_interval: "month",
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", user.org_id);
-
-      // Subscription canceled - downgraded to free
+    const sub = payload.data as SubscriptionLike;
+    if (sub.status === "canceled") {
+      await downgradeToFree(sub);
       return;
     }
-
-    // Handle plan change
-    const productId = payload.data.productId;
-    const tier = POLAR_PRODUCT_TO_TIER[productId] || "starter";
-
-    // Extract billing interval from subscription
-    const recurringInterval = (payload.data as { recurringInterval?: string })
-      .recurringInterval;
-    const billingInterval = recurringInterval === "year" ? "year" : "month";
-
-    await supabase
-      .from("organizations")
-      .update({
-        subscription_tier: tier,
-        billing_interval: billingInterval,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", user.org_id);
-
-    // Subscription updated - new tier applied
+    await applySubscription(sub, { resetAnchor: false });
   },
 
   onSubscriptionCanceled: async (payload) => {
-    const customer = payload.data.customer;
-    const email = customer?.email;
-
-    if (!email) return;
-
-    const { data: user } = await supabase
-      .from("users")
-      .select("id, org_id")
-      .eq("email", email)
-      .single();
-
-    if (!user?.org_id) return;
-
-    // Downgrade to free tier and reset billing interval
-    await supabase
-      .from("organizations")
-      .update({
-        subscription_tier: "free",
-        billing_interval: "month",
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", user.org_id);
-
-    // Subscription canceled - downgraded to free
-  },
-
-  // Handle order completed (legacy - no longer used for usage)
-  onOrderCreated: async (payload) => {
-    const customer = payload.data.customer;
-    const email = customer?.email;
-
-    if (!email) return;
-
-    const { data: user } = await supabase
-      .from("users")
-      .select("id, org_id")
-      .eq("email", email)
-      .single();
-
-    if (!user?.org_id) return;
-
-    // Check if this is a legacy purchase (custom metadata)
-    const metadata = payload.data.metadata as {
-      type?: string;
-      usage?: number;
-    } | null;
-    // Legacy usage purchases no longer supported
-    // Usage is tracked via org_usage per tier limits
-    if (metadata?.type === "usage_purchase") {
-      // Legacy usage purchase ignored - using limit-based system
-    }
+    await downgradeToFree(payload.data as SubscriptionLike);
   },
 });

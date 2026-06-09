@@ -34,6 +34,10 @@ export const FEATURE_KEYS = {
   ONBOARDING_USERS: "onboarding_users",
   // Customer Success Agent (The "Brain")
   SUPPORT_MESSAGES: "support_messages",
+  // Revenue Recovery Agent (The "Collector")
+  RECOVERY_ATTEMPTS: "recovery_attempts",
+  // Superagent (The "Manager") — paid plans only (-1 limit on free)
+  SUPERAGENT_CAMPAIGNS: "superagent_campaigns",
   // Team management
   TEAM_MEMBERS: "team_members",
 } as const;
@@ -185,6 +189,8 @@ export function getFeatureKeyForAgent(agentType: string): FeatureKey | null {
     competitor_intel: FEATURE_KEYS.COMPETITORS,
     onboarding: FEATURE_KEYS.ONBOARDING_USERS,
     customer_success: FEATURE_KEYS.SUPPORT_MESSAGES,
+    revenue_recovery: FEATURE_KEYS.RECOVERY_ATTEMPTS,
+    superagent: FEATURE_KEYS.SUPERAGENT_CAMPAIGNS,
     // Legacy agent type names (for backwards compatibility during migration)
     content: FEATURE_KEYS.SEO_ARTICLES,
     leads: FEATURE_KEYS.LEADS_SCRAPED,
