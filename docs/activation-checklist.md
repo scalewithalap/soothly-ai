@@ -1,8 +1,10 @@
-# Owner Activation Checklist — Phases 0–3
+# Owner Activation Checklist — Full MVP (Phases 0–6)
 
-> Everything the owner must do to activate the code landed in commits
-> `6ee9920` (billing), `91ac5e74` (foundation), `7ce9dcd` (agent infra).
+> Everything the owner must do to activate the complete MVP build
+> (commits `6ee9920` → `5c4f2d1` + Phase 6 hardening).
 > Work top to bottom — later steps depend on earlier ones.
+> Steps 1–7 get you to a working sandbox deployment; Step 8 is the
+> production cutover when you're ready to charge real cards.
 
 ## Step 1 — Verify the code builds
 
@@ -21,6 +23,9 @@ In the Supabase dashboard → SQL editor, run **in this exact order**:
 - [ ] `supabase/migrations/0004_vector_search_rpcs.sql` — pgvector + RAG/memory/cache RPCs
 - [ ] `supabase/migrations/0005_agent_work_tables.sql` — prospects, proposals, support_tickets
 - [ ] `supabase/migrations/0006_lifecycle_agent_tables.sql` — onboarding_tasks, competitors + snapshots/changes
+- [ ] `supabase/migrations/0007_revenue_ops_tables.sql` — payment_recoveries
+- [ ] `supabase/migrations/0008_superagent_campaigns.sql` — superagent_campaigns
+- [ ] `supabase/migrations/0009_rls_hardening.sql` — **RLS on every original table (launch blocker — schema.sql shipped with zero RLS)**
 
 Verification queries (all should pass):
 
@@ -33,6 +38,11 @@ SELECT proname FROM pg_proc WHERE proname IN
    'search_knowledge_base','match_semantic_cache','search_agent_memories',
    'access_agent_memory','get_trace_tree','get_knowledge_base_stats'); -- expect 9 rows
 SELECT to_regclass('public.support_tickets'), to_regclass('public.competitors'); -- both non-NULL
+SELECT to_regclass('public.payment_recoveries'), to_regclass('public.superagent_campaigns'); -- both non-NULL
+-- RLS coverage: expect 0 rows
+SELECT tablename FROM pg_tables t WHERE schemaname='public'
+  AND NOT EXISTS (SELECT 1 FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace
+                  WHERE n.nspname='public' AND c.relname=t.tablename AND c.relrowsecurity);
 ```
 
 ## Step 3 — Create service resources
@@ -41,6 +51,7 @@ SELECT to_regclass('public.support_tickets'), to_regclass('public.competitors');
 - [ ] **Inngest Cloud:** create app (id must be `soothly-ai`). Copy event key + signing key.
 - [ ] **Upstash:** create a Redis database. Copy REST URL + REST token.
 - [ ] **Google AI Studio:** create an API key (Gemini — used for all agent AI + embeddings).
+- [ ] **AWS SES:** verify your sending domain, request production access (out of SES sandbox), create an IAM user with `ses:SendEmail` — needed for recovery emails, sequences, notifications.
 
 ## Step 4 — Environment variables
 
@@ -82,6 +93,12 @@ UPSTASH_REDIS_REST_TOKEN=
 
 # Apify (Lead Gen scraping — Phase 4a+)
 APIFY_API_TOKEN=
+
+# AWS SES (recovery emails, sequences, notifications — Phase 4c+)
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_REGION=us-east-1
+SES_FROM_EMAIL=                 # verified sender, e.g. noreply@yourdomain.com
 ```
 
 ## Step 5 — Deploy
@@ -94,15 +111,45 @@ APIFY_API_TOKEN=
 - [ ] **Polar webhook:** sandbox dashboard → add endpoint `{app-url}/api/polar/webhook`, subscribe to subscription events, copy the webhook secret → set `POLAR_WEBHOOK_SECRET` → redeploy
 - [ ] **Inngest sync:** Inngest Cloud → Apps → sync `{app-url}/api/inngest` — the function list should show ~30 functions across 9 agents + sequences
 
-## Step 7 — Smoke tests
+## Step 7 — Smoke tests (golden path)
 
-- [ ] Sign up a fresh user → complete onboarding → lands on dashboard
+Billing:
+- [ ] Sign up fresh user → complete onboarding → dashboard; Inngest shows `onboarding/user.created`
 - [ ] `/billing` shows 4 plans (Free / Launch $129 / Growth $349 / Scale $997)
-- [ ] Click Upgrade on Launch → Polar sandbox checkout opens → pay with test card → org's tier becomes `launch` in the organizations table, billing page reflects it
-- [ ] Cancel the sandbox subscription → tier returns to `free`
-- [ ] Inngest dashboard: `onboarding/user.created` event appears after a new signup completes onboarding
+- [ ] Upgrade to Launch → sandbox checkout → pay test card → org tier = `launch`; cancel → back to `free`
+
+Quota enforcement (on a free org):
+- [ ] 2nd content brief → 429 with upgrade message (free = 1 article/mo)
+- [ ] Superagent campaign POST → 402 paid-plan prompt
+- [ ] After upgrading: same calls succeed; usage counters move in /billing
+
+Agents (paid org):
+- [ ] Lead campaign → Apify scrape → leads appear; approval card shows in smart mode; approving resumes within seconds (not 7 days)
+- [ ] Content brief → article draft lands in articles table
+- [ ] Proposal from URL → analysis → proposal; GET /api/agents/proposals/{id}/pdf downloads a PDF
+- [ ] POST /api/support/tickets with a question → resolved or escalated ticket; second identical question hits semantic cache
+- [ ] Add competitor → initial scan rows in competitor_snapshots
+- [ ] Customer Stripe (test) connected via webhook URL → fire `invoice.payment_failed` test → recovery email + payment_recoveries row + 1 recovery_attempts deducted
+- [ ] Superagent campaign (content_blitz) → Inngest run tree shows prepare → dispatch → await per step; deducts 1 on completion; cancel mid-run stops next round
+
+Security spot-checks:
+- [ ] With user A's session, request a user B (other org) resource by id → 404/empty (RLS)
+- [ ] POST /api/webhooks/receive/stripe/{id} with bad signature → 401
+- [ ] /api/widget/data without bearer token → 401
+
+## Step 8 — Production cutover (when ready to charge real cards)
+
+1. **Polar production:** create production org at polar.sh → recreate the 6 products → production access token + org id
+2. Swap Vercel **production-scope** env: `POLAR_SERVER=production`, production `POLAR_ACCESS_TOKEN`, `POLAR_ORGANIZATION_ID`, 6 production `POLAR_PRODUCT_*` ids
+3. Add production webhook endpoint (polar.sh dashboard) → `{prod-url}/api/polar/webhook` → set production `POLAR_WEBHOOK_SECRET`
+4. **Inngest:** create/promote a production environment for app `soothly-ai` → production event + signing keys in Vercel production scope → sync `{prod-url}/api/inngest`
+5. **Domain:** attach custom domain in Vercel → update `NEXT_PUBLIC_APP_URL` → redeploy
+6. **Supabase:** Auth → URL configuration → add production domain to redirect allowlist
+7. Re-run Step 7 smoke tests against production (Polar real card on your own account, then refund)
+8. Watch Inngest + Vercel logs for the first 24h; `payment_recoveries`, `org_usage`, and `activities` tables tell you billing is flowing
 
 ## Known deferred items
 
-- Phase 4c credentials: AWS SES keys (email/sequences), Plivo (SMS — currently stubbed)
-- Production Polar org + production Inngest keys land in Phase 6
+- Plivo SMS (Revenue Recovery currently email-only — the log-sms-intent step is the hook point)
+- Workers without `*.completed` events (partnership/proposal/intel) run fire-and-forget inside Superagent campaigns — fine for current templates
+- `npm audit` + dependency review recommended before launch (owner-side; sandbox can't run installs)

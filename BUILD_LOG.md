@@ -141,4 +141,14 @@ Remaining Phase 1 scope (next session): auth flow verification against hosted Su
 2. Smoke: free org POST /api/agents/superagent/campaigns → 402; upgraded org → campaign plans, executes (check Inngest run tree: prepare → dispatch → await per step), 1 superagent_campaigns unit deducted on completion; cancel mid-run → loop exits at next round
 
 ## Phase 6 — Production Launch
-**Status:** ⚪ Not started — security pass, Polar production, prod Vercel + domain, Inngest prod, smoke tests, runbook.
+**Status:** 🟡 Code/docs complete 2026-06-10; owner executes checklist Steps 1-8
+
+| Date | Change | Details |
+|---|---|---|
+| 2026-06-10 | RLS hardening (launch blocker) | schema.sql had ZERO RLS statements — any authenticated user could read other orgs' rows via PostgREST. migrations/0009: RLS on every table; org policies via current_org_id() helper; catalogs public-read; sensitive internals service-role-only (ADR-012) |
+| 2026-06-10 | Activation checklist consolidated | docs/activation-checklist.md now covers all phases: 9 migrations in order with verification queries, all env vars (incl. SES), full smoke-test plan (billing, quota, all 9 agents, security spot-checks), and Step 8 production cutover (Polar prod, Inngest prod env, domain, Supabase auth allowlist) |
+| 2026-06-10 | Ops runbook completed | docs/runbook.md: environment matrix, key surfaces, billing/quota operator model, 7 incident playbooks (wrong tier, hung approvals, Inngest replay, missing webhooks, signature failures, rate limits, empty RAG), crons, alerting defaults |
+| 2026-06-10 | Security audit notes | 37 service-role routes reviewed — all server-side with auth or signature gates; public routes are intentional (health, plans catalog, auth flows, API-key-authed /api/triggers). Residual: /api/triggers uses in-memory rate limiting (acceptable: API-key scoped); npm audit delegated to owner |
+
+### Owner actions needed to activate
+Everything is consolidated in docs/activation-checklist.md — Steps 1-7 (sandbox) then Step 8 (production cutover).
