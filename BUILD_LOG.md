@@ -127,7 +127,18 @@ Remaining Phase 1 scope (next session): auth flow verification against hosted Su
 3. Connect a customer Stripe (test mode) via the connections UI → paste issued URL into Stripe webhooks → fire invoice.payment_failed test event → recovery email sends, payment_recoveries row created, 1 recovery_attempts deducted
 
 ## Phase 5 — Superagent
-**Status:** ⚪ Not started — campaign plan/execute/cancel chaining real agents, paid gating, success-based deduction.
+**Status:** 🟡 Code complete 2026-06-10; owner applies migration 0008
+
+| Date | Change | Details |
+|---|---|---|
+| 2026-06-10 | Dispatch rewritten | getEventName() fired events workers don't listen to (seo/brief.created vs content/article.generate) with payloads referencing records that were never created — every chained step no-op'd. NEW dispatchAgentStep(): creates the worker's expected record (lead_campaigns/content_briefs), fires the REAL trigger, returns correlated completion event (ADR-011) |
+| 2026-06-10 | Real dependency chaining | Steps were marked complete immediately after dispatch. Now step.waitForEvent on the worker's *.completed (correlation id, 30m timeout) gates dependent steps |
+| 2026-06-10 | superagent_campaigns table | migrations/0008: phantom table #10 — the entire orchestration layer's storage never existed; created with org RLS |
+| 2026-06-10 | Paid gate + billing | requireAgentQuota at POST campaigns route: 402 upgrade prompt on free tier (limit -1), 429 on exhausted paid quota; deductAgentUsage 1/completed campaign. Mid-run cancellation now honored (status re-check per round) |
+
+### Owner actions needed to activate
+1. Run migration 0008 (after 0001-0007)
+2. Smoke: free org POST /api/agents/superagent/campaigns → 402; upgraded org → campaign plans, executes (check Inngest run tree: prepare → dispatch → await per step), 1 superagent_campaigns unit deducted on completion; cancel mid-run → loop exits at next round
 
 ## Phase 6 — Production Launch
 **Status:** ⚪ Not started — security pass, Polar production, prod Vercel + domain, Inngest prod, smoke tests, runbook.

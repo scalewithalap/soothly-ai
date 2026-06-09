@@ -4,6 +4,7 @@ import { inngest } from "@/inngest/client";
 import { SUPERAGENT_EVENTS } from "@/inngest/events";
 import { apiSuccess, withErrorHandler, validateBody } from "@/lib/validation";
 import { AppError, ErrorCodes } from "@/lib/errors";
+import { requireAgentQuota } from "@/lib/usage";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 const planSchema = z.object({
@@ -100,6 +101,11 @@ export const POST = withErrorHandler(async (request: Request) => {
   if (!userData?.org_id) {
     throw new AppError(ErrorCodes.NOT_FOUND, "Organization not found", 404);
   }
+
+  // Paid-plan gate + quota: superagent_campaigns has limit -1 on free tier,
+  // so requireAgentQuota throws 402 with upgrade messaging for free orgs and
+  // 429 when a paid org exhausts its monthly campaigns (ADR-008/ADR-011).
+  await requireAgentQuota(userData.org_id, "superagent");
 
   // Trigger Inngest campaign planning
   await inngest.send({

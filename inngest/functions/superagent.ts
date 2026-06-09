@@ -36,6 +36,7 @@ import {
 } from "@/lib/agents/schemas/llm-output-schemas";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { AgentType } from "@/lib/agents/base/types";
+import { deductAgentUsage } from "@/lib/usage";
 
 // Type helper
 function getUntypedClient() {
@@ -172,19 +173,107 @@ function interpolate(
 /**
  * Map agent action to Inngest event
  */
-function getEventName(agentType: AgentType, action: string): string {
-  const eventMap: Record<AgentType, string> = {
-    lead_gen: "leads/campaign.created",
-    seo: "seo/brief.created",
-    partnership: "partners/discover.requested",
-    proposal: "proposal/create.full",
-    competitor_intel: "intel/scan.daily",
-    customer_success: "support/ticket.created",
-    revenue_recovery: "recovery/payment.retry",
-    onboarding: "onboarding/progress.check",
-    superagent: "superagent/campaign.execute",
-  };
-  return eventMap[agentType] || `${agentType}/${action}`;
+/**
+ * Prepare a worker's expected DB record (if any) and return the exact event
+ * to dispatch + how to await its completion.
+ *
+ * Phase 5 fix: the old getEventName() map fired events the workers either
+ * don't listen to ("seo/brief.created" — real trigger is content/*) or that
+ * reference DB records (campaignId/briefId) which were never created — every
+ * chained step silently no-op'd with "Campaign not found". Workers are
+ * stateless on purpose (SKILL.md); the orchestrator owns record creation.
+ */
+async function dispatchAgentStep(
+  execStep: {
+    id: string;
+    agentType: AgentType;
+    action: string;
+    params: Record<string, unknown>;
+  },
+  orgId: string,
+  campaignName: string,
+): Promise<{
+  eventName: string;
+  eventData: Record<string, unknown>;
+  waitEvent?: string;
+  correlationField?: string;
+  correlationId?: string;
+}> {
+  const supabase = getUntypedClient();
+  const p = execStep.params;
+
+  switch (execStep.agentType) {
+    case "lead_gen": {
+      const { data: leadCampaign } = await supabase
+        .from("lead_campaigns")
+        .insert({
+          org_id: orgId,
+          name: `${campaignName} — leads`,
+          target_criteria: {
+            industries: p.industry ? [p.industry] : undefined,
+            keywords: p.niche ? [p.niche] : p.keywords,
+            maxResults: typeof p.count === "number" ? p.count : 50,
+          },
+          status: "draft",
+          leads_collected: 0,
+          leads_contacted: 0,
+        })
+        .select("id")
+        .single();
+      return {
+        eventName: "leads/campaign.created",
+        eventData: { campaignId: leadCampaign?.id, orgId },
+        waitEvent: "leads/campaign.completed",
+        correlationField: "campaignId",
+        correlationId: leadCampaign?.id as string,
+      };
+    }
+    case "seo": {
+      const topic = (p.topic as string) || (p.niche as string) || "industry insights";
+      const { data: brief } = await supabase
+        .from("content_briefs")
+        .insert({
+          org_id: orgId,
+          title: `${topic} — campaign article`,
+          primary_keyword: topic,
+          content_type: "blog_post",
+          status: "draft",
+        })
+        .select("id")
+        .single();
+      return {
+        eventName: "content/article.generate",
+        eventData: { briefId: brief?.id, orgId },
+        waitEvent: "content/article.completed",
+        correlationField: "briefId",
+        correlationId: brief?.id as string,
+      };
+    }
+    case "partnership":
+      return {
+        eventName: "partners/discover.requested",
+        eventData: {
+          orgId,
+          industry: (p.niche as string) ?? (p.industry as string) ?? "",
+          partnerType: (p.partnerType as string) ?? "affiliate",
+        },
+      };
+    case "proposal":
+      return {
+        eventName: "proposal/create.full",
+        eventData: { orgId, prospectUrl: p.url ?? p.prospectUrl },
+      };
+    case "competitor_intel":
+      return {
+        eventName: "intel/scan.daily",
+        eventData: { orgId, triggeredAt: new Date().toISOString() },
+      };
+    default:
+      return {
+        eventName: `${execStep.agentType}/${execStep.action}`,
+        eventData: { ...p, orgId },
+      };
+  }
 }
 
 // ============================================
@@ -408,28 +497,60 @@ export const executeCampaign = inngest.createFunction(
 
       if (executableSteps.length === 0) break;
 
+      // Honor mid-run cancellation (cancelCampaign sets status=cancelled;
+      // the file header promised this but the loop never re-checked).
+      const currentStatus = await step.run(`check-status-r${round}`, async () => {
+        const supabase = getUntypedClient();
+        const { data } = await supabase
+          .from("superagent_campaigns")
+          .select("status")
+          .eq("id", campaignId)
+          .single();
+        return data?.status as string | undefined;
+      });
+      if (currentStatus === "cancelled") {
+        return {
+          success: true,
+          campaignId,
+          status: "cancelled",
+          stepsCompleted: completedSteps.size,
+        };
+      }
+
       // Execute each step
       for (const execStep of executableSteps) {
-        const stepResult = await step.run(
-          `execute-${execStep.id}`,
-          async () => {
-            // Merge params with results from previous steps
-            const enrichedParams = {
-              ...execStep.params,
-              orgId,
-              campaignId,
-              previousResults: results,
-            };
+        // 3a. Prepare worker inputs (creates lead_campaigns/content_briefs
+        // records the workers expect) and resolve the real trigger event.
+        const dispatch = await step.run(`prepare-${execStep.id}`, async () => {
+          return dispatchAgentStep(execStep, orgId, campaign.name as string);
+        });
 
-            // Send event to the target agent
-            await inngest.send({
-              name: getEventName(execStep.agentType, execStep.action),
-              data: enrichedParams,
-            });
+        // 3b. Fire the worker's actual trigger event.
+        await step.sendEvent(`dispatch-${execStep.id}`, {
+          name: dispatch.eventName,
+          data: dispatch.eventData,
+        });
 
-            return { triggered: true, agentType: execStep.agentType };
-          },
-        );
+        // 3c. If the worker emits a completion event, wait for it (correlated)
+        // so dependent steps actually run AFTER their dependencies finish —
+        // the old code marked steps complete immediately after dispatch.
+        let stepResult: Record<string, unknown> = {
+          triggered: true,
+          agentType: execStep.agentType,
+        };
+        if (dispatch.waitEvent && dispatch.correlationId) {
+          const completion = await step.waitForEvent(`await-${execStep.id}`, {
+            event: dispatch.waitEvent,
+            timeout: "30m",
+            if: `async.data.${dispatch.correlationField} == "${dispatch.correlationId}"`,
+          });
+          stepResult = {
+            ...stepResult,
+            completed: completion !== null,
+            output: completion?.data ?? null,
+            timedOut: completion === null,
+          };
+        }
 
         completedSteps.add(execStep.id);
         results[execStep.id] = stepResult;
@@ -458,6 +579,12 @@ export const executeCampaign = inngest.createFunction(
         await step.sleep("inter-step-delay", "5s");
       }
     }
+
+    // Success-based billing: one superagent_campaigns unit per completed
+    // campaign (worker steps bill their own features individually).
+    await step.run("deduct-usage", async () => {
+      return deductAgentUsage(orgId, "superagent", 1);
+    });
 
     // Step 4: Mark campaign as completed
     await step.run("mark-completed", async () => {
