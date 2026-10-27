@@ -11,7 +11,7 @@ import { runActor } from "./client";
 
 export const ACTORS = {
   // Lead Scraping
-  LINKEDIN_PEOPLE_SEARCH: "curious_coder/linkedin-people-search-crawler",
+  LINKEDIN_PEOPLE_SEARCH: "johnvc/linkedin-people-search-api",
   GOOGLE_MAPS_SCRAPER: "compass/crawler-google-places",
   YELLOW_PAGES_SCRAPER: "epctex/yellowpages-scraper",
 
@@ -65,35 +65,44 @@ export interface ScrapedLead {
 export async function scrapeLinkedInLeads(
   input: LeadScrapingInput
 ): Promise<ScrapedLead[]> {
+  // The actor takes single strings, so list criteria are combined
   const actorInput = {
-    searchTerms: input.keywords || [],
-    jobTitles: input.jobTitles || [],
-    locations: input.locations || [],
-    industries: input.industries || [],
-    maxItems: input.maxResults || 50,
+    keywords:
+      [...(input.keywords || []), ...(input.industries || [])].join(" ") ||
+      undefined,
+    jobTitle: (input.jobTitles || []).join(" OR ") || undefined,
+    location: input.locations?.[0],
+    maxResults: input.maxResults || 50,
   };
 
   const results = await runActor<{
     fullName: string;
     headline: string;
-    companyName: string;
-    companyUrl: string;
+    currentTitle: string;
+    currentCompany: string;
+    currentCompanyUrl: string;
     profileUrl: string;
-    location: string;
-    profilePicture: string;
-    summary: string;
+    locationLocality: string;
+    locationCountry: string;
+    profilePhotoUrl: string;
+    about: string;
+    errorMessage?: string;
   }>(ACTORS.LINKEDIN_PEOPLE_SEARCH, actorInput, { timeoutSecs: 600 });
 
-  return results.map((r) => ({
-    name: r.fullName,
-    title: r.headline,
-    company: r.companyName,
-    companyUrl: r.companyUrl,
-    linkedinUrl: r.profileUrl,
-    location: r.location,
-    profileImage: r.profilePicture,
-    summary: r.summary,
-  }));
+  return results
+    .filter((r) => !r.errorMessage)
+    .map((r) => ({
+      name: r.fullName,
+      title: r.currentTitle || r.headline,
+      company: r.currentCompany,
+      companyUrl: r.currentCompanyUrl,
+      linkedinUrl: r.profileUrl,
+      location: [r.locationLocality, r.locationCountry]
+        .filter(Boolean)
+        .join(", "),
+      profileImage: r.profilePhotoUrl,
+      summary: r.about,
+    }));
 }
 
 /**
