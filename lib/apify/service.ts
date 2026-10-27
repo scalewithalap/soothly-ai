@@ -160,9 +160,8 @@ function buildLeadActorInput(
   switch (source) {
     case "linkedin":
       return {
-        searchTerms: [query],
+        keywords: [query, industry].filter(Boolean).join(" "),
         location: location,
-        industry: industry,
         maxResults,
       };
 
@@ -220,16 +219,20 @@ export function normalizeLeadResults(
 ): UnifiedLead[] {
   switch (source) {
     case "linkedin":
-      return rawResults.map((r) => ({
-        source: "linkedin" as const,
-        name: String(r.fullName || r.name || ""),
-        email: String(r.email || ""),
-        company: String(r.company || r.companyName || ""),
-        title: String(r.title || r.position || ""),
-        linkedin_url: String(r.profileUrl || r.url || ""),
-        location: String(r.location || ""),
-        rawData: r,
-      }));
+      return rawResults
+        .filter((r) => !r.errorMessage)
+        .map((r) => ({
+          source: "linkedin" as const,
+          name: String(r.fullName || ""),
+          email: String(r.email || ""),
+          company: String(r.currentCompany || ""),
+          title: String(r.currentTitle || r.headline || ""),
+          linkedin_url: String(r.profileUrl || ""),
+          location: [r.locationLocality, r.locationCountry]
+            .filter(Boolean)
+            .join(", "),
+          rawData: r,
+        }));
 
     case "google_maps":
       return rawResults.map((r) => ({
